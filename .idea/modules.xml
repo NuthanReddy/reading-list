@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Nuthan/.idea/Nuthan.iml" filepath="$PROJECT_DIR$/../Nuthan/.idea/Nuthan.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/reading-list.iml" filepath="$PROJECT_DIR$/.idea/reading-list.iml" />
     </modules>
   </component>
