@@ -5,15 +5,15 @@ This catalog lists files by top-level folder.
 ## Root
 - `CATALOG.md`
 - `README.md`
-- `Uber-staff`
 
+## Architecture
+- `07Sketches - The essential guide to architecture.pdf`
+- `Bathroom design guide.pdf`
 
 ## Artificial_Intelligence
 - `artificial general intelligence (2007).pdf`
 - `artificial intelligence (luger, 6th, 2008).pdf`
 - `artificial intelligence - a modern approach (3rd, 2009).pdf`
-- `Artificial Intelligence - A Modern Approach 2nd ed.pdf`
-- `Artificial Intelligence A Modern Approach.pdf`
 - `artificial intelligence for games (2nd, 2009).pdf`
 - `Fuzzy Expert Systems and Fuzzy Reasoning - William Siler.pdf`
 - `universal artificial intelligence (2005).pdf`
@@ -23,7 +23,6 @@ This catalog lists files by top-level folder.
 
 ## Computer Science
 - `Algorithms Parallel and Sequential.pdf`
-- `Introduction to Algorithms 3rd ed.pdf`
 - `LinuxKernelArchitecture.pdf`
 - `Understanding Distributed Systems (Roberto Vitillo).pdf`
 - `Understanding Linux Kernel.pdf`
@@ -57,7 +56,6 @@ This catalog lists files by top-level folder.
 - `Joy of Cooking - All About Salads Dressings.pdf`
 - `Keys to Good Cooking (Harold McGee) (Z-Library).epub`
 - `Masala Lab by Krish Ashok.pdf`
-- `Molecular Gastronomy Exploring the Science of Flavor (This Herve) (Z-Library).epub`
 - `Molecular Gastronomy Exploring the Science of Flavor.epub`
 - `Salt Fat Acid Heat Mastering the Elements of Good Cooking.epub`
 - `The 100 Healthiest Foods to Eat During Pregnancy.epub`
@@ -124,7 +122,7 @@ This catalog lists files by top-level folder.
 - `Cache-aware load balancing  of data center applications.pdf`
 - `Chubby.pdf`
 - `Colossus.pdf`
-- `Debugging Incidents in Google's Distributed Systems.pdf`
+- `Debugging Incidents in Google’s Distributed Systems.pdf`
 - `DeltaLake.pdf`
 - `Distributed Load Balancing.pdf`
 - `Distributed System Throttlers.pdf`
@@ -165,22 +163,22 @@ This catalog lists files by top-level folder.
 - `Design Patterns Elements of Reusable Object-Oriented Software.pdf`
 - `Go In Action.pdf`
 - `Head First Design Patterns.pdf`
+- `Introduction to Algorithms 3rd ed.pdf`
 - `Object Oriented vs Functional Programming.pdf`
 - `TDD By Example.pdf`
 - `The Robert C Martin Clean Code Collection Collection.epub`
-
 
 ## System Design
 - `Building Microservices.pdf`
 - `Clean Architecture A Craftsman Guide to Software Structure and Design.pdf`
 - `Designing Data Intensive Applications.pdf`
+- `DesigningDistributedSystems.pdf`
 - `DiceDB Pub_Sub Support.docx`
 - `educativeio - Grokking the System Design-educativeio.pdf`
 - `Grokking the Advanced System Design Interview (educative.io).pdf`
 - `Microservices From Design to Deploy.pdf`
+- `Patterns of Distributed Systems_One_page.pdf`
 - `Software Architecture Patterns.pdf`
 - `System Design - The Big Archive.pdf`
 - `System Design Interview An Insiders Guide_ Volume 2.pdf`
 - `system-design-interview-an-insiders-guide.pdf`
-
-
