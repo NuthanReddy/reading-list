@@ -12,12 +12,9 @@ A shuffle writer runs inside the **map task's executor JVM**. It consumes one in
 
 > **Key distinction:** The 25 bytes for reducer 2 are together on disk. This layout groups records by partition; it does not require sorting by key.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Attempt 41 groups records by destination, commits them to disk, and reports their location to the driver](visuals/shuffle-writer.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=shuffle-writer) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## How Spark chooses the writer
 

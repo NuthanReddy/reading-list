@@ -12,12 +12,9 @@ Before an executor fetches any shuffle bytes, it needs a list of blocks and serv
 
 > **Watch for:** A zero size means the block is empty and can be skipped. A missing map status means the location is unknown and the lookup fails.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor tracker checks its cache and uses map statuses to list the blocks and addresses for reducer 2](visuals/map-output-tracker-worker.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=map-output-tracker-worker) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Input and output
 

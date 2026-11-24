@@ -18,12 +18,9 @@ is not this bridge.
 
 > **Key distinction:** A successful Py4J call tests the local bridge, not the executors' route to the driver.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Py4J returns socket details to Python, which reads the collected rows over the separate socket](visuals/py4j-gateway.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=py4j-gateway) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Bootstrap and lifetime
 

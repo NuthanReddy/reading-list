@@ -12,12 +12,9 @@
 
 > **Key distinction:** The allocator can count an executor as running before that executor registers with the driver.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Four of five target executors are running, starting or pending, so the allocator requests one container and launches on its granted node.](visuals/yarn-allocator.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=yarn-allocator) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Interfaces and state
 

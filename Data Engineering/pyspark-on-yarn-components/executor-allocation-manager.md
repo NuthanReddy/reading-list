@@ -12,12 +12,9 @@
 
 > **Key distinction:** Lowering the target from six to one does not kill five executors; idle removal is a separate decision.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Task counts drive the executor target that the backend sends to the YARN application master](visuals/executor-allocation-manager.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=executor-allocation-manager) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Ownership and contracts
 

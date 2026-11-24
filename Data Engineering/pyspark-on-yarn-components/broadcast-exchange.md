@@ -16,12 +16,9 @@ This is an internal SQL operator, not a Python call to `sc.broadcast`.
 
 > **Key distinction:** The exchange builds the lookup table; join tasks probe it after resolving the handle.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Build tasks send region rows to the driver, which indexes them by region ID and gets a broadcast handle for the join.](visuals/broadcast-exchange.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=broadcast-exchange) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Contract and lifetime
 

@@ -12,12 +12,9 @@
 
 > **Key distinction:** The task returns a commit message and a write summary to the driver, not three Parquet files.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Partition 7's four rows become three files across east and west; the driver collects task messages for job commit.](visuals/file-format-writer.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=file-format-writer) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Inputs, outputs, and state
 

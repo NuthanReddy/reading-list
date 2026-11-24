@@ -12,12 +12,9 @@
 
 > **Watch for:** A task can return records on a miss even if the partition does not fit in the cache.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A task looks up rdd_17_3; a hit supplies cached records, while a miss computes partition 3 and attempts to store it.](visuals/rdd-cache.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=rdd-cache) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## The driver records intent; tasks supply the data
 

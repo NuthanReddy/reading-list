@@ -1,38 +1,224 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="373" viewBox="0 0 360 373" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">CoarseGrainedSchedulerBackend: the driver&apos;s executor ledger: Flow at a glance</title>
-<desc id="flow-desc">1. Registration: The driver records executor 3 with two cores but zero free. 2. Executor ready: A launch acknowledgement lets the driver offer both cores. 3. Task 41: Uses one core until the driver receives its finish report.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">CoarseGrainedSchedulerBackend: Executor Ledger</title>
+<desc id="topo-desc">RegisterExecutor (free=0) vs LaunchedExecutor (free=2), ordered locks, LaunchTask size guard, and slot return. 1. ExecutorBackend to DriverSchedBackend: RegisterExecutor(3,2cpu) (driver-1:41000); 2. DriverSchedBackend to LiveListenerBus: ExecutorAdded (exec-3) (driver-1 in-JVM); 3. ExecutorBackend to DriverSchedBackend: LaunchedExecutor(3) (driver-1:41000); 4. DriverSchedBackend to TaskSchedulerImpl: resourceOffers(3:free=2) (driver-1 in-JVM); 5. DriverSchedBackend to ExecutorBackend: LaunchTask (TID 41) (driver-1:41000); 6. ExecutorBackend to DriverSchedBackend: StatusUpdate(41,FINISHED) (driver-1:41000)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(121px); }
-  82%, 100% { transform: translateY(242px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 0; }
+  0.67% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 1; }
+  5.17% { transform: translate(504.8px, 261.9px); color: #5bd3a8; opacity: 1; }
+  9.67% { transform: translate(504.8px, 218.1px); color: #5bd3a8; opacity: 1; }
+  14.17% { transform: translate(496.3px, 175.5px); color: #5bd3a8; opacity: 1; }
+  15.33% { transform: translate(496.3px, 175.5px); color: #5bd3a8; opacity: 0; }
+  16.00% { transform: translate(560px, 163.7px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(560px, 163.7px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(581.8px, 166.2px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(604.2px, 166.2px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(626px, 163.7px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(626px, 163.7px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 0; }
+  34.00% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 1; }
+  38.50% { transform: translate(504.8px, 261.9px); color: #5bd3a8; opacity: 1; }
+  43.00% { transform: translate(504.8px, 218.1px); color: #5bd3a8; opacity: 1; }
+  47.50% { transform: translate(496.3px, 175.5px); color: #5bd3a8; opacity: 1; }
+  48.67% { transform: translate(496.3px, 175.5px); color: #5bd3a8; opacity: 0; }
+  49.33% { transform: translate(400px, 135.3px); color: #bfa6ff; opacity: 0; }
+  50.67% { transform: translate(400px, 135.3px); color: #bfa6ff; opacity: 1; }
+  55.17% { transform: translate(378.2px, 132.8px); color: #bfa6ff; opacity: 1; }
+  59.67% { transform: translate(355.8px, 132.8px); color: #bfa6ff; opacity: 1; }
+  64.17% { transform: translate(334px, 135.3px); color: #bfa6ff; opacity: 1; }
+  65.33% { transform: translate(334px, 135.3px); color: #bfa6ff; opacity: 0; }
+  66.00% { transform: translate(463.7px, 175.5px); color: #5bd3a8; opacity: 0; }
+  67.33% { transform: translate(463.7px, 175.5px); color: #5bd3a8; opacity: 1; }
+  71.83% { transform: translate(455.2px, 218.1px); color: #5bd3a8; opacity: 1; }
+  76.33% { transform: translate(455.2px, 261.9px); color: #5bd3a8; opacity: 1; }
+  80.83% { transform: translate(463.7px, 304.5px); color: #5bd3a8; opacity: 1; }
+  82.00% { transform: translate(463.7px, 304.5px); color: #5bd3a8; opacity: 0; }
+  82.67% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 0; }
+  84.00% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 1; }
+  88.50% { transform: translate(504.8px, 261.9px); color: #5bd3a8; opacity: 1; }
+  93.00% { transform: translate(504.8px, 218.1px); color: #5bd3a8; opacity: 1; }
+  97.50% { transform: translate(496.3px, 175.5px); color: #5bd3a8; opacity: 1; }
+  98.67% { transform: translate(496.3px, 175.5px); color: #5bd3a8; opacity: 0; }
+  100% { transform: translate(496.3px, 304.5px); color: #5bd3a8; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="371" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V272" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Registration</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">The driver records</tspan><tspan x="62" y="84">executor 3 with two cores</tspan><tspan x="62" y="107">but zero free.</tspan></text>
-  <rect x="48" y="131" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="151" r="12" fill="#184d50"/>
-  <text x="24" y="157" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="157">Executor ready</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="182">A launch acknowledgement</tspan><tspan x="62" y="205">lets the driver offer both</tspan><tspan x="62" y="228">cores.</tspan></text>
-  <rect x="48" y="252" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="272" r="12" fill="#184d50"/>
-  <text x="24" y="278" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="278">Task 41</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="303">Uses one core until the</tspan><tspan x="62" y="326">driver receives its finish</tspan><tspan x="62" y="349">report.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">CoarseGrainedSchedulerBackend: Executor Ledger</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">RegisterExecutor (free=0) vs LaunchedExecutor (free=2), ordered locks, LaunchTask size guard, and slot return</text>
+  <g class="channel-legend">
+    <line x1="844.2" y1="24" x2="855.2" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="855.2" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="861.2" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="169" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="235" width="928" height="169" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="257" x2="944" y2="257" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="246" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="249.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="executor-backend" data-to="driver-scheduler-backend">
+    <path d="M 496.3 304.5 Q 515.6 240 496.3 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(496.3, 175.5) rotate(-105.7)"/>
+  </g>
+  <g class="topo-edge" data-from="driver-scheduler-backend" data-to="listener-bus">
+    <path d="M 560 163.7 Q 593 169.5 626 163.7" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 163.7) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="driver-scheduler-backend" data-to="task-scheduler">
+    <path d="M 400 135.3 Q 367 129.5 334 135.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(334, 135.3) rotate(170.6)"/>
+  </g>
+  <g class="topo-edge" data-from="driver-scheduler-backend" data-to="executor-backend">
+    <path d="M 463.7 175.5 Q 444.4 240 463.7 304.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(463.7, 304.5) rotate(74.3)"/>
+  </g>
+  <g class="topo-node" data-id="task-scheduler">
+    <rect x="177" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TaskSchedulerImpl</text>
+    <text class="f-mono" x="254" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="driver-scheduler-backend">
+    <rect x="400" y="123.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DriverSchedBackend</text>
+    <text class="f-mono" x="480" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(515, 119.5)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="listener-bus">
+    <rect x="629" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="127.5" width="142" height="3" rx="1.5" fill="#bfa6ff"/>
+    <text class="f-sans" x="706" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">LiveListenerBus</text>
+    <text class="f-mono" x="706" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="executor-backend">
+    <rect x="403" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="308.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ExecutorBackend</text>
+    <text class="f-mono" x="480" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="504.1" cy="268.4" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="504.1" y="271.6" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="593" cy="166.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="169.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="505.9" cy="240" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="505.9" y="243.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="367" cy="132.4" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="135.6" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="454.1" cy="240" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="454.1" y="243.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="504.1" cy="211.6" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="504.1" y="214.8" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 4 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">ExecutorBackend -&gt; DriverSchedBackend</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">RegisterExecutor(3,2cpu)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">DriverSchedBackend -&gt; LiveListenerBus</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">ExecutorAdded (exec-3)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">ExecutorBackend -&gt; DriverSchedBackend</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">LaunchedExecutor(3)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">DriverSchedBackend -&gt; TaskSchedulerImpl</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">resourceOffers(3:free=2)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">DriverSchedBackend -&gt; ExecutorBackend</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">LaunchTask (TID 41)</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">ExecutorBackend -&gt; DriverSchedBackend</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">StatusUpdate(41,FINISHED)</text>
+  </g>
 </g>
 </svg>

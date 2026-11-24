@@ -18,12 +18,9 @@ Arrow evaluator present in this revision.
 
 > **Key distinction:** The scalar UDF returns one value per input; the JVM filter decides which orders to keep.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Statuses go to Python while order IDs stay in the JVM to pair with the returning results](visuals/python-udf-operator.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=python-udf-operator) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## How the driver chooses a path
 

@@ -1,38 +1,249 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="373" viewBox="0 0 360 373" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">External shuffle service: serving map files after an executor exits: Flow at a glance</title>
-<desc id="flow-desc">1. Producing executor: Registers its local shuffle directories with the NodeManager service. 2. Reducing executor: Asks the service for reducer 2&apos;s block from attempt 41. 3. Shuffle service: Reads the indexed byte range from local disk and sends it to the reducer.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">YarnShuffleService (ESS) — Post-Exit Shuffle Serving</title>
+<desc id="topo-desc">NodeManager auxiliary service (:7337) serving local map files even after producer executors exit. 1. NodeManager to Ext Shuffle Service: serviceInit(:7337) (:7337); 2. BlockManager to Ext Shuffle Service: RegisterExecutor(info) (:7337); 3. YARN Container to MapOutputMaster: MapStatus(worker-a:7337) (:41000); 4. Shuffle Reader to Ext Shuffle Service: FetchBlocks(s7,m41,r2) (:7337); 5. Ext Shuffle Service to Shuffle Reader: StreamHandle(id=91, n=1) (:7337); 6. Ext Shuffle Service to Shuffle Reader: Chunk #0 (25 B segment) (:7337)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(121px); }
-  82%, 100% { transform: translateY(242px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(262px, 293px); color: #7aa2ff; opacity: 0; }
+  0.67% { transform: translate(262px, 293px); color: #7aa2ff; opacity: 1; }
+  5.17% { transform: translate(298.9px, 311.7px); color: #7aa2ff; opacity: 1; }
+  9.67% { transform: translate(332.5px, 325.2px); color: #7aa2ff; opacity: 1; }
+  14.17% { transform: translate(360.8px, 332.5px); color: #7aa2ff; opacity: 1; }
+  15.33% { transform: translate(360.8px, 332.5px); color: #7aa2ff; opacity: 0; }
+  16.00% { transform: translate(294.8px, 360.6px); color: #f2b950; opacity: 0; }
+  17.33% { transform: translate(294.8px, 360.6px); color: #f2b950; opacity: 1; }
+  21.83% { transform: translate(316.6px, 363.2px); color: #f2b950; opacity: 1; }
+  26.33% { transform: translate(339px, 363.2px); color: #f2b950; opacity: 1; }
+  30.83% { transform: translate(360.8px, 360.6px); color: #f2b950; opacity: 1; }
+  32.00% { transform: translate(360.8px, 360.6px); color: #f2b950; opacity: 0; }
+  32.67% { transform: translate(456.3px, 241px); color: #5bd3a8; opacity: 0; }
+  34.00% { transform: translate(456.3px, 241px); color: #5bd3a8; opacity: 1; }
+  38.50% { transform: translate(469.2px, 213.9px); color: #5bd3a8; opacity: 1; }
+  43.00% { transform: translate(477.2px, 183.6px); color: #5bd3a8; opacity: 1; }
+  47.50% { transform: translate(479.9px, 151.7px); color: #5bd3a8; opacity: 1; }
+  48.67% { transform: translate(479.9px, 151.7px); color: #5bd3a8; opacity: 0; }
+  49.33% { transform: translate(717.8px, 295.3px); color: #f2b950; opacity: 0; }
+  50.67% { transform: translate(717.8px, 295.3px); color: #f2b950; opacity: 1; }
+  55.17% { transform: translate(664.8px, 296.9px); color: #f2b950; opacity: 1; }
+  59.67% { transform: translate(597.5px, 305.4px); color: #f2b950; opacity: 1; }
+  64.17% { transform: translate(520px, 320.4px); color: #f2b950; opacity: 1; }
+  65.33% { transform: translate(520px, 320.4px); color: #f2b950; opacity: 0; }
+  66.00% { transform: translate(520.8px, 356.2px); color: #f2b950; opacity: 0; }
+  67.33% { transform: translate(520.8px, 356.2px); color: #f2b950; opacity: 1; }
+  71.83% { transform: translate(587.8px, 354.4px); color: #f2b950; opacity: 1; }
+  76.33% { transform: translate(657.6px, 346.4px); color: #f2b950; opacity: 1; }
+  80.83% { transform: translate(726px, 332.7px); color: #f2b950; opacity: 1; }
+  82.00% { transform: translate(726px, 332.7px); color: #f2b950; opacity: 0; }
+  82.67% { transform: translate(520.8px, 356.2px); color: #f2b950; opacity: 0; }
+  84.00% { transform: translate(520.8px, 356.2px); color: #f2b950; opacity: 1; }
+  88.50% { transform: translate(587.8px, 354.4px); color: #f2b950; opacity: 1; }
+  93.00% { transform: translate(657.6px, 346.4px); color: #f2b950; opacity: 1; }
+  97.50% { transform: translate(726px, 332.7px); color: #f2b950; opacity: 1; }
+  98.67% { transform: translate(726px, 332.7px); color: #f2b950; opacity: 0; }
+  100% { transform: translate(262px, 293px); color: #7aa2ff; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="371" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V272" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Producing executor</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">Registers its local shuffle</tspan><tspan x="62" y="84">directories with the</tspan><tspan x="62" y="107">NodeManager service.</tspan></text>
-  <rect x="48" y="131" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="151" r="12" fill="#184d50"/>
-  <text x="24" y="157" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="157">Reducing executor</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="182">Asks the service for</tspan><tspan x="62" y="205">reducer 2&apos;s block from</tspan><tspan x="62" y="228">attempt 41.</tspan></text>
-  <rect x="48" y="252" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="272" r="12" fill="#184d50"/>
-  <text x="24" y="278" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="278">Shuffle service</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="303">Reads the indexed byte</tspan><tspan x="62" y="326">range from local disk and</tspan><tspan x="62" y="349">sends it to the reducer.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">YarnShuffleService (ESS) — Post-Exit Shuffle Serving</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">NodeManager auxiliary service (:7337) serving local map files even after producer executors exit</text>
+  <g class="channel-legend">
+    <line x1="807.6" y1="24" x2="818.6" y2="24" stroke="#7aa2ff" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="818.6" cy="24" r="2.2" fill="#7aa2ff"/>
+    <text class="f-mono" x="824.6" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">YARN</text>
+    <line x1="854.8" y1="24" x2="865.8" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="865.8" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="871.8" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="896.8" y1="24" x2="907.8" y2="24" stroke="#f2b950" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="907.8" cy="24" r="2.2" fill="#f2b950"/>
+    <text class="f-mono" x="913.8" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">DATA</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="121.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="187.5" width="623.6" height="216.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="209.5" x2="639.6" y2="209.5" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="198.5" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="201.7" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-b">
+    <rect x="651.6" y="187.5" width="292.4" height="216.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="651.6" y1="209.5" x2="944" y2="209.5" stroke="#212d45" stroke-width="1"/>
+    <circle cx="662.6" cy="198.5" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="670.6" y="201.7" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE B</text>
+  </g>
+  <g class="topo-edge" data-from="node-manager" data-to="external-shuffle-service">
+    <path d="M 262 293 Q 321.2 325.6 360.8 332.5" fill="none" stroke="#7aa2ff" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#7aa2ff" transform="translate(360.8, 332.5) rotate(10.8)"/>
+  </g>
+  <g class="topo-edge" data-from="block-manager" data-to="external-shuffle-service">
+    <path d="M 294.8 360.6 Q 327.8 366.4 360.8 360.6" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(360.8, 360.6) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="yarn-container" data-to="map-output-tracker-master">
+    <path d="M 456.3 241 Q 479.7 201.7 479.9 151.7" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(479.9, 151.7) rotate(-88.9)"/>
+  </g>
+  <g class="topo-edge" data-from="shuffle-reader" data-to="external-shuffle-service">
+    <path d="M 717.8 295.3 Q 646.7 292.7 520 320.4" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(520, 320.4) rotate(167.9)"/>
+  </g>
+  <g class="topo-edge" data-from="external-shuffle-service" data-to="shuffle-reader">
+    <path d="M 520.8 356.2 Q 621.8 357.9 726 332.7" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(726, 332.7) rotate(-13.2)"/>
+  </g>
+  <g class="topo-node" data-id="map-output-tracker-master">
+    <rect x="403" y="102.7" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="103.7" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="480" y="125.7" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">MapOutputMaster</text>
+    <text class="f-mono" x="480" y="139.7" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="node-manager">
+    <rect x="137.8" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="143.8" y="245" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="214.8" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">NodeManager</text>
+    <text class="f-mono" x="214.8" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="yarn-container">
+    <rect x="363.8" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="369.8" y="245" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="440.8" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YARN Container</text>
+    <text class="f-mono" x="440.8" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="block-manager">
+    <rect x="137.8" y="323.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="143.8" y="324.4" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="214.8" y="346.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManager</text>
+    <text class="f-mono" x="214.8" y="360.4" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="external-shuffle-service">
+    <rect x="360.8" y="320.4" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="363.8" y="323.4" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="369.8" y="324.4" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="440.8" y="346.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Ext Shuffle Service</text>
+    <text class="f-mono" x="440.8" y="360.4" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(475.8, 316.4)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="shuffle-reader">
+    <rect x="720.8" y="283.7" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="726.8" y="284.7" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="797.8" y="306.7" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Shuffle Reader</text>
+    <text class="f-mono" x="797.8" y="320.7" text-anchor="middle" fill="#8998b4" font-size="9">worker-b</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="316.3" cy="319.2" r="9" fill="#0d1526" stroke="#7aa2ff" stroke-width="1.6"/>
+    <text class="f-mono" x="316.3" y="322.4" text-anchor="middle" fill="#7aa2ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="327.8" cy="363.5" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="327.8" y="366.7" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="473.9" cy="199.1" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="473.9" y="202.3" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="632.8" cy="300.3" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="632.8" y="303.5" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="577.6" cy="355" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="577.6" y="358.2" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="667.9" cy="344.7" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="667.9" y="347.9" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#7aa2ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#7aa2ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">NodeManager -&gt; Ext Shuffle Service</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">:7337</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">serviceInit(:7337)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockManager -&gt; Ext Shuffle Service</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">:7337</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">RegisterExecutor(info)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">YARN Container -&gt; MapOutputMaster</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">MapStatus(worker-a:7337)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Shuffle Reader -&gt; Ext Shuffle Service</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">:7337</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">FetchBlocks(s7,m41,r2)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Ext Shuffle Service -&gt; Shuffle Reader</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">:7337</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">StreamHandle(id=91, n=1)</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Ext Shuffle Service -&gt; Shuffle Reader</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">:7337</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">Chunk #0 (25 B segment)</text>
+  </g>
 </g>
 </svg>

@@ -12,12 +12,9 @@ A logical task says **which stage partition to compute**. An attempt is one sche
 
 > **Watch for:** The copies have different attempt IDs. A late result from the losing copy is treated as killed, not as a second success.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Two attempts race on one partition; the driver accepts one result and asks to stop the other attempt.](visuals/task-attempt.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=task-attempt) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## From offer to result
 

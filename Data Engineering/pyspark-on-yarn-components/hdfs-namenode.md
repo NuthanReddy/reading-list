@@ -16,12 +16,9 @@ coding, WebHDFS, or Spark shuffle storage.
 
 > **Key distinction:** The NameNode supplies block locations; the chosen DataNode supplies the Parquet bytes.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The NameNode maps offset 4096 to block 123 on A or B; the client reads from A.](visuals/hdfs-namenode.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=hdfs-namenode) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Runtime boundary and state
 

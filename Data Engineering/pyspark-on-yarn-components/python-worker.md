@@ -12,12 +12,9 @@
 
 > **Key distinction:** Reuse keeps the interpreter alive, not the previous task's context or input iterator.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A Python worker loads a partition function, adds one to two values, and streams both results to the executor](visuals/python-worker.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=python-worker) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Contract and state
 

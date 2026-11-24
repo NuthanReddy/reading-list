@@ -19,12 +19,9 @@ and the submit-side JVM in client mode. No context is shipped to executors or
 
 > **Watch for:** Read `sc.defaultParallelism` on the driver and capture the integer in a task function, not `sc`.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![An RDD action goes through SparkContext to the DAG scheduler and gets a result for each requested partition](visuals/spark-context.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=spark-context) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Construction: from `SparkConf` to a usable application
 

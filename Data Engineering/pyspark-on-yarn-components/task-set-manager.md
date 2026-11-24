@@ -20,12 +20,9 @@ YARN container.
 
 > **Key distinction:** The task attempt changes; the partition and stage attempt stay the same.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Partition 7 gets a second task attempt with a new task ID after the first attempt fails](visuals/task-set-manager.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=task-set-manager) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Requirements analysis
 

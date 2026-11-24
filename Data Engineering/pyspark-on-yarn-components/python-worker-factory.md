@@ -12,12 +12,9 @@
 
 > **Key distinction:** The factory supplies the connection; the runner sends the function and the worker executes it.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The executor runner requests a worker and receives a socket connected to a new daemon child](visuals/python-worker-factory.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=python-worker-factory) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Ownership and interface
 

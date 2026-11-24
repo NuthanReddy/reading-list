@@ -17,12 +17,9 @@ the Spark task scheduler.
 
 > **Watch for:** If localization fails, the executor never starts. Check the NodeManager's localizer log rather than the executor's stderr.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The NodeManager accepts the launch, fails to localize a staged file and reports the container failure before the executor starts.](visuals/node-manager.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=node-manager) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Inputs, outputs, and local state
 

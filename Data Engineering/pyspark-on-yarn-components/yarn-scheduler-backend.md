@@ -20,12 +20,9 @@ and task launches without routing each task through the AM.
 
 > **Watch for:** A disconnect stops new offers immediately; it does not tell you why the executor disappeared.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor 3 stops receiving offers before the ApplicationMaster confirms its container was preempted](visuals/yarn-scheduler-backend.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=yarn-scheduler-backend) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Requirements analysis
 

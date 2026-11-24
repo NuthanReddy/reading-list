@@ -12,12 +12,9 @@
 
 > **Watch for:** A full `eventLog` queue can drop a task-end event even when the live UI shows the task as finished.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A task-end event reaches the status and event-log queues, whose threads call their listeners independently](visuals/listener-bus.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=listener-bus) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## A task completion, across the two boundaries
 

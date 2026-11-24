@@ -12,12 +12,9 @@ If executor 5 wants `rdd_17_3`, the master can answer **which managers have repo
 
 > **Key distinction:** The directory returns a reported address, not the block or proof that it is still readable.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor 2 reports a cached block, the driver records its location, and executor 5 looks up the holder's address.](visuals/block-manager-master.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=block-manager-master) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## State and message contracts
 

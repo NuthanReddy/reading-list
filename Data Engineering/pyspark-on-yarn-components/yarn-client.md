@@ -12,12 +12,9 @@ Spark's `org.apache.spark.deploy.yarn.Client` translates one Spark submission in
 
 > **Key distinction:** Staging makes a file available to the cluster. Localization makes it visible in one container's working directory.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The client gets an application ID and submits launch instructions; the selected NodeManager localizes the files for the AM.](visuals/yarn-client.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=yarn-client) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Two different records go to YARN
 

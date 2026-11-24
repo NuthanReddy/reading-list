@@ -16,12 +16,9 @@ This is not a Spark Connect client/server deployment.
 
 > **Key distinction:** YARN grants the container; the driver decides which tasks its executor runs.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![An executor registers, the driver sends a task, and the final task update frees its cores](visuals/spark-driver.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=spark-driver) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Placement: which process must stay alive?
 

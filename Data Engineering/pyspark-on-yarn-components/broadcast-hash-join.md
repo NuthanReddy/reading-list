@@ -17,12 +17,9 @@ run in a Python worker.
 
 > **Watch for:** A hash hit alone is not a match: the order must also meet the region's minimum amount.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![An executor probes the broadcast regions table and emits a joined order or a null label](visuals/broadcast-hash-join.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=broadcast-hash-join) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Input, state, and output
 

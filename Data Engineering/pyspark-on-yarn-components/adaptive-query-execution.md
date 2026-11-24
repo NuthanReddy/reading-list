@@ -17,12 +17,9 @@ and recovery of missing shuffle outputs.
 
 > **Key distinction:** AQE changes how later tasks read existing blocks; it does not split a running task.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![AQE splits the read of a large orders partition across tasks that share one regions partition](visuals/adaptive-query-execution.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=adaptive-query-execution) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## The driver feedback loop
 

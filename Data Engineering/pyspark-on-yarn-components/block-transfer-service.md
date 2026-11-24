@@ -12,12 +12,9 @@
 
 > **Key distinction:** The open reply identifies the stream; the chunk response carries the bytes.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor 5 opens broadcast_9_piece1 on executor 2, gets a stream handle, then fetches the chunk containing the piece.](visuals/block-transfer-service.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=block-transfer-service) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Runtime, endpoints and contracts
 

@@ -17,12 +17,9 @@ This classic PySpark launcher is `org.apache.spark.deploy.PythonRunner`, not the
 
 > **Key distinction:** The main script runs once per driver attempt, not once per partition.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The Python driver packages a map function for a worker to run on partition records](visuals/python-driver.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=python-driver) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Invocation contract
 

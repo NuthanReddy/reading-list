@@ -1,38 +1,247 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="304" viewBox="0 0 360 304" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">BlockManagerMaster: the driver&apos;s block directory: Flow at a glance</title>
-<desc id="flow-desc">1. Executor 2: Report the block ID, storage tier and size. 2. Driver directory: Index executor 2 under that block ID. 3. Executor 5: Look up the block to get a holder&apos;s address.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">BlockManagerMaster — Driver Block Directory</title>
+<desc id="topo-desc">Metadata-only location index, preferred-location lookup, heartbeat membership, and RemoveRdd fan-out. 1. BlockManager to BlockManagerMaster: UpdateBlockInfo(rdd_17_3) (:41000); 2. BlockManagerMaster to DAGScheduler: getLocations(rdd_17_3) (in-JVM); 3. BlockManagerMaster to BlockManager: Locations(exec2:42001) (:41000); 4. BlockManager to BlockTransferSvc: Direct peer fetch (:42001); 5. HeartbeatReceiver to BlockManagerMaster: BlockManagerHeartbeat (:41000); 6. SparkContext to BlockManagerMaster: RemoveRdd(17, blocking) (:41000)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(98px); }
-  82%, 100% { transform: translateY(196px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(447px, 319.9px); color: #5bd3a8; opacity: 0; }
+  0.67% { transform: translate(447px, 319.9px); color: #5bd3a8; opacity: 1; }
+  5.17% { transform: translate(560.7px, 285.6px); color: #5bd3a8; opacity: 1; }
+  9.67% { transform: translate(674.4px, 236.5px); color: #5bd3a8; opacity: 1; }
+  14.17% { transform: translate(781.6px, 175.5px); color: #5bd3a8; opacity: 1; }
+  15.33% { transform: translate(781.6px, 175.5px); color: #5bd3a8; opacity: 0; }
+  16.00% { transform: translate(727.8px, 175.5px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(727.8px, 175.5px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(650.4px, 190.4px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(556.3px, 188.2px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(451.1px, 169.1px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(451.1px, 169.1px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(726.7px, 160.1px); color: #5bd3a8; opacity: 0; }
+  34.00% { transform: translate(726.7px, 160.1px); color: #5bd3a8; opacity: 1; }
+  38.50% { transform: translate(613.1px, 194.4px); color: #5bd3a8; opacity: 1; }
+  43.00% { transform: translate(499.3px, 243.5px); color: #5bd3a8; opacity: 1; }
+  47.50% { transform: translate(392.1px, 304.5px); color: #5bd3a8; opacity: 1; }
+  48.67% { transform: translate(392.1px, 304.5px); color: #5bd3a8; opacity: 0; }
+  49.33% { transform: translate(447px, 344.7px); color: #f2b950; opacity: 0; }
+  50.67% { transform: translate(447px, 344.7px); color: #f2b950; opacity: 1; }
+  55.17% { transform: translate(468.8px, 347.2px); color: #f2b950; opacity: 1; }
+  59.67% { transform: translate(491.2px, 347.2px); color: #f2b950; opacity: 1; }
+  64.17% { transform: translate(513px, 344.7px); color: #f2b950; opacity: 1; }
+  65.33% { transform: translate(513px, 344.7px); color: #f2b950; opacity: 0; }
+  66.00% { transform: translate(668.9px, 164.2px); color: #5bd3a8; opacity: 0; }
+  67.33% { transform: translate(668.9px, 164.2px); color: #5bd3a8; opacity: 1; }
+  71.83% { transform: translate(688px, 166.5px); color: #5bd3a8; opacity: 1; }
+  76.33% { transform: translate(707.6px, 166.5px); color: #5bd3a8; opacity: 1; }
+  80.83% { transform: translate(726.7px, 164.2px); color: #5bd3a8; opacity: 1; }
+  82.00% { transform: translate(726.7px, 164.2px); color: #5bd3a8; opacity: 0; }
+  82.67% { transform: translate(233.3px, 127px); color: #5bd3a8; opacity: 0; }
+  84.00% { transform: translate(233.3px, 127px); color: #5bd3a8; opacity: 1; }
+  88.50% { transform: translate(396.1px, 96.3px); color: #5bd3a8; opacity: 1; }
+  93.00% { transform: translate(563.9px, 96.3px); color: #5bd3a8; opacity: 1; }
+  97.50% { transform: translate(726.7px, 127px); color: #5bd3a8; opacity: 1; }
+  98.67% { transform: translate(726.7px, 127px); color: #5bd3a8; opacity: 0; }
+  100% { transform: translate(447px, 319.9px); color: #5bd3a8; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="302" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V226" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Executor 2</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">Report the block ID,</tspan><tspan x="62" y="84">storage tier and size.</tspan></text>
-  <rect x="48" y="108" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="128" r="12" fill="#184d50"/>
-  <text x="24" y="134" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="134">Driver directory</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="159">Index executor 2 under</tspan><tspan x="62" y="182">that block ID.</tspan></text>
-  <rect x="48" y="206" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="226" r="12" fill="#184d50"/>
-  <text x="24" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="232">Executor 5</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="257">Look up the block to get</tspan><tspan x="62" y="280">a holder&apos;s address.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">BlockManagerMaster — Driver Block Directory</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Metadata-only location index, preferred-location lookup, heartbeat membership, and RemoveRdd fan-out</text>
+  <g class="channel-legend">
+    <line x1="796.9" y1="24" x2="807.9" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="807.9" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="813.9" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="838.9" y1="24" x2="849.9" y2="24" stroke="#f2b950" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="849.9" cy="24" r="2.2" fill="#f2b950"/>
+    <text class="f-mono" x="855.9" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">DATA</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="169" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="235" width="928" height="169" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="257" x2="944" y2="257" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="246" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="249.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="block-manager" data-to="block-manager-master">
+    <path d="M 447 319.9 Q 621.6 278 781.6 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(781.6, 175.5) rotate(-32.1)"/>
+  </g>
+  <g class="topo-edge" data-from="block-manager-master" data-to="dag-scheduler">
+    <path d="M 727.8 175.5 Q 620.9 210.7 451.1 169.1" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(451.1, 169.1) rotate(-166.8)"/>
+  </g>
+  <g class="topo-edge" data-from="block-manager-master" data-to="block-manager">
+    <path d="M 726.7 160.1 Q 552.1 202 392.1 304.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(392.1, 304.5) rotate(147.9)"/>
+  </g>
+  <g class="topo-edge" data-from="block-manager" data-to="block-transfer-service">
+    <path d="M 447 344.7 Q 480 350.5 513 344.7" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(513, 344.7) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="heartbeat-receiver" data-to="block-manager-master">
+    <path d="M 668.9 164.2 Q 697.8 169.5 726.7 164.2" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(726.7, 164.2) rotate(-9.8)"/>
+  </g>
+  <g class="topo-edge" data-from="spark-context" data-to="block-manager-master">
+    <path d="M 233.3 127 Q 480 57.5 726.7 127" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(726.7, 127) rotate(14.8)"/>
+  </g>
+  <g class="topo-node" data-id="spark-context">
+    <rect x="76.3" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="82.3" y="127.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="153.3" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">SparkContext</text>
+    <text class="f-mono" x="153.3" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="dag-scheduler">
+    <rect x="294.1" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="300.1" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="371.1" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DAGScheduler</text>
+    <text class="f-mono" x="371.1" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="heartbeat-receiver">
+    <rect x="511.9" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="517.9" y="127.5" width="142" height="3" rx="1.5" fill="#bfa6ff"/>
+    <text class="f-sans" x="588.9" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">HeartbeatReceiver</text>
+    <text class="f-mono" x="588.9" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="block-manager-master">
+    <rect x="726.7" y="123.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="729.7" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="735.7" y="127.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="806.7" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManagerMaster</text>
+    <text class="f-mono" x="806.7" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(841.7, 119.5)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="block-manager">
+    <rect x="290" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="308.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="367" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManager</text>
+    <text class="f-mono" x="367" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="block-transfer-service">
+    <rect x="516" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="522" y="308.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="593" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockTransferSvc</text>
+    <text class="f-mono" x="593" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="618" cy="262.8" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="618" y="266" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="605.2" cy="191.5" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="605.2" y="194.7" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="555.8" cy="217.2" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="555.8" y="220.4" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="480" cy="347.6" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="350.8" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="697.8" cy="166.8" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="697.8" y="170" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="480" cy="92.2" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="95.4" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockManager -&gt; BlockManagerMaster</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">UpdateBlockInfo(rdd_17_3)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockManagerMaster -&gt; DAGScheduler</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">getLocations(rdd_17_3)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockManagerMaster -&gt; BlockManager</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">Locations(exec2:42001)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockManager -&gt; BlockTransferSvc</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">:42001</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">Direct peer fetch</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">HeartbeatReceiver -&gt; BlockManagerMaster</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">BlockManagerHeartbeat</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">SparkContext -&gt; BlockManagerMaster</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">RemoveRdd(17, blocking)</text>
+  </g>
 </g>
 </svg>

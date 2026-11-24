@@ -12,12 +12,9 @@ A Spark executor can be healthy from YARN's perspective yet unreachable from its
 
 > **Watch for:** The driver measures a gap between heartbeats it receives. A timeout is not proof that YARN killed the container.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The driver keeps executor 7 at 120 seconds and requests a replacement at the 180-second check.](visuals/heartbeat-receiver.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=heartbeat-receiver) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Owner and wire contract
 

@@ -20,12 +20,9 @@ handles executor-count requests separately.
 
 > **Key distinction:** A finished task frees a Spark slot, not the executor's YARN container.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor 3 goes from zero free cores to two, uses one for task 41, then gets it back](visuals/driver-scheduler-backend.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=driver-scheduler-backend) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Requirements analysis
 

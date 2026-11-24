@@ -18,12 +18,9 @@ blocks or asks YARN for a container to run an individual task.
 
 > **Key distinction:** A stage can have all its inputs and still be waiting for an executor slot.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Two map outputs become available before the result task for partition 7 is submitted](visuals/dag-scheduler.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=dag-scheduler) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Requirements analysis
 

@@ -12,12 +12,9 @@ On YARN, `YarnShuffleService` is an **optional NodeManager auxiliary service**. 
 
 > **Watch for:** Registration tells the service where the files are; it does not copy them. The service can outlive the executor, but it cannot serve bytes from a lost disk.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor registers its directories and the NodeManager shuffle service serves a reducer the requested file slice](visuals/external-shuffle-service.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=external-shuffle-service) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Two distinct deployments
 

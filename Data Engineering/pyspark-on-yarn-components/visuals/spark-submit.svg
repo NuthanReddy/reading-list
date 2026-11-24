@@ -1,38 +1,225 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="327" viewBox="0 0 360 327" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">`spark-submit`: choosing where the PySpark driver starts: Flow at a glance</title>
-<desc id="flow-desc">1. Submit wrapper: Passes the command line to SparkSubmit. 2. SparkSubmit: Selects PythonRunner for a client-mode Python script. 3. PythonRunner: Starts the Python driver on the submit host.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">spark-submit: CLI &amp; Deploy-Mode Dispatch</title>
+<desc id="topo-desc">Option parsing, YARN conf mapping, and cluster vs client entry-point selection. 1. spark-submit to YARN Client: YarnClusterApplication (edge-01 in-JVM); 2. YARN Client to ApplicationMaster: Launch AM (cluster) (rm01:8032 -&gt; NM); 3. ApplicationMaster to AM PyDriver: PythonRunner.main (AM container local); 4. spark-submit to Client PyDriver: PythonRunner (client) (edge-01 local); 5. Client PyDriver to YarnClientSched: Submit AM w/ driver (edge-01:41000)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(98px); }
-  82%, 100% { transform: translateY(219px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(233.3px, 129.9px); color: #bfa6ff; opacity: 0; }
+  0.80% { transform: translate(233.3px, 129.9px); color: #bfa6ff; opacity: 1; }
+  6.20% { transform: translate(338.5px, 110.8px); color: #bfa6ff; opacity: 1; }
+  11.60% { transform: translate(432.6px, 108.6px); color: #bfa6ff; opacity: 1; }
+  17.00% { transform: translate(509.9px, 123.5px); color: #bfa6ff; opacity: 1; }
+  18.40% { transform: translate(509.9px, 123.5px); color: #bfa6ff; opacity: 0; }
+  19.20% { transform: translate(539.8px, 175.5px); color: #7aa2ff; opacity: 0; }
+  20.80% { transform: translate(539.8px, 175.5px); color: #7aa2ff; opacity: 1; }
+  26.20% { transform: translate(488px, 208.3px); color: #7aa2ff; opacity: 1; }
+  31.60% { transform: translate(436.5px, 252.1px); color: #7aa2ff; opacity: 1; }
+  37.00% { transform: translate(388.4px, 304.5px); color: #7aa2ff; opacity: 1; }
+  38.40% { transform: translate(388.4px, 304.5px); color: #7aa2ff; opacity: 0; }
+  39.20% { transform: translate(447px, 344.7px); color: #ec82b3; opacity: 0; }
+  40.80% { transform: translate(447px, 344.7px); color: #ec82b3; opacity: 1; }
+  46.20% { transform: translate(468.8px, 347.2px); color: #ec82b3; opacity: 1; }
+  51.60% { transform: translate(491.2px, 347.2px); color: #ec82b3; opacity: 1; }
+  57.00% { transform: translate(513px, 344.7px); color: #ec82b3; opacity: 1; }
+  58.40% { transform: translate(513px, 344.7px); color: #ec82b3; opacity: 0; }
+  59.20% { transform: translate(233.3px, 127px); color: #ec82b3; opacity: 0; }
+  60.80% { transform: translate(233.3px, 127px); color: #ec82b3; opacity: 1; }
+  66.20% { transform: translate(396.1px, 96.3px); color: #ec82b3; opacity: 1; }
+  71.60% { transform: translate(563.9px, 96.3px); color: #ec82b3; opacity: 1; }
+  77.00% { transform: translate(726.7px, 127px); color: #ec82b3; opacity: 1; }
+  78.40% { transform: translate(726.7px, 127px); color: #ec82b3; opacity: 0; }
+  79.20% { transform: translate(727.8px, 175.5px); color: #bfa6ff; opacity: 0; }
+  80.80% { transform: translate(727.8px, 175.5px); color: #bfa6ff; opacity: 1; }
+  86.20% { transform: translate(650.4px, 190.4px); color: #bfa6ff; opacity: 1; }
+  91.60% { transform: translate(556.3px, 188.2px); color: #bfa6ff; opacity: 1; }
+  97.00% { transform: translate(451.1px, 169.1px); color: #bfa6ff; opacity: 1; }
+  98.40% { transform: translate(451.1px, 169.1px); color: #bfa6ff; opacity: 0; }
+  100% { transform: translate(233.3px, 129.9px); color: #bfa6ff; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="325" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V249" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Submit wrapper</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">Passes the command line</tspan><tspan x="62" y="84">to SparkSubmit.</tspan></text>
-  <rect x="48" y="108" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="128" r="12" fill="#184d50"/>
-  <text x="24" y="134" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="134">SparkSubmit</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="159">Selects PythonRunner for</tspan><tspan x="62" y="182">a client-mode Python</tspan><tspan x="62" y="205">script.</tspan></text>
-  <rect x="48" y="229" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="249" r="12" fill="#184d50"/>
-  <text x="24" y="255" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="255">PythonRunner</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="280">Starts the Python driver</tspan><tspan x="62" y="303">on the submit host.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">spark-submit: CLI &amp; Deploy-Mode Dispatch</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Option parsing, YARN conf mapping, and cluster vs client entry-point selection</text>
+  <g class="channel-legend">
+    <line x1="781" y1="24" x2="792" y2="24" stroke="#7aa2ff" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="792" cy="24" r="2.2" fill="#7aa2ff"/>
+    <text class="f-mono" x="798" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">YARN</text>
+    <line x1="828.3" y1="24" x2="839.3" y2="24" stroke="#ec82b3" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="839.3" cy="24" r="2.2" fill="#ec82b3"/>
+    <text class="f-mono" x="845.3" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">PYTHON</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="submit-host">
+    <rect x="16" y="54" width="928" height="169" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">SUBMIT HOST</text>
+  </g>
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="235" width="928" height="169" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="257" x2="944" y2="257" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="246" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="249.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="topo-edge" data-from="spark-submit" data-to="yarn-client">
+    <path d="M 233.3 129.9 Q 403.1 88.3 509.9 123.5" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(509.9, 123.5) rotate(16.8)"/>
+  </g>
+  <g class="topo-edge" data-from="yarn-client" data-to="application-master">
+    <path d="M 539.8 175.5 Q 459.9 217.9 388.4 304.5" fill="none" stroke="#7aa2ff" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#7aa2ff" transform="translate(388.4, 304.5) rotate(130)"/>
+  </g>
+  <g class="topo-edge" data-from="application-master" data-to="python-driver">
+    <path d="M 447 344.7 Q 480 350.5 513 344.7" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(513, 344.7) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="spark-submit" data-to="python-driver-client">
+    <path d="M 233.3 127 Q 480 57.5 726.7 127" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(726.7, 127) rotate(14.8)"/>
+  </g>
+  <g class="topo-edge" data-from="python-driver-client" data-to="yarn-scheduler-backend">
+    <path d="M 727.8 175.5 Q 620.9 210.7 451.1 169.1" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(451.1, 169.1) rotate(-166.8)"/>
+  </g>
+  <g class="topo-node" data-id="spark-submit">
+    <rect x="73.3" y="123.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="76.3" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="82.3" y="127.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="153.3" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">spark-submit</text>
+    <text class="f-mono" x="153.3" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">edge-01</text>
+    <g transform="translate(188.3, 119.5)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="yarn-scheduler-backend">
+    <rect x="294.1" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="300.1" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="371.1" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YarnClientSched</text>
+    <text class="f-mono" x="371.1" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">edge-01</text>
+  </g>
+  <g class="topo-node" data-id="yarn-client">
+    <rect x="511.9" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="517.9" y="127.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="588.9" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YARN Client</text>
+    <text class="f-mono" x="588.9" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">edge-01</text>
+  </g>
+  <g class="topo-node" data-id="python-driver-client">
+    <rect x="729.7" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="735.7" y="127.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="806.7" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Client PyDriver</text>
+    <text class="f-mono" x="806.7" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">edge-01</text>
+  </g>
+  <g class="topo-node" data-id="application-master">
+    <rect x="290" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="308.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="367" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ApplicationMaster</text>
+    <text class="f-mono" x="367" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="python-driver">
+    <rect x="516" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="522" y="308.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="593" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">AM PyDriver</text>
+    <text class="f-mono" x="593" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="387.3" cy="107.5" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="387.3" y="110.7" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="462" cy="228.9" r="9" fill="#0d1526" stroke="#7aa2ff" stroke-width="1.6"/>
+    <text class="f-mono" x="462" y="232.1" text-anchor="middle" fill="#7aa2ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="480" cy="347.6" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="350.8" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="480" cy="92.2" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="95.4" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="605.2" cy="191.5" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="605.2" y="194.7" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">5 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">spark-submit -&gt; YARN Client</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">edge-01 in-JVM</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">YarnClusterApplication</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#7aa2ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#7aa2ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">YARN Client -&gt; ApplicationMaster</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">rm01:8032 -&gt; NM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">Launch AM (cluster)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">ApplicationMaster -&gt; AM PyDriver</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">AM container local</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">PythonRunner.main</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">spark-submit -&gt; Client PyDriver</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">edge-01 local</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">PythonRunner (client)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Client PyDriver -&gt; YarnClientSched</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">edge-01:41000</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">Submit AM w/ driver</text>
+  </g>
 </g>
 </svg>

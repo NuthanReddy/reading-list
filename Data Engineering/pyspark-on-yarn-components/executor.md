@@ -12,12 +12,9 @@ On classic YARN, `Executor` is a long-lived **object inside the executor JVM**, 
 
 > **Key distinction:** The kill mark belongs to one attempt ID, not to every attempt for that partition.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A kill request arrives before launch and the matching task runner stops before computing the partition.](visuals/executor.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=executor) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## What lives for the executor's lifetime?
 

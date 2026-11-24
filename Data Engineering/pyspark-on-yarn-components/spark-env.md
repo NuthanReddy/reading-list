@@ -18,12 +18,9 @@ It is not an OS environment-variable map, a [SQL session](spark-session.md), or 
 
 > **Watch for:** If the executor cannot reach the tracker, check the advertised driver host and RPC port, not the Py4J port.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The executor asks the driver's tracker for shuffle locations, then reads block data from those locations](visuals/spark-env.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=spark-env) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Who creates it, and with what?
 

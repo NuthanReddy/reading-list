@@ -1,38 +1,225 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="396" viewBox="0 0 360 396" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">Python worker: executing one partition&apos;s Python code: Flow at a glance</title>
-<desc id="flow-desc">1. Python worker: The worker sets up this task&apos;s context and loads the partition function. 2. Partition function: The function adds one to each input, turning 4 and 9 into 5 and 10. 3. Result stream: The worker streams those values to the executor JVM, then confirms a clean finish.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">pyspark.worker — One Partition Invocation Loop</title>
+<desc id="topo-desc">Init frame &amp; Python version check, broadcast delta sync, mapPartitions [4,9]-&gt;[5,10], and reuse handshake. 1. BasePythonRunner to Python Worker: INIT_MSG(split=7, cmd) (127.0.0.1:ephemeral); 2. Exec BroadcastMgr to Python Worker: Sync broadcast IDs delta (local-disk); 3. Python Worker to BasePythonRunner: INIT_RESPONSE (ok) (127.0.0.1:ephemeral); 4. BasePythonRunner to Python Worker: Input [4, 9] -&gt; func(7) (127.0.0.1:ephemeral); 5. Python Worker to Task Attempt: Output [5,10] + accums (127.0.0.1:ephemeral); 6. Python Worker to PythonWorkerFactory: END_OF_STREAM (reusable) (127.0.0.1:ephemeral)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(121px); }
-  82%, 100% { transform: translateY(242px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(447px, 317.7px); color: #ec82b3; opacity: 0; }
+  0.67% { transform: translate(447px, 317.7px); color: #ec82b3; opacity: 1; }
+  5.17% { transform: translate(468.8px, 320.2px); color: #ec82b3; opacity: 1; }
+  9.67% { transform: translate(491.2px, 320.2px); color: #ec82b3; opacity: 1; }
+  14.17% { transform: translate(513px, 317.7px); color: #ec82b3; opacity: 1; }
+  15.33% { transform: translate(513px, 317.7px); color: #ec82b3; opacity: 0; }
+  16.00% { transform: translate(661px, 211px); color: #ec82b3; opacity: 0; }
+  17.33% { transform: translate(661px, 211px); color: #ec82b3; opacity: 1; }
+  21.83% { transform: translate(644.1px, 223.8px); color: #ec82b3; opacity: 1; }
+  26.33% { transform: translate(626.4px, 243.5px); color: #ec82b3; opacity: 1; }
+  30.83% { transform: translate(609px, 269px); color: #ec82b3; opacity: 1; }
+  32.00% { transform: translate(609px, 269px); color: #ec82b3; opacity: 0; }
+  32.67% { transform: translate(513px, 272.3px); color: #ec82b3; opacity: 0; }
+  34.00% { transform: translate(513px, 272.3px); color: #ec82b3; opacity: 1; }
+  38.50% { transform: translate(491.2px, 269.8px); color: #ec82b3; opacity: 1; }
+  43.00% { transform: translate(468.8px, 269.8px); color: #ec82b3; opacity: 1; }
+  47.50% { transform: translate(447px, 272.3px); color: #ec82b3; opacity: 1; }
+  48.67% { transform: translate(447px, 272.3px); color: #ec82b3; opacity: 0; }
+  49.33% { transform: translate(447px, 317.7px); color: #ec82b3; opacity: 0; }
+  50.67% { transform: translate(447px, 317.7px); color: #ec82b3; opacity: 1; }
+  55.17% { transform: translate(468.8px, 320.2px); color: #ec82b3; opacity: 1; }
+  59.67% { transform: translate(491.2px, 320.2px); color: #ec82b3; opacity: 1; }
+  64.17% { transform: translate(513px, 317.7px); color: #ec82b3; opacity: 1; }
+  65.33% { transform: translate(513px, 317.7px); color: #ec82b3; opacity: 0; }
+  66.00% { transform: translate(540.6px, 269px); color: #ec82b3; opacity: 0; }
+  67.33% { transform: translate(540.6px, 269px); color: #ec82b3; opacity: 1; }
+  71.83% { transform: translate(469.9px, 237.4px); color: #ec82b3; opacity: 1; }
+  76.33% { transform: translate(399.7px, 213.4px); color: #ec82b3; opacity: 1; }
+  80.83% { transform: translate(334px, 198.5px); color: #ec82b3; opacity: 1; }
+  82.00% { transform: translate(334px, 198.5px); color: #ec82b3; opacity: 0; }
+  82.67% { transform: translate(577px, 269px); color: #ec82b3; opacity: 0; }
+  84.00% { transform: translate(577px, 269px); color: #ec82b3; opacity: 1; }
+  88.50% { transform: translate(559.6px, 243.5px); color: #ec82b3; opacity: 1; }
+  93.00% { transform: translate(541.9px, 223.8px); color: #ec82b3; opacity: 1; }
+  97.50% { transform: translate(525px, 211px); color: #ec82b3; opacity: 1; }
+  98.67% { transform: translate(525px, 211px); color: #ec82b3; opacity: 0; }
+  100% { transform: translate(447px, 317.7px); color: #ec82b3; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="394" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V272" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Python worker</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">The worker sets up this</tspan><tspan x="62" y="84">task&apos;s context and loads</tspan><tspan x="62" y="107">the partition function.</tspan></text>
-  <rect x="48" y="131" width="302" height="111" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="151" r="12" fill="#184d50"/>
-  <text x="24" y="157" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="157">Partition function</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="182">The function adds one to</tspan><tspan x="62" y="205">each input, turning 4 and</tspan><tspan x="62" y="228">9 into 5 and 10.</tspan></text>
-  <rect x="48" y="252" width="302" height="134" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="272" r="12" fill="#184d50"/>
-  <text x="24" y="278" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="278">Result stream</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="303">The worker streams those</tspan><tspan x="62" y="326">values to the executor</tspan><tspan x="62" y="349">JVM, then confirms a</tspan><tspan x="62" y="372">clean finish.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">pyspark.worker — One Partition Invocation Loop</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Init frame &amp; Python version check, broadcast delta sync, mapPartitions [4,9]-&gt;[5,10], and reuse handshake</text>
+  <g class="channel-legend">
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#ec82b3" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#ec82b3"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">PYTHON</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="54" width="928" height="350" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="python-runner" data-to="python-worker">
+    <path d="M 447 317.7 Q 480 323.5 513 317.7" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(513, 317.7) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="broadcast-manager" data-to="python-worker">
+    <path d="M 661 211 Q 635.5 225.7 609 269" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(609, 269) rotate(122)"/>
+  </g>
+  <g class="topo-edge" data-from="python-worker" data-to="python-runner">
+    <path d="M 513 272.3 Q 480 266.5 447 272.3" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(447, 272.3) rotate(170.6)"/>
+  </g>
+  <g class="topo-edge" data-from="python-worker" data-to="task-attempt">
+    <path d="M 540.6 269 Q 431.6 214.9 334 198.5" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(334, 198.5) rotate(-169.8)"/>
+  </g>
+  <g class="topo-edge" data-from="python-worker" data-to="python-worker-factory">
+    <path d="M 577 269 Q 550.5 225.7 525 211" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(525, 211) rotate(-148.6)"/>
+  </g>
+  <g class="topo-node" data-id="task-attempt">
+    <rect x="177" y="162" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="163" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="185" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Task Attempt</text>
+    <text class="f-mono" x="254" y="199" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="python-worker-factory">
+    <rect x="403" y="162" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="163" width="142" height="3" rx="1.5" fill="#ec82b3"/>
+    <text class="f-sans" x="480" y="185" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">PythonWorkerFactory</text>
+    <text class="f-mono" x="480" y="199" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="broadcast-manager">
+    <rect x="629" y="162" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="163" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="706" y="185" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Exec BroadcastMgr</text>
+    <text class="f-mono" x="706" y="199" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="python-runner">
+    <rect x="290" y="272" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="273" width="142" height="3" rx="1.5" fill="#ec82b3"/>
+    <text class="f-sans" x="367" y="295" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BasePythonRunner</text>
+    <text class="f-mono" x="367" y="309" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="python-worker">
+    <rect x="513" y="269" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="516" y="272" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="522" y="273" width="142" height="3" rx="1.5" fill="#ec82b3"/>
+    <text class="f-sans" x="593" y="295" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Python Worker</text>
+    <text class="f-mono" x="593" y="309" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(628, 265)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="465.5" cy="320" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="465.5" y="323.2" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="635.3" cy="232.8" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="635.3" y="236" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="480" cy="269.4" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="272.6" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="494.5" cy="320" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="494.5" y="323.2" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="434.5" cy="224.3" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="434.5" y="227.5" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="550.7" cy="232.8" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="550.7" y="236" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 5 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">BasePythonRunner -&gt; Python Worker</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">127.0.0.1:ephemeral</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">INIT_MSG(split=7, cmd)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Exec BroadcastMgr -&gt; Python Worker</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">local-disk</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">Sync broadcast IDs delta</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Python Worker -&gt; BasePythonRunner</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">127.0.0.1:ephemeral</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">INIT_RESPONSE (ok)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">BasePythonRunner -&gt; Python Worker</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">127.0.0.1:ephemeral</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">Input [4, 9] -&gt; func(7)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Python Worker -&gt; Task Attempt</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">127.0.0.1:ephemeral</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">Output [5,10] + accums</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Python Worker -&gt; PythonWorkerFactory</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">127.0.0.1:ephemeral</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">END_OF_STREAM (reusable)</text>
+  </g>
 </g>
 </svg>

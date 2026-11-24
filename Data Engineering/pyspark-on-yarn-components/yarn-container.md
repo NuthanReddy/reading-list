@@ -16,12 +16,9 @@ executor. The executor JVM need not even exist yet.
 
 > **Key distinction:** YARN can grant both vcores before the executor process even exists.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![One container grant on worker-b leads to a NodeManager launch and then Spark executor registration](visuals/yarn-container.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=yarn-container) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Who owns which record?
 

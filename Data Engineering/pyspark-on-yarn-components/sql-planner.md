@@ -17,12 +17,9 @@ but `explain` can ask for it before the data is processed.
 
 > **Key distinction:** The SQL planner chooses operators; the core schedulers later form stages and launch tasks.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A logical left join becomes a broadcast hash join with an exchange on the regions side](visuals/sql-planner.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=sql-planner) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## What crosses each interface
 

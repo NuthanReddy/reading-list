@@ -12,12 +12,9 @@
 
 > **Key distinction:** Executor `7` can appear on the list and still stay if removing it would put its profile below target.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![An executor's last task starts its idle clock; the data it holds affects when the monitor returns its ID](visuals/executor-monitor.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=executor-monitor) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Owner, inputs and state
 

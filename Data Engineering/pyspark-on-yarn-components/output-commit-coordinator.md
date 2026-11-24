@@ -12,12 +12,9 @@ If two attempts compute the same Spark partition, **which one may call the under
 
 > **Key distinction:** A grant lets A1 try a task commit; the grant itself neither moves a file nor commits the job.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A1 wins the permission race for partition 7, A0 is denied, and only A1 calls Hadoop task commit.](visuals/output-commit-coordinator.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=output-commit-coordinator) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Contract and lifetime
 

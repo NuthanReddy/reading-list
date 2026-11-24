@@ -12,12 +12,9 @@
 
 > **Key distinction:** For `collect`, the driver counts the sizes of the indirect results, not the sizes of their block references.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Two 2 MiB results fit individually, but the driver aborts the task set before fetching the second block.](visuals/task-result-getter.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=task-result-getter) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## What did the executor actually send?
 

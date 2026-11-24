@@ -12,12 +12,9 @@ The event log records **what Spark reported about an application attempt**. The 
 
 > **Key distinction:** A failed task's record can name its executor and end reason; look in the YARN container log for raw stdout.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The driver opens an attempt log, encodes selected events as JSON lines, and flushes them to storage](visuals/event-log.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=event-log) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## From listener callback to stored record
 

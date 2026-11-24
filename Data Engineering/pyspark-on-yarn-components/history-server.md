@@ -12,12 +12,9 @@ The History Server is an **optional, separate JVM service** for many Spark appli
 
 > **Watch for:** An attempt can still appear in progress if the driver died before writing the application-end event.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The History Server discovers an attempt and can replay its saved events to rebuild stage and task views](visuals/history-server.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=history-server) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Who starts it and what it needs
 

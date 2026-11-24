@@ -12,12 +12,9 @@
 
 > **Key distinction:** Reducer 2 needs only its slice from each map output. For attempt 41 that's `shuffle_7_41_2`, not the whole data file.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Shuffle reader uses block locations to fetch reducer 2's bytes and decode them into records](visuals/shuffle-reader.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=shuffle-reader) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Who creates it, and what it receives
 

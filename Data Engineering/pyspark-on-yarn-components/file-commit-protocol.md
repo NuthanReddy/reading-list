@@ -12,12 +12,9 @@
 
 > **Watch for:** North keeps its old data because no task touched it, and east and west are replaced separately rather than in one atomic swap.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The task stages east and west; after Hadoop job commit the driver replaces those two directories and leaves north unchanged.](visuals/file-commit-protocol.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=file-commit-protocol) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## What state travels where?
 

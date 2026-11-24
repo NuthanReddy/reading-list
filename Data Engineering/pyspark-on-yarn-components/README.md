@@ -2,7 +2,7 @@
 
 Use this reference to follow a call across process boundaries or to find the
 component that owns a decision. Each page starts with one worked handoff.
-Read the three steps, or expand the diagram to follow the handoff visually.
+Read the three steps or follow the spatial topology diagram right below them.
 The labels stay visible with motion off. If your Markdown viewer shows only a
 still image, you can also open that component's SVG directly in a browser.
 
@@ -24,12 +24,9 @@ and [scenarios traced through the source](../pyspark-on-yarn-scenarios.md).
 
 > **Key distinction:** A grant identifies where a process *can* run. Registration tells Spark where it *can* send work. Neither transfers a shuffle block.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A container grant leads to executor registration; the reducer then fetches data from the serving node.](visuals/overview.svg)
 
-</details>
+> **Interactive explorer:** [Open Spark Visualizer (Master Lifecycle & All 54 Map)](https://nuthanreddy.github.io/spark-visualizer/#flow=flow-cluster-lifecycle) to step through commands, wire payloads, category filters, and job/fault simulations live.
 
 ## Follow a record, not just a class name
 
@@ -188,7 +185,8 @@ service on the producer node instead of the original executor.
 
 ## Maintaining the flow diagrams
 
-Edit the three numbered steps under **Flow at a glance** in the relevant page.
+Edit the three numbered steps under **Flow at a glance** in the relevant page
+or update the diagram layout specs in `visuals/topology-specs.json`.
 From this directory, `node visuals/render-flows.mjs` rebuilds the SVG files;
 `node visuals/render-flows.mjs --check` checks whether they are up to date.
 Reading the guides does not require Node, JavaScript, or a network connection:

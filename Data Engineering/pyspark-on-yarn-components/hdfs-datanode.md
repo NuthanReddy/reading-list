@@ -16,12 +16,9 @@ not delete HDFS data, and a local Spark shuffle file is not an HDFS replica.
 
 > **Key distinction:** A successful packet ACK neither closes the HDFS file nor commits the Spark job.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Packet 42 travels from the writer through A, B and C; its acknowledgment travels back through B and A to the writer.](visuals/hdfs-datanode.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=hdfs-datanode) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Runtime boundary and local state
 

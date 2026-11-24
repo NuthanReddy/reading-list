@@ -16,12 +16,9 @@ shuffle blocks.
 
 > **Key distinction:** RUNNING means the AM registered. Spark may still have no executors.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The ResourceManager selects a node and requests the AM launch; the new AM registers its attempt with the ResourceManager.](visuals/resource-manager.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=resource-manager) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Runtime boundary and ownership
 

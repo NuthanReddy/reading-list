@@ -19,12 +19,9 @@ neither sends `LaunchTask` itself nor obtains containers from YARN.
 
 > **Key distinction:** An offer describes capacity on an existing executor, not a new grant from YARN.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Executor 3 offers two CPUs and one task takes one CPU from the round's budget](visuals/task-scheduler.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=task-scheduler) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Requirements analysis
 

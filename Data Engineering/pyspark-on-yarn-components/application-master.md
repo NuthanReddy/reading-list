@@ -12,12 +12,9 @@ The Spark ApplicationMaster (AM) represents **one attempt** of a YARN applicatio
 
 > **Key distinction:** In client mode the AM connects to an existing driver. It never starts the Python script.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The cluster-mode AM starts the driver, waits for its SparkContext, then registers with YARN and creates the allocator.](visuals/application-master.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=application-master) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Trace startup: how does the AM find the driver?
 

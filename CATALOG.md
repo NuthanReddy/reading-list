@@ -144,6 +144,7 @@ This catalog lists files by top-level folder.
 - `pyspark-on-yarn-components/visuals/task-result-getter.svg`
 - `pyspark-on-yarn-components/visuals/task-scheduler.svg`
 - `pyspark-on-yarn-components/visuals/task-set-manager.svg`
+- `pyspark-on-yarn-components/visuals/topology-specs.json`
 - `pyspark-on-yarn-components/visuals/yarn-allocator.svg`
 - `pyspark-on-yarn-components/visuals/yarn-client.svg`
 - `pyspark-on-yarn-components/visuals/yarn-container.svg`

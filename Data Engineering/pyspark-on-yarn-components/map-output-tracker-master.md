@@ -12,12 +12,9 @@ When a reduce task needs shuffle 7, the driver can tell it **which map attempts 
 
 > **Key distinction:** A retry can put a new attempt in slot 3. The tracker tells executors where to fetch the new output; it never forwards the shuffle bytes.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Map attempt 41 reports its location, the driver records it in slot 3, and an executor looks it up](visuals/map-output-tracker-master.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=map-output-tracker-master) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## What the driver stores
 

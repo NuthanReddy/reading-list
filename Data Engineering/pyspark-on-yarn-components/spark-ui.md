@@ -12,12 +12,9 @@ A browser asking how many tasks finished in stage `3` does **not** poll its exec
 
 > **Watch for:** Two task IDs for one partition can mean a failed first attempt and a successful retry.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Task events update the driver's status store, which supplies the Stages page for a specific attempt](visuals/spark-ui.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=spark-ui) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Startup, request path and shutdown
 

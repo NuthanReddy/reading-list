@@ -12,12 +12,9 @@
 
 > **Key distinction:** The executor-added event confirms registration. Its cores become available only after the driver receives `LaunchedExecutor`.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The driver holds the executor at zero free cores until the backend reports that its runtime is ready.](visuals/executor-backend.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=executor-backend) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## One launch, three milestones
 

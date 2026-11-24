@@ -12,12 +12,9 @@
 
 > **Key distinction:** Task launches need no Spark RPC listener on the executor. Fetching a result block uses a separate listener.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The driver sends a task launch back over the connection the executor opened, without dialing an executor port.](visuals/rpc-env.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=rpc-env) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Which side listens?
 

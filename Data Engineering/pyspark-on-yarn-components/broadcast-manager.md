@@ -12,12 +12,9 @@ A Spark broadcast gives tasks a small **handle** for a read-only value. Creating
 
 > **Key distinction:** Tasks carry a handle, not the whole value, and peers can supply pieces as well as the driver.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The driver publishes numbered pieces; an executor fetches missing ones, joins their bytes in index order, and deserializes the value.](visuals/broadcast-manager.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=broadcast-manager) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Owners and representations
 

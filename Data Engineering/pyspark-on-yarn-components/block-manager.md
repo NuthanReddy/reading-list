@@ -12,12 +12,9 @@
 
 > **Key distinction:** `MEMORY_AND_DISK` allows disk fallback; it does not require a copy in both stores.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![A writer locks a block ID and stores its records; a reader tries local memory and disk before looking for a peer.](visuals/block-manager.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=block-manager) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Runtime and state
 

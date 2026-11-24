@@ -12,12 +12,9 @@
 
 > **Key distinction:** The tracker reports an estimated size for this block. The on-disk index, not that estimate, supplies its exact start and end.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Block resolver uses index offsets 40 and 65 to locate reducer 2's 25 bytes in attempt 41's data file](visuals/shuffle-block-resolver.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=shuffle-block-resolver) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## The disk layout, with one worked lookup
 

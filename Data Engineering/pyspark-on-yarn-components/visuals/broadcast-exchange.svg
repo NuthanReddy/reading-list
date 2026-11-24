@@ -1,38 +1,244 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="304" viewBox="0 0 360 304" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">Broadcast exchange: building the small side: Flow at a glance</title>
-<desc id="flow-desc">1. Build tasks: Send region rows to the driver. 2. Driver exchange: Build a hashed relation keyed by region ID. 3. Core broadcast: Publish the relation and return its handle.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">BroadcastExchangeExec — Driver HashedRelation Build</title>
+<desc id="topo-desc">Async executeCollectIterator(), LongHashedRelation build, 8 GiB post-build guard, serializedOnly broadcast. 1. BroadcastHashJoin to BroadcastExchange: executeBroadcast() (in-JVM); 2. BroadcastExchange to DAGScheduler: Submit tagged build job (in-JVM); 3. Task Attempt to BroadcastExchange: Compressed regions rows (:41000); 4. BroadcastExchange to BroadcastExchange: Build LongHashedRelation (in-JVM); 5. BroadcastExchange to SparkContext: broadcast(serOnly=true) (in-JVM); 6. BroadcastManager to BroadcastHashJoin: Broadcast[HashedRelation] (in-JVM)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(98px); }
-  82%, 100% { transform: translateY(196px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(552.8px, 202.4px); color: #bfa6ff; opacity: 0; }
+  0.67% { transform: translate(552.8px, 202.4px); color: #bfa6ff; opacity: 1; }
+  5.17% { transform: translate(546.9px, 188px); color: #bfa6ff; opacity: 1; }
+  9.67% { transform: translate(535.8px, 180.8px); color: #bfa6ff; opacity: 1; }
+  14.17% { transform: translate(520.2px, 181.3px); color: #bfa6ff; opacity: 1; }
+  15.33% { transform: translate(520.2px, 181.3px); color: #bfa6ff; opacity: 0; }
+  16.00% { transform: translate(560px, 169.5px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(560px, 169.5px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(581.8px, 172px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(604.2px, 172px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(626px, 169.5px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(626px, 169.5px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(485.4px, 333.9px); color: #5bd3a8; opacity: 0; }
+  34.00% { transform: translate(485.4px, 333.9px); color: #5bd3a8; opacity: 1; }
+  38.50% { transform: translate(492.5px, 283.5px); color: #5bd3a8; opacity: 1; }
+  43.00% { transform: translate(492.5px, 231.7px); color: #5bd3a8; opacity: 1; }
+  47.50% { transform: translate(485.4px, 181.3px); color: #5bd3a8; opacity: 1; }
+  48.67% { transform: translate(485.4px, 181.3px); color: #5bd3a8; opacity: 0; }
+  49.33% { transform: translate(454px, 130.3px); color: #bfa6ff; opacity: 0; }
+  50.67% { transform: translate(454px, 130.3px); color: #bfa6ff; opacity: 1; }
+  55.17% { transform: translate(466.5px, 110.8px); color: #bfa6ff; opacity: 1; }
+  59.67% { transform: translate(479.5px, 110.8px); color: #bfa6ff; opacity: 1; }
+  64.17% { transform: translate(492px, 130.3px); color: #bfa6ff; opacity: 1; }
+  65.33% { transform: translate(492px, 130.3px); color: #bfa6ff; opacity: 0; }
+  66.00% { transform: translate(400px, 141.1px); color: #bfa6ff; opacity: 0; }
+  67.33% { transform: translate(400px, 141.1px); color: #bfa6ff; opacity: 1; }
+  71.83% { transform: translate(378.2px, 138.6px); color: #bfa6ff; opacity: 1; }
+  76.33% { transform: translate(355.8px, 138.6px); color: #bfa6ff; opacity: 1; }
+  80.83% { transform: translate(334px, 141.1px); color: #bfa6ff; opacity: 1; }
+  82.00% { transform: translate(334px, 141.1px); color: #bfa6ff; opacity: 0; }
+  82.67% { transform: translate(447px, 242.6px); color: #bfa6ff; opacity: 0; }
+  84.00% { transform: translate(447px, 242.6px); color: #bfa6ff; opacity: 1; }
+  88.50% { transform: translate(468.8px, 245.2px); color: #bfa6ff; opacity: 1; }
+  93.00% { transform: translate(491.2px, 245.2px); color: #bfa6ff; opacity: 1; }
+  97.50% { transform: translate(513px, 242.6px); color: #bfa6ff; opacity: 1; }
+  98.67% { transform: translate(513px, 242.6px); color: #bfa6ff; opacity: 0; }
+  100% { transform: translate(552.8px, 202.4px); color: #bfa6ff; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="302" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V226" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Build tasks</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">Send region rows to the</tspan><tspan x="62" y="84">driver.</tspan></text>
-  <rect x="48" y="108" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="128" r="12" fill="#184d50"/>
-  <text x="24" y="134" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="134">Driver exchange</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="159">Build a hashed relation</tspan><tspan x="62" y="182">keyed by region ID.</tspan></text>
-  <rect x="48" y="206" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="226" r="12" fill="#184d50"/>
-  <text x="24" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="232">Core broadcast</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="257">Publish the relation and</tspan><tspan x="62" y="280">return its handle.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">BroadcastExchangeExec — Driver HashedRelation Build</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Async executeCollectIterator(), LongHashedRelation build, 8 GiB post-build guard, serializedOnly broadcast</text>
+  <g class="channel-legend">
+    <line x1="844.2" y1="24" x2="855.2" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="855.2" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="861.2" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="227.7" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="293.7" width="928" height="110.3" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="315.7" x2="944" y2="315.7" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="304.7" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="307.9" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="broadcast-hash-join" data-to="broadcast-exchange">
+    <path d="M 552.8 202.4 Q 547.4 175.1 520.2 181.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(520.2, 181.3) rotate(168.9)"/>
+  </g>
+  <g class="topo-edge" data-from="broadcast-exchange" data-to="dag-scheduler">
+    <path d="M 560 169.5 Q 593 175.3 626 169.5" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 169.5) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="task-attempt" data-to="broadcast-exchange">
+    <path d="M 485.4 333.9 Q 501.4 257.6 485.4 181.3" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(485.4, 181.3) rotate(-101.1)"/>
+  </g>
+  <g class="topo-edge" data-from="broadcast-exchange" data-to="broadcast-exchange">
+    <path d="M 454 130.3 Q 473 86.3 492 130.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(492, 130.3) rotate(65.3)"/>
+  </g>
+  <g class="topo-edge" data-from="broadcast-exchange" data-to="spark-context">
+    <path d="M 400 141.1 Q 367 135.3 334 141.1" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(334, 141.1) rotate(170.6)"/>
+  </g>
+  <g class="topo-edge" data-from="broadcast-manager" data-to="broadcast-hash-join">
+    <path d="M 447 242.6 Q 480 248.4 513 242.6" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(513, 242.6) rotate(-9.4)"/>
+  </g>
+  <g class="topo-node" data-id="spark-context">
+    <rect x="177" y="132.3" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="133.3" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="254" y="155.3" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">SparkContext</text>
+    <text class="f-mono" x="254" y="169.3" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="broadcast-exchange">
+    <rect x="400" y="129.3" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="132.3" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="133.3" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="480" y="155.3" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BroadcastExchange</text>
+    <text class="f-mono" x="480" y="169.3" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(515, 125.3)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="dag-scheduler">
+    <rect x="629" y="132.3" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="133.3" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="706" y="155.3" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DAGScheduler</text>
+    <text class="f-mono" x="706" y="169.3" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="broadcast-manager">
+    <rect x="290" y="205.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="206.4" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="367" y="228.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BroadcastManager</text>
+    <text class="f-mono" x="367" y="242.4" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="broadcast-hash-join">
+    <rect x="516" y="205.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="522" y="206.4" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="593" y="228.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BroadcastHashJoin</text>
+    <text class="f-mono" x="593" y="242.4" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="task-attempt">
+    <rect x="403" y="336.9" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="337.9" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="359.9" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Task Attempt</text>
+    <text class="f-mono" x="480" y="373.9" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="570.8" cy="177.2" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="570.8" y="180.4" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="602.2" cy="172.2" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="602.2" y="175.4" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="493.4" cy="257.6" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="493.4" y="260.8" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="473" cy="108.3" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="473" y="111.5" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="367" cy="138.2" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="141.4" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="470.8" cy="245.3" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="470.8" y="248.5" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">BroadcastHashJoin -&gt; BroadcastExchange</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">executeBroadcast()</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">BroadcastExchange -&gt; DAGScheduler</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">Submit tagged build job</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Task Attempt -&gt; BroadcastExchange</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">Compressed regions rows</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">BroadcastExchange (self)</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">Build LongHashedRelation</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">BroadcastExchange -&gt; SparkContext</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">broadcast(serOnly=true)</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">BroadcastManager -&gt; BroadcastHashJoin</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">Broadcast[HashedRelation]</text>
+  </g>
 </g>
 </svg>

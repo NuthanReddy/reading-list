@@ -12,12 +12,9 @@ For a classic PySpark batch script, `spark-submit` decides **which JVM entry poi
 
 > **Key distinction:** In cluster mode the submit JVM runs the YARN submission client instead. The AM starts Python later.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![The submit wrapper passes a client-mode command to SparkSubmit, which selects PythonRunner to start the driver locally.](visuals/spark-submit.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=spark-submit) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## From command line to JVM call
 

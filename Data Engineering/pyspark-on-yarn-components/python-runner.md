@@ -12,12 +12,9 @@
 
 > **Watch for:** If the task stops reading early, cleanup closes the connection instead of returning the worker to the pool.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Pulling the runner's iterator drives partition input and results over a worker socket until the finish reply](visuals/python-runner.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=python-runner) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Entry points and ownership
 

@@ -18,12 +18,9 @@ or on the submit host in client mode. This is not a Connect session.
 
 > **Watch for:** Stopping either session stops their shared SparkContext, even though their local views are separate.
 
-<details>
-<summary>Show the animated flow</summary>
-
 ![Two sessions share a SparkContext, but the second cannot see the first session's local view](visuals/spark-session.svg)
 
-</details>
+> **Interactive explorer:** [Open in Spark Visualizer](https://nuthanreddy.github.io/spark-visualizer/#component=spark-session) to step through commands, wire payloads, category filters, and fault simulations on the live cluster canvas.
 
 ## Creation and state ownership
 

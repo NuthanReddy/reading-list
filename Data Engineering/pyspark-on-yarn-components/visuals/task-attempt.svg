@@ -1,38 +1,250 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="304" viewBox="0 0 360 304" role="img" aria-labelledby="flow-title" aria-describedby="flow-desc">
-<title id="flow-title">Task attempt: one partition on one executor thread: Flow at a glance</title>
-<desc id="flow-desc">1. Scheduler: Launch a speculative copy of a slow partition task. 2. Winning attempt: Deliver the first result the driver accepts. 3. Task set manager: Ask the executor to kill the other copy.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">Task Attempt: TaskRunner Lifecycle &amp; Speculation</title>
+<desc id="topo-desc">Early RUNNING report, TaskMemoryManager + TaskContextImpl, ShuffleMapTask run, cleanup, and loser kill. 1. Executor to Task Attempt: TaskRunner.run (TID 41) (worker-a JVM); 2. Task Attempt to BlockManager: registerTask(TID 41) (worker-a JVM); 3. Task Attempt to Shuffle Writer: writer.write(iterator) (worker-a disk); 4. Task Attempt to ExecutorBackend: statusUpdate(41,FINISHED) (worker-a JVM); 5. ExecutorBackend to TaskSetManager: Winner TID 41 accepted (driver-1:41000); 6. TaskSetManager to Task Attempt: KillTask(TID 49 loser) (driver-1:41000)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
 <style>
-@keyframes handoff {
-  0%, 18% { transform: translateY(0); }
-  40%, 58% { transform: translateY(98px); }
-  82%, 100% { transform: translateY(196px); }
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(334px, 281.2px); color: #bfa6ff; opacity: 0; }
+  0.67% { transform: translate(334px, 281.2px); color: #bfa6ff; opacity: 1; }
+  5.17% { transform: translate(355.8px, 283.8px); color: #bfa6ff; opacity: 1; }
+  9.67% { transform: translate(378.2px, 283.8px); color: #bfa6ff; opacity: 1; }
+  14.17% { transform: translate(400px, 281.2px); color: #bfa6ff; opacity: 1; }
+  15.33% { transform: translate(400px, 281.2px); color: #bfa6ff; opacity: 0; }
+  16.00% { transform: translate(517px, 293px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(517px, 293px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(524.8px, 309.3px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(538px, 318.6px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(556px, 320.4px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(556px, 320.4px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(560px, 281.2px); color: #f2b950; opacity: 0; }
+  34.00% { transform: translate(560px, 281.2px); color: #f2b950; opacity: 1; }
+  38.50% { transform: translate(581.8px, 283.8px); color: #f2b950; opacity: 1; }
+  43.00% { transform: translate(604.2px, 283.8px); color: #f2b950; opacity: 1; }
+  47.50% { transform: translate(626px, 281.2px); color: #f2b950; opacity: 1; }
+  48.67% { transform: translate(626px, 281.2px); color: #f2b950; opacity: 0; }
+  49.33% { transform: translate(443px, 293px); color: #bfa6ff; opacity: 0; }
+  50.67% { transform: translate(443px, 293px); color: #bfa6ff; opacity: 1; }
+  55.17% { transform: translate(425px, 294.8px); color: #bfa6ff; opacity: 1; }
+  59.67% { transform: translate(411.8px, 304.2px); color: #bfa6ff; opacity: 1; }
+  64.17% { transform: translate(404px, 320.4px); color: #bfa6ff; opacity: 1; }
+  65.33% { transform: translate(404px, 320.4px); color: #bfa6ff; opacity: 0; }
+  66.00% { transform: translate(371.5px, 320.4px); color: #5bd3a8; opacity: 0; }
+  67.33% { transform: translate(371.5px, 320.4px); color: #5bd3a8; opacity: 1; }
+  71.83% { transform: translate(388.4px, 257px); color: #5bd3a8; opacity: 1; }
+  76.33% { transform: translate(416.6px, 199.7px); color: #5bd3a8; opacity: 1; }
+  80.83% { transform: translate(454.6px, 151.7px); color: #5bd3a8; opacity: 1; }
+  82.00% { transform: translate(454.6px, 151.7px); color: #5bd3a8; opacity: 0; }
+  82.67% { transform: translate(472.6px, 151.7px); color: #f87171; opacity: 0; }
+  84.00% { transform: translate(472.6px, 151.7px); color: #f87171; opacity: 1; }
+  88.50% { transform: translate(467.1px, 181.2px); color: #f87171; opacity: 1; }
+  93.00% { transform: translate(467.1px, 211.6px); color: #f87171; opacity: 1; }
+  97.50% { transform: translate(472.6px, 241px); color: #f87171; opacity: 1; }
+  98.67% { transform: translate(472.6px, 241px); color: #f87171; opacity: 0; }
+  100% { transform: translate(334px, 281.2px); color: #bfa6ff; opacity: 0; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  #focus { display: inline; animation: handoff 4.6s ease-in-out 1 both; }
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
 }
-@media (prefers-reduced-motion: reduce) { #focus { display: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
 </style>
-<rect x="1" y="1" width="358" height="302" rx="13" fill="#f2f7f6" stroke="#b8cbc8"/>
-<path d="M24 30 V226" fill="none" stroke="#577d7b" stroke-width="2"/>
-<g font-family="Arial, Helvetica, sans-serif">
-  <rect x="48" y="10" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="30" r="12" fill="#184d50"/>
-  <text x="24" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="36">Scheduler</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="61">Launch a speculative copy</tspan><tspan x="62" y="84">of a slow partition task.</tspan></text>
-  <rect x="48" y="108" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="128" r="12" fill="#184d50"/>
-  <text x="24" y="134" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="134">Winning attempt</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="159">Deliver the first result the</tspan><tspan x="62" y="182">driver accepts.</tspan></text>
-  <rect x="48" y="206" width="302" height="88" rx="9" fill="#fff" stroke="#a8bdbb"/>
-  <circle cx="24" cy="226" r="12" fill="#184d50"/>
-  <text x="24" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
-  <text font-size="19" font-weight="700" fill="#12383d"><tspan x="62" y="232">Task set manager</tspan></text>
-  <text font-size="18" fill="#223a40"><tspan x="62" y="257">Ask the executor to kill</tspan><tspan x="62" y="280">the other copy.</tspan></text>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
 </g>
-<g id="focus" display="none" aria-hidden="true">
-  <circle cx="24" cy="30" r="16" fill="none" stroke="#17484d" stroke-width="2"/>
-  <path d="M40 25 l6 5 -6 5 z" fill="#17484d"/>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">Task Attempt: TaskRunner Lifecycle &amp; Speculation</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Early RUNNING report, TaskMemoryManager + TaskContextImpl, ShuffleMapTask run, cleanup, and loser kill</text>
+  <g class="channel-legend">
+    <line x1="744.4" y1="24" x2="755.4" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="755.4" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="761.4" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="786.3" y1="24" x2="797.3" y2="24" stroke="#f2b950" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="797.3" cy="24" r="2.2" fill="#f2b950"/>
+    <text class="f-mono" x="803.3" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">DATA</text>
+    <line x1="833.6" y1="24" x2="844.6" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="844.6" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="850.6" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+    <line x1="891.4" y1="24" x2="902.4" y2="24" stroke="#f87171" stroke-width="2" stroke-dasharray="6 3" stroke-linecap="round"/>
+    <circle cx="902.4" cy="24" r="2.2" fill="#f87171"/>
+    <text class="f-mono" x="908.4" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">ERROR</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="121.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="187.5" width="928" height="216.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="209.5" x2="944" y2="209.5" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="198.5" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="201.7" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="executor" data-to="task-attempt">
+    <path d="M 334 281.2 Q 367 287 400 281.2" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(400, 281.2) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="task-attempt" data-to="block-manager">
+    <path d="M 517 293 Q 525 323.1 556 320.4" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(556, 320.4) rotate(-3.2)"/>
+  </g>
+  <g class="topo-edge" data-from="task-attempt" data-to="shuffle-writer">
+    <path d="M 560 281.2 Q 593 287 626 281.2" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(626, 281.2) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="task-attempt" data-to="executor-backend">
+    <path d="M 443 293 Q 412 290.4 404 320.4" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(404, 320.4) rotate(106.6)"/>
+  </g>
+  <g class="topo-edge" data-from="executor-backend" data-to="task-set-manager">
+    <path d="M 371.5 320.4 Q 389.3 218.6 454.6 151.7" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(454.6, 151.7) rotate(-46.7)"/>
+  </g>
+  <g class="topo-edge" data-from="task-set-manager" data-to="task-attempt">
+    <path d="M 472.6 151.7 Q 460 196.4 472.6 241" fill="none" stroke="#f87171" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="6 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f87171" transform="translate(472.6, 241) rotate(75.1)"/>
+  </g>
+  <g class="topo-node" data-id="task-set-manager">
+    <rect x="403" y="102.7" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="103.7" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="125.7" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TaskSetManager</text>
+    <text class="f-mono" x="480" y="139.7" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="executor">
+    <rect x="177" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="245" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Executor</text>
+    <text class="f-mono" x="254" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="task-attempt">
+    <rect x="400" y="241" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="245" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Task Attempt</text>
+    <text class="f-mono" x="480" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(515, 237)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="shuffle-writer">
+    <rect x="629" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="245" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="706" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Shuffle Writer</text>
+    <text class="f-mono" x="706" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="executor-backend">
+    <rect x="290" y="323.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="324.4" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="367" y="346.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ExecutorBackend</text>
+    <text class="f-mono" x="367" y="360.4" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="block-manager">
+    <rect x="516" y="323.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="522" y="324.4" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="593" y="346.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManager</text>
+    <text class="f-mono" x="593" y="360.4" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="367" cy="284.1" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="287.3" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="525.7" cy="310.4" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="525.7" y="313.6" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="593" cy="284.1" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="287.3" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="412.7" cy="303" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="412.7" y="306.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="401.2" cy="227.3" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="401.2" y="230.5" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="466.3" cy="196.4" r="9" fill="#0d1526" stroke="#f87171" stroke-width="1.6"/>
+    <text class="f-mono" x="466.3" y="199.6" text-anchor="middle" fill="#f87171" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Executor -&gt; Task Attempt</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a JVM</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">TaskRunner.run (TID 41)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Task Attempt -&gt; BlockManager</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">registerTask(TID 41)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Task Attempt -&gt; Shuffle Writer</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a disk</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">writer.write(iterator)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Task Attempt -&gt; ExecutorBackend</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a JVM</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">statusUpdate(41,FINISHED)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">ExecutorBackend -&gt; TaskSetManager</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">Winner TID 41 accepted</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f87171" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#f87171" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">TaskSetManager -&gt; Task Attempt</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">KillTask(TID 49 loser)</text>
+  </g>
 </g>
 </svg>
