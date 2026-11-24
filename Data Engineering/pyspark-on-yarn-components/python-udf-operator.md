@@ -13,7 +13,7 @@ Arrow evaluator present in this revision.
 ## Flow at a glance
 
 1. **Executor JVM**: The operator keeps each order ID and sends only the status to Python.
-2. **Python worker**: The worker runs `is_paid` on each status and returns the results in order.
+2. **Python worker**: Runs the paid-status function and returns the results in input order.
 3. **Row assembly**: The operator pairs each result with the oldest saved order ID.
 
 > **Key distinction:** The scalar UDF returns one value per input; the JVM filter decides which orders to keep.

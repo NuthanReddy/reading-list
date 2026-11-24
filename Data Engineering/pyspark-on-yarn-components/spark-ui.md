@@ -6,7 +6,7 @@ A browser asking how many tasks finished in stage `3` does **not** poll its exec
 
 ## Flow at a glance
 
-1. **Status queue**: The driver's `appStatus` queue delivers task events to the status listener.
+1. **Status queue**: Delivers task events to the status listener in the driver.
 2. **Status listener**: The listener writes task-attempt records and updates stage counts in the driver's store.
 3. **Stages page**: The UI reads the selected stage attempt from the store and displays its task rows.
 

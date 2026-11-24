@@ -7,7 +7,7 @@ The event log records **what Spark reported about an application attempt**. The 
 ## Flow at a glance
 
 1. **Log startup**: With event logging enabled, the driver opens the attempt's log and writes the Spark version.
-2. **Event listener**: The listener encodes each selected event from the `eventLog` queue as one JSON line.
+2. **Event listener**: Encodes each selected event from its queue as one JSON line.
 3. **Log writer**: The writer flushes at stage completion and finalizes the log on orderly shutdown.
 
 > **Key distinction:** A failed task's record can name its executor and end reason; look in the YARN container log for raw stdout.
