@@ -15,6 +15,7 @@ This catalog lists files by top-level folder.
 - `artificial intelligence (luger, 6th, 2008).pdf`
 - `artificial intelligence - a modern approach (3rd, 2009).pdf`
 - `artificial intelligence for games (2nd, 2009).pdf`
+- `DeepLearningBook.pdf`
 - `Fuzzy Expert Systems and Fuzzy Reasoning - William Siler.pdf`
 - `universal artificial intelligence (2005).pdf`
 
@@ -29,6 +30,7 @@ This catalog lists files by top-level folder.
 
 ## Data Engineering
 - `big-book-of-data-engineering-2nd-edition-final.pdf`
+- `Databricks Data Intelligence Platform.pdf`
 - `Distributed Systems for practitioners (Dimos Raptis).pdf`
 - `Distributed_Computing_Book.pdf`
 - `kafka.txt`
@@ -39,6 +41,63 @@ This catalog lists files by top-level folder.
 - `oreilly-delta-lake_-up-and-running.pdf`
 - `oreilly-technical-guide-understanding-etl.pdf`
 - `OReillyZooKeeperDistributed process coordination.pdf`
+- `pyspark-on-yarn-components/adaptive-query-execution.md`
+- `pyspark-on-yarn-components/application-master.md`
+- `pyspark-on-yarn-components/block-manager-master.md`
+- `pyspark-on-yarn-components/block-manager.md`
+- `pyspark-on-yarn-components/block-transfer-service.md`
+- `pyspark-on-yarn-components/broadcast-exchange.md`
+- `pyspark-on-yarn-components/broadcast-hash-join.md`
+- `pyspark-on-yarn-components/broadcast-manager.md`
+- `pyspark-on-yarn-components/dag-scheduler.md`
+- `pyspark-on-yarn-components/driver-scheduler-backend.md`
+- `pyspark-on-yarn-components/event-log.md`
+- `pyspark-on-yarn-components/executor-allocation-manager.md`
+- `pyspark-on-yarn-components/executor-backend.md`
+- `pyspark-on-yarn-components/executor-monitor.md`
+- `pyspark-on-yarn-components/executor.md`
+- `pyspark-on-yarn-components/external-shuffle-service.md`
+- `pyspark-on-yarn-components/file-commit-protocol.md`
+- `pyspark-on-yarn-components/file-format-writer.md`
+- `pyspark-on-yarn-components/hdfs-datanode.md`
+- `pyspark-on-yarn-components/hdfs-namenode.md`
+- `pyspark-on-yarn-components/heartbeat-receiver.md`
+- `pyspark-on-yarn-components/history-server.md`
+- `pyspark-on-yarn-components/listener-bus.md`
+- `pyspark-on-yarn-components/map-output-tracker-master.md`
+- `pyspark-on-yarn-components/map-output-tracker-worker.md`
+- `pyspark-on-yarn-components/node-manager.md`
+- `pyspark-on-yarn-components/output-commit-coordinator.md`
+- `pyspark-on-yarn-components/py4j-gateway.md`
+- `pyspark-on-yarn-components/python-driver.md`
+- `pyspark-on-yarn-components/python-runner.md`
+- `pyspark-on-yarn-components/python-udf-operator.md`
+- `pyspark-on-yarn-components/python-worker-factory.md`
+- `pyspark-on-yarn-components/python-worker.md`
+- `pyspark-on-yarn-components/rdd-cache.md`
+- `pyspark-on-yarn-components/README.md`
+- `pyspark-on-yarn-components/resource-manager.md`
+- `pyspark-on-yarn-components/rpc-env.md`
+- `pyspark-on-yarn-components/shuffle-block-resolver.md`
+- `pyspark-on-yarn-components/shuffle-reader.md`
+- `pyspark-on-yarn-components/shuffle-writer.md`
+- `pyspark-on-yarn-components/spark-context.md`
+- `pyspark-on-yarn-components/spark-driver.md`
+- `pyspark-on-yarn-components/spark-env.md`
+- `pyspark-on-yarn-components/spark-session.md`
+- `pyspark-on-yarn-components/spark-submit.md`
+- `pyspark-on-yarn-components/spark-ui.md`
+- `pyspark-on-yarn-components/sql-planner.md`
+- `pyspark-on-yarn-components/task-attempt.md`
+- `pyspark-on-yarn-components/task-result-getter.md`
+- `pyspark-on-yarn-components/task-scheduler.md`
+- `pyspark-on-yarn-components/task-set-manager.md`
+- `pyspark-on-yarn-components/yarn-allocator.md`
+- `pyspark-on-yarn-components/yarn-client.md`
+- `pyspark-on-yarn-components/yarn-container.md`
+- `pyspark-on-yarn-components/yarn-scheduler-backend.md`
+- `pyspark-on-yarn-scenarios.md`
+- `pyspark-on-yarn.md`
 - `SparkInternals_All.pdf`
 - `The-Data-Warehouse-Toolkit-Kimball-3rd-Edition.pdf`
 - `tw_ebook_modern_data_engineering_playbook.pdf`
