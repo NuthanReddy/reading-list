@@ -6988,5 +6988,281 @@
         "peerTag": null
       }
     ]
+  },
+  "metrics-system": {
+    "slug": "metrics-system",
+    "title": "MetricsSystem — Per-JVM Dropwizard Sources, Sinks & Servlets",
+    "subtitle": "Driver, Executor & AM MetricsSystem bootstrap, internal Source registration, SparkUI /metrics/* mount, and stop cleanup",
+    "focusComponentId": "metrics-system",
+    "nodes": [
+      {
+        "id": "spark-env",
+        "componentId": "spark-env",
+        "shortLabel": "SparkEnv",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "dag-scheduler",
+        "componentId": "dag-scheduler",
+        "shortLabel": "DAGScheduler",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "application-master",
+        "componentId": "application-master",
+        "shortLabel": "ApplicationMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "submission"
+      },
+      {
+        "id": "spark-context",
+        "componentId": "spark-context",
+        "shortLabel": "SparkContext",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "metrics-system",
+        "componentId": "metrics-system",
+        "shortLabel": "Driver MetricsSys",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "spark-ui",
+        "componentId": "spark-ui",
+        "shortLabel": "Live Spark UI",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "exec-metrics-system",
+        "componentId": "metrics-system",
+        "shortLabel": "Exec MetricsSys",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "observability"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-env",
+        "to": "metrics-system",
+        "channel": "internal",
+        "protocol": "In-JVM Metrics Init",
+        "port": "in-JVM",
+        "label": "createMetricsSystem()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "dag-scheduler",
+        "to": "metrics-system",
+        "channel": "internal",
+        "protocol": "Dropwizard Registry",
+        "port": "in-JVM",
+        "label": "registerSource(DAGSched)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "application-master",
+        "to": "metrics-system",
+        "channel": "internal",
+        "protocol": "Dropwizard Registry",
+        "port": "in-JVM",
+        "label": "registerSource(AMSource)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "metrics-system",
+        "to": "spark-ui",
+        "channel": "internal",
+        "protocol": "Jetty Servlet Mount",
+        "port": "driver-1:4040",
+        "label": "attachHandler(/metrics/*)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "executor",
+        "to": "exec-metrics-system",
+        "channel": "internal",
+        "protocol": "Dropwizard Sink Report",
+        "port": "in-JVM",
+        "label": "ExecutorSource & report()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "spark-context",
+        "to": "metrics-system",
+        "channel": "internal",
+        "protocol": "In-JVM Teardown",
+        "port": "in-JVM",
+        "label": "report() & stop()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "executor-metrics-poller": {
+    "slug": "executor-metrics-poller",
+    "title": "ExecutorMetricsPoller — Peak Sampling & Heartbeat Bridge",
+    "subtitle": "Task/stage high-water mark polling, ExecutorMetricsSource Dropwizard snapshot, Heartbeat RPC, and stage peak event logging",
+    "focusComponentId": "executor-metrics-poller",
+    "nodes": [
+      {
+        "id": "heartbeat-receiver",
+        "componentId": "heartbeat-receiver",
+        "shortLabel": "HeartbeatReceiver",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "event-log",
+        "componentId": "event-log",
+        "shortLabel": "Spark Event Log",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "executor-metrics-poller",
+        "componentId": "executor-metrics-poller",
+        "shortLabel": "ExecMetricsPoller",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "observability"
+      },
+      {
+        "id": "exec-metrics-source",
+        "componentId": "metrics-system",
+        "shortLabel": "ExecMetricsSource",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "observability"
+      },
+      {
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Task Attempt",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "executor-rpc"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "executor",
+        "to": "executor-metrics-poller",
+        "channel": "internal",
+        "protocol": "In-JVM Poller Init",
+        "port": "in-JVM",
+        "label": "new Poller & start()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "task-attempt",
+        "to": "executor-metrics-poller",
+        "channel": "internal",
+        "protocol": "In-JVM Task Hook",
+        "port": "in-JVM",
+        "label": "onTaskStart(84, s3.0)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "executor-metrics-poller",
+        "to": "exec-metrics-source",
+        "channel": "internal",
+        "protocol": "Dropwizard Snapshot",
+        "port": "in-JVM",
+        "label": "updateMetricsSnapshot()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "executor-metrics-poller",
+        "to": "executor",
+        "channel": "internal",
+        "protocol": "In-JVM Peak Drain",
+        "port": "in-JVM",
+        "label": "getExecutorUpdates()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "executor",
+        "to": "heartbeat-receiver",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": ":41000",
+        "label": "Heartbeat(execUpdates)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "heartbeat-receiver",
+        "to": "event-log",
+        "channel": "internal",
+        "protocol": "ListenerBus -> EventLog",
+        "port": "in-JVM",
+        "label": "StageExecutorMetrics peak",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
   }
 }

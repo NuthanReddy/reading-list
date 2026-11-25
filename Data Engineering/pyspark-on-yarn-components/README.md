@@ -26,7 +26,7 @@ and [scenarios traced through the source](../pyspark-on-yarn-scenarios.md).
 
 ![A container grant leads to executor registration; the reducer then fetches data from the serving node.](visuals/overview.svg)
 
-> **Interactive explorer:** [Open Spark Visualizer (Master Lifecycle & All 54 Map)](https://nuthanreddy.github.io/spark-visualizer/#flow=flow-cluster-lifecycle) to step through commands, wire payloads, category filters, and job/fault simulations live.
+> **Interactive explorer:** [Open Spark Visualizer (Master Lifecycle & All 56 Map)](https://nuthanreddy.github.io/spark-visualizer/#flow=flow-cluster-lifecycle) to step through commands, wire payloads, category filters, and job/fault simulations live.
 
 ## Follow a record, not just a class name
 
@@ -129,6 +129,8 @@ service on the producer node instead of the original executor.
 | [Spark event log](event-log.md) | What structured events are written for replay, as distinct from container stdout/stderr? |
 | [Live Spark UI](spark-ui.md) | Which driver-side state explains a running job, stage, SQL execution, or executor? |
 | [Spark History Server](history-server.md) | What can a separate service reconstruct after the driver is gone, and what evidence can be missing? |
+| [MetricsSystem](metrics-system.md) | How do driver, executor, and AM JVMs each wire Dropwizard sources to local sinks and UI servlets? |
+| [ExecutorMetricsPoller](executor-metrics-poller.md) | How are executor memory and `/proc` peaks sampled, cached for Dropwizard, and shipped via heartbeats? |
 
 ### 7. Block storage and reuse
 

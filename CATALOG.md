@@ -54,6 +54,7 @@ This catalog lists files by top-level folder.
 - `pyspark-on-yarn-components/event-log.md`
 - `pyspark-on-yarn-components/executor-allocation-manager.md`
 - `pyspark-on-yarn-components/executor-backend.md`
+- `pyspark-on-yarn-components/executor-metrics-poller.md`
 - `pyspark-on-yarn-components/executor-monitor.md`
 - `pyspark-on-yarn-components/executor.md`
 - `pyspark-on-yarn-components/external-shuffle-service.md`
@@ -66,6 +67,7 @@ This catalog lists files by top-level folder.
 - `pyspark-on-yarn-components/listener-bus.md`
 - `pyspark-on-yarn-components/map-output-tracker-master.md`
 - `pyspark-on-yarn-components/map-output-tracker-worker.md`
+- `pyspark-on-yarn-components/metrics-system.md`
 - `pyspark-on-yarn-components/node-manager.md`
 - `pyspark-on-yarn-components/output-commit-coordinator.md`
 - `pyspark-on-yarn-components/py4j-gateway.md`
@@ -105,6 +107,7 @@ This catalog lists files by top-level folder.
 - `pyspark-on-yarn-components/visuals/event-log.svg`
 - `pyspark-on-yarn-components/visuals/executor-allocation-manager.svg`
 - `pyspark-on-yarn-components/visuals/executor-backend.svg`
+- `pyspark-on-yarn-components/visuals/executor-metrics-poller.svg`
 - `pyspark-on-yarn-components/visuals/executor-monitor.svg`
 - `pyspark-on-yarn-components/visuals/executor.svg`
 - `pyspark-on-yarn-components/visuals/external-shuffle-service.svg`
@@ -117,6 +120,7 @@ This catalog lists files by top-level folder.
 - `pyspark-on-yarn-components/visuals/listener-bus.svg`
 - `pyspark-on-yarn-components/visuals/map-output-tracker-master.svg`
 - `pyspark-on-yarn-components/visuals/map-output-tracker-worker.svg`
+- `pyspark-on-yarn-components/visuals/metrics-system.svg`
 - `pyspark-on-yarn-components/visuals/node-manager.svg`
 - `pyspark-on-yarn-components/visuals/output-commit-coordinator.svg`
 - `pyspark-on-yarn-components/visuals/overview.svg`
