@@ -1,0 +1,259 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">HadoopDelegationTokenManager -- 75% Renewal &amp; Token Fanout</title>
+<desc id="topo-desc">Submit-time HDFS token fetch, 0.75 * (renewal - now) KDC refresh, and UpdateDelegationTokens RPC fanout. 1. YARN Client to HDFS NameNode: getDelegationToken (init) (nn01:8020); 2. YarnSchedBackend to Delegation Tokens: if renewalEnabled -&gt; start() (driver-1 in-JVM); 3. Delegation Tokens to HDFS NameNode: doLogin + getDelegationToken (nn01:8020); 4. HDFS NameNode to Delegation Tokens: Fresh HDFS_DELEGATION_TOKEN (nn01:8020); 5. Delegation Tokens to DriverSchedBackend: UpdateDelegationTokens (driver-1 in-JVM); 6. DriverSchedBackend to ExecutorBackend: UpdateDelegationTokens (driver-1:41000)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
+<style>
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(325px, 125.2px); color: #7aa2ff; opacity: 0; }
+  0.67% { transform: translate(325px, 125.2px); color: #7aa2ff; opacity: 1; }
+  5.17% { transform: translate(427.3px, 130.3px); color: #7aa2ff; opacity: 1; }
+  9.67% { transform: translate(532.7px, 130.3px); color: #7aa2ff; opacity: 1; }
+  14.17% { transform: translate(635px, 125.2px); color: #7aa2ff; opacity: 1; }
+  15.33% { transform: translate(635px, 125.2px); color: #7aa2ff; opacity: 0; }
+  16.00% { transform: translate(334px, 254.2px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(334px, 254.2px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(355.8px, 256.7px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(378.2px, 256.7px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(400px, 254.2px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(400px, 254.2px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(560px, 226.9px); color: #7aa2ff; opacity: 0; }
+  34.00% { transform: translate(560px, 226.9px); color: #7aa2ff; opacity: 1; }
+  38.50% { transform: translate(606.3px, 209.5px); color: #7aa2ff; opacity: 1; }
+  43.00% { transform: translate(653.5px, 181.8px); color: #7aa2ff; opacity: 1; }
+  47.50% { transform: translate(698.7px, 145.3px); color: #7aa2ff; opacity: 1; }
+  48.67% { transform: translate(698.7px, 145.3px); color: #7aa2ff; opacity: 0; }
+  49.33% { transform: translate(635px, 132.4px); color: #7aa2ff; opacity: 0; }
+  50.67% { transform: translate(635px, 132.4px); color: #7aa2ff; opacity: 1; }
+  55.17% { transform: translate(588.7px, 149.8px); color: #7aa2ff; opacity: 1; }
+  59.67% { transform: translate(541.5px, 177.5px); color: #7aa2ff; opacity: 1; }
+  64.17% { transform: translate(496.3px, 214px); color: #7aa2ff; opacity: 1; }
+  65.33% { transform: translate(496.3px, 214px); color: #7aa2ff; opacity: 0; }
+  66.00% { transform: translate(560px, 254.2px); color: #bfa6ff; opacity: 0; }
+  67.33% { transform: translate(560px, 254.2px); color: #bfa6ff; opacity: 1; }
+  71.83% { transform: translate(581.8px, 256.7px); color: #bfa6ff; opacity: 1; }
+  76.33% { transform: translate(604.2px, 256.7px); color: #bfa6ff; opacity: 1; }
+  80.83% { transform: translate(626px, 254.2px); color: #bfa6ff; opacity: 1; }
+  82.00% { transform: translate(626px, 254.2px); color: #bfa6ff; opacity: 0; }
+  82.67% { transform: translate(630.7px, 266px); color: #5bd3a8; opacity: 0; }
+  84.00% { transform: translate(630.7px, 266px); color: #5bd3a8; opacity: 1; }
+  88.50% { transform: translate(597.1px, 280.7px); color: #5bd3a8; opacity: 1; }
+  93.00% { transform: translate(557.5px, 304px); color: #5bd3a8; opacity: 1; }
+  97.50% { transform: translate(514.3px, 334.7px); color: #5bd3a8; opacity: 1; }
+  98.67% { transform: translate(514.3px, 334.7px); color: #5bd3a8; opacity: 0; }
+  100% { transform: translate(325px, 125.2px); color: #7aa2ff; opacity: 0; }
+}
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
+</style>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
+</g>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">HadoopDelegationTokenManager -- 75% Renewal &amp; Token Fanout</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Submit-time HDFS token fetch, 0.75 * (renewal - now) KDC refresh, and UpdateDelegationTokens RPC fanout</text>
+  <g class="channel-legend">
+    <line x1="796.9" y1="24" x2="807.9" y2="24" stroke="#7aa2ff" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="807.9" cy="24" r="2.2" fill="#7aa2ff"/>
+    <text class="f-mono" x="813.9" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">YARN</text>
+    <line x1="844.2" y1="24" x2="855.2" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="855.2" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="861.2" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="submit-host">
+    <rect x="16" y="54" width="458" height="108.7" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="474" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">SUBMIT HOST</text>
+  </g>
+  <g class="host-zone" data-zone="storage-history">
+    <rect x="486" y="54" width="458" height="108.7" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="486" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="497" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="505" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">HDFS &amp; HISTORY</text>
+  </g>
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="174.7" width="928" height="108.7" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="196.7" x2="944" y2="196.7" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="185.7" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="188.9" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="295.3" width="928" height="108.7" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="317.3" x2="944" y2="317.3" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="306.3" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="309.5" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="yarn-client" data-to="hdfs-namenode">
+    <path d="M 325 125.2 Q 480 136.7 635 125.2" fill="none" stroke="#7aa2ff" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#7aa2ff" transform="translate(635, 125.2) rotate(-4)"/>
+  </g>
+  <g class="topo-edge" data-from="yarn-scheduler-backend" data-to="delegation-token-manager">
+    <path d="M 334 254.2 Q 367 260 400 254.2" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(400, 254.2) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="delegation-token-manager" data-to="hdfs-namenode">
+    <path d="M 560 226.9 Q 630.5 207.7 698.7 145.3" fill="none" stroke="#7aa2ff" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#7aa2ff" transform="translate(698.7, 145.3) rotate(-41.8)"/>
+  </g>
+  <g class="topo-edge" data-from="hdfs-namenode" data-to="delegation-token-manager">
+    <path d="M 635 132.4 Q 564.5 151.6 496.3 214" fill="none" stroke="#7aa2ff" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#7aa2ff" transform="translate(496.3, 214) rotate(138.2)"/>
+  </g>
+  <g class="topo-edge" data-from="delegation-token-manager" data-to="driver-scheduler-backend">
+    <path d="M 560 254.2 Q 593 260 626 254.2" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 254.2) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="driver-scheduler-backend" data-to="executor-backend">
+    <path d="M 630.7 266 Q 583.4 282.3 514.3 334.7" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(514.3, 334.7) rotate(143.2)"/>
+  </g>
+  <g class="topo-node" data-id="yarn-client">
+    <rect x="168" y="96.3" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="174" y="97.3" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="245" y="119.3" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YARN Client</text>
+    <text class="f-mono" x="245" y="133.3" text-anchor="middle" fill="#8998b4" font-size="9">edge-01</text>
+  </g>
+  <g class="topo-node" data-id="hdfs-namenode">
+    <rect x="638" y="96.3" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="644" y="97.3" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="715" y="119.3" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">HDFS NameNode</text>
+    <text class="f-mono" x="715" y="133.3" text-anchor="middle" fill="#8998b4" font-size="9">hdfs :8020</text>
+  </g>
+  <g class="topo-node" data-id="yarn-scheduler-backend">
+    <rect x="177" y="217" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="218" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="240" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YarnSchedBackend</text>
+    <text class="f-mono" x="254" y="254" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="delegation-token-manager">
+    <rect x="400" y="214" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="217" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="218" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="480" y="240" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Delegation Tokens</text>
+    <text class="f-mono" x="480" y="254" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(515, 210)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="driver-scheduler-backend">
+    <rect x="629" y="217" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="218" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="706" y="240" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DriverSchedBackend</text>
+    <text class="f-mono" x="706" y="254" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="executor-backend">
+    <rect x="403" y="337.7" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="338.7" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="360.7" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ExecutorBackend</text>
+    <text class="f-mono" x="480" y="374.7" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="480" cy="131" r="9" fill="#0d1526" stroke="#7aa2ff" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="134.2" text-anchor="middle" fill="#7aa2ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="367" cy="257.1" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="260.3" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="629.9" cy="196.9" r="9" fill="#0d1526" stroke="#7aa2ff" stroke-width="1.6"/>
+    <text class="f-mono" x="629.9" y="200.1" text-anchor="middle" fill="#7aa2ff" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="565.1" cy="162.4" r="9" fill="#0d1526" stroke="#7aa2ff" stroke-width="1.6"/>
+    <text class="f-mono" x="565.1" y="165.6" text-anchor="middle" fill="#7aa2ff" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="593" cy="257.1" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="260.3" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="577.9" cy="291.3" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="577.9" y="294.5" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#7aa2ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#7aa2ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">YARN Client -&gt; HDFS NameNode</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">nn01:8020</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">getDelegationToken (init)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">YarnSchedBackend -&gt; Delegation Tokens</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">if renewalEnabled -&gt; start()</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#7aa2ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#7aa2ff" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Delegation Tokens -&gt; HDFS NameNode</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">nn01:8020</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">doLogin + getDelegationToken</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#7aa2ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#7aa2ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">HDFS NameNode -&gt; Delegation Tokens</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">nn01:8020</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">Fresh HDFS_DELEGATION_TOKEN</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Delegation Tokens -&gt; DriverSchedBackend</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">UpdateDelegationTokens</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">DriverSchedBackend -&gt; ExecutorBackend</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">UpdateDelegationTokens</text>
+  </g>
+</g>
+</svg>

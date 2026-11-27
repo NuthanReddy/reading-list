@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">TransportContext -- Shared Netty Server, ClientFactory &amp; Zero-Copy</title>
+<desc id="topo-desc">Shared common/network-common Netty framing, SASL/AES bootstraps, connection pooling, and FileRegion ChunkFetch. 1. NettyRpcEnv to Driver Transport: new TransportContext(:41000) (driver-1 in-JVM); 2. BlockTransferSvc to TransportContext: new TransportContext(:42001) (worker-a in-JVM); 3. ExecutorBackend to Exec RPC Transport: createClient(driver-1:41000) (worker-a in-JVM); 4. Exec RPC Transport to Driver Transport: RpcRequest (control frame) (driver-1:41000); 5. TransportContext to BlockManager: getChunk() FileRegion (worker-a in-JVM); 6. Driver Transport to NettyRpcEnv: NettyRpcHandler.receive() (driver-1 in-JVM)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
+<style>
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(447px, 148.4px); color: #bfa6ff; opacity: 0; }
+  0.67% { transform: translate(447px, 148.4px); color: #bfa6ff; opacity: 1; }
+  5.17% { transform: translate(468.8px, 151px); color: #bfa6ff; opacity: 1; }
+  9.67% { transform: translate(491.2px, 151px); color: #bfa6ff; opacity: 1; }
+  14.17% { transform: translate(513px, 148.4px); color: #bfa6ff; opacity: 1; }
+  15.33% { transform: translate(513px, 148.4px); color: #bfa6ff; opacity: 0; }
+  16.00% { transform: translate(330px, 320.4px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(330px, 320.4px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(322.2px, 304.2px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(309px, 294.8px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(291px, 293px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(291px, 293px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(626px, 252.9px); color: #bfa6ff; opacity: 0; }
+  34.00% { transform: translate(626px, 252.9px); color: #bfa6ff; opacity: 1; }
+  38.50% { transform: translate(604.2px, 250.3px); color: #bfa6ff; opacity: 1; }
+  43.00% { transform: translate(581.8px, 250.3px); color: #bfa6ff; opacity: 1; }
+  47.50% { transform: translate(560px, 252.9px); color: #bfa6ff; opacity: 1; }
+  48.67% { transform: translate(560px, 252.9px); color: #bfa6ff; opacity: 0; }
+  49.33% { transform: translate(502.3px, 241px); color: #5bd3a8; opacity: 0; }
+  50.67% { transform: translate(502.3px, 241px); color: #5bd3a8; opacity: 1; }
+  55.17% { transform: translate(516.1px, 224.2px); color: #5bd3a8; opacity: 1; }
+  59.67% { transform: translate(540.1px, 193.8px); color: #5bd3a8; opacity: 1; }
+  64.17% { transform: translate(572.8px, 151.7px); color: #5bd3a8; opacity: 1; }
+  65.33% { transform: translate(572.8px, 151.7px); color: #5bd3a8; opacity: 0; }
+  66.00% { transform: translate(334px, 287px); color: #bfa6ff; opacity: 0; }
+  67.33% { transform: translate(334px, 287px); color: #bfa6ff; opacity: 1; }
+  71.83% { transform: translate(404.6px, 304.3px); color: #bfa6ff; opacity: 1; }
+  76.33% { transform: translate(465.5px, 318.7px); color: #bfa6ff; opacity: 1; }
+  80.83% { transform: translate(513px, 329.3px); color: #bfa6ff; opacity: 1; }
+  82.00% { transform: translate(513px, 329.3px); color: #bfa6ff; opacity: 0; }
+  82.67% { transform: translate(513px, 103.1px); color: #bfa6ff; opacity: 0; }
+  84.00% { transform: translate(513px, 103.1px); color: #bfa6ff; opacity: 1; }
+  88.50% { transform: translate(491.2px, 100.5px); color: #bfa6ff; opacity: 1; }
+  93.00% { transform: translate(468.8px, 100.5px); color: #bfa6ff; opacity: 1; }
+  97.50% { transform: translate(447px, 103.1px); color: #bfa6ff; opacity: 1; }
+  98.67% { transform: translate(447px, 103.1px); color: #bfa6ff; opacity: 0; }
+  100% { transform: translate(447px, 148.4px); color: #bfa6ff; opacity: 0; }
+}
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
+</style>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
+</g>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">TransportContext -- Shared Netty Server, ClientFactory &amp; Zero-Copy</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Shared common/network-common Netty framing, SASL/AES bootstraps, connection pooling, and FileRegion ChunkFetch</text>
+  <g class="channel-legend">
+    <line x1="844.2" y1="24" x2="855.2" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="855.2" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="861.2" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="121.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="187.5" width="928" height="216.5" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="209.5" x2="944" y2="209.5" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="198.5" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="201.7" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="rpc-env" data-to="driver-transport">
+    <path d="M 447 148.4 Q 480 154.2 513 148.4" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(513, 148.4) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="block-transfer-service" data-to="transport-context">
+    <path d="M 330 320.4 Q 322 290.4 291 293" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(291, 293) rotate(176.8)"/>
+  </g>
+  <g class="topo-edge" data-from="executor-backend" data-to="exec-rpc-transport">
+    <path d="M 626 252.9 Q 593 247 560 252.9" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(560, 252.9) rotate(170.6)"/>
+  </g>
+  <g class="topo-edge" data-from="exec-rpc-transport" data-to="driver-transport">
+    <path d="M 502.3 241 Q 516.1 224.9 572.8 151.7" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(572.8, 151.7) rotate(-52.2)"/>
+  </g>
+  <g class="topo-edge" data-from="transport-context" data-to="block-manager">
+    <path d="M 334 287 Q 449.6 315.8 513 329.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(513, 329.3) rotate(12.2)"/>
+  </g>
+  <g class="topo-edge" data-from="driver-transport" data-to="rpc-env">
+    <path d="M 513 103.1 Q 480 97.2 447 103.1" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(447, 103.1) rotate(170.6)"/>
+  </g>
+  <g class="topo-node" data-id="rpc-env">
+    <rect x="290" y="102.7" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="103.7" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="367" y="125.7" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">NettyRpcEnv</text>
+    <text class="f-mono" x="367" y="139.7" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="driver-transport">
+    <rect x="513" y="99.7" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="516" y="102.7" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="522" y="103.7" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="593" y="125.7" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Driver Transport</text>
+    <text class="f-mono" x="593" y="139.7" text-anchor="middle" fill="#8998b4" font-size="9">driver-1</text>
+    <g transform="translate(628, 95.7)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="transport-context">
+    <rect x="174" y="241" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="177" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="183" y="245" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TransportContext</text>
+    <text class="f-mono" x="254" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(289, 237)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="exec-rpc-transport">
+    <rect x="400" y="241" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="245" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Exec RPC Transport</text>
+    <text class="f-mono" x="480" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(515, 237)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="executor-backend">
+    <rect x="629" y="244" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="245" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="706" y="267" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ExecutorBackend</text>
+    <text class="f-mono" x="706" y="281" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="block-transfer-service">
+    <rect x="290" y="323.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="296" y="324.4" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="367" y="346.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockTransferSvc</text>
+    <text class="f-mono" x="367" y="360.4" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="block-manager">
+    <rect x="516" y="323.4" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="522" y="324.4" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="593" y="346.4" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManager</text>
+    <text class="f-mono" x="593" y="360.4" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="480" cy="151.3" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="154.5" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="321.3" cy="303" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="321.3" y="306.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="593" cy="249.9" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="253.1" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="526.8" cy="210.6" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="526.8" y="213.8" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="460.6" cy="317.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="460.6" y="320.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="480" cy="100.2" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="480" y="103.4" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 7 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">NettyRpcEnv -&gt; Driver Transport</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">new TransportContext(:41000)</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockTransferSvc -&gt; TransportContext</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">new TransportContext(:42001)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">ExecutorBackend -&gt; Exec RPC Transport</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a in-JVM</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">createClient(driver-1:41000)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Exec RPC Transport -&gt; Driver Transport</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">RpcRequest (control frame)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">TransportContext -&gt; BlockManager</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a in-JVM</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">getChunk() FileRegion</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Driver Transport -&gt; NettyRpcEnv</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">NettyRpcHandler.receive()</text>
+  </g>
+</g>
+</svg>

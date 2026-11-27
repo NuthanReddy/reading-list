@@ -1,17 +1,21 @@
-# PySpark on YARN: component design reference
+# Spark on YARN (PySpark, Scala, and Java): component design reference
 
 Use this reference to follow a call across process boundaries or to find the
-component that owns a decision. Each page starts with one worked handoff.
-Read the three steps or follow the spatial topology diagram right below them.
-The labels stay visible with motion off. If your Markdown viewer shows only a
-still image, you can also open that component's SVG directly in a browser.
+component that owns a decision across **all 71 Spark-on-YARN components**
+(covering **PySpark, Scala, and Java** execution paths). Each page starts with
+one worked handoff. Read the three steps or follow the spatial topology diagram
+right below them. The labels stay visible with motion off. If your Markdown
+viewer shows only a still image, you can also open that component's SVG
+directly in a browser.
 
-This is **classic PySpark batch execution on managed YARN**, not Spark Connect or
-Spark Standalone. The pages describe the existing implementation at
+This is **classic Spark batch execution on managed YARN** across PySpark,
+Scala, and Java (not Spark Connect or Spark Standalone). The pages describe the
+existing implementation at
 [Spark `dada2a6`](https://github.com/apache/spark/tree/dada2a6db5d73b152d6ba16e4fe21406f86abfe3).
 Hadoop service pages use [Apache Hadoop 3.4.1](https://hadoop.apache.org/docs/r3.4.1/).
-HDFS, dynamic allocation, speculation, and the external shuffle service are not
-required for every application. Ports given as defaults are not fixed deployment addresses.
+HDFS, dynamic allocation, speculation, push-based shuffle, node decommission,
+and the external shuffle service are not required for every application. Ports
+given as defaults are not fixed deployment addresses.
 
 **Companions:** [End-to-end lifecycle, discovery, and ports](../pyspark-on-yarn.md)
 and [scenarios traced through the source](../pyspark-on-yarn-scenarios.md).
@@ -26,7 +30,7 @@ and [scenarios traced through the source](../pyspark-on-yarn-scenarios.md).
 
 ![A container grant leads to executor registration; the reducer then fetches data from the serving node.](visuals/overview.svg)
 
-> **Interactive explorer:** [Open Spark Visualizer (Master Lifecycle & All 56 Map)](https://nuthanreddy.github.io/spark-visualizer/#flow=flow-cluster-lifecycle) to step through commands, wire payloads, category filters, and job/fault simulations live.
+> **Interactive explorer:** [Open Spark Visualizer (Master Lifecycle & All 71 Map)](https://nuthanreddy.github.io/spark-visualizer/#flow=flow-cluster-lifecycle) to switch globally between **PySpark**, **Scala**, and **Java** (`#lang=pyspark|scala|java`) and step through commands, wire payloads, category filters, and multi-language job/fault simulations live.
 
 ## Follow a record, not just a class name
 
@@ -87,16 +91,19 @@ service on the producer node instead of the original executor.
 | [HDFS NameNode](hdfs-namenode.md) | Where does a client get namespace and block-location metadata? |
 | [HDFS DataNode](hdfs-datanode.md) | Which process serves file bytes and participates in replicated block writes? |
 
-### 3. The driver: two processes, different responsibilities
+### 3. The driver: process boundaries, JVM entry, and core runtime services
 
 | Component | Decision or handoff to look for |
 |---|---|
 | [Spark driver JVM](spark-driver.md) | Which responsibilities share an application lifetime and failure boundary? |
 | [Python driver](python-driver.md) | Who runs the script's top-level code and observes its exit? |
 | [Py4J gateway](py4j-gateway.md) | How does a Python driver call its local JVM without sending that call directly to executors? |
+| [JVM User Application (`--class`)](jvm-user-app.md) | How does Scala/Java `--class` run `main()` directly in-JVM with `__app__.jar` and zero Python/Py4J boundary? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=jvm-user-app&lang=scala)) |
 | [SparkSession](spark-session.md) | Which SQL state belongs to a session, and what can two sessions share? |
 | [SparkContext](spark-context.md) | Who initializes application services, submits RDD work, and coordinates shutdown? |
 | [SparkEnv](spark-env.md) | How does a driver or executor obtain its own RPC, serializer, storage, and shuffle services? |
+| [HadoopDelegationTokenManager](delegation-token-manager.md) | When are Kerberos/HDFS delegation tokens renewed at 75% lifetime and fanned out via `UpdateDelegationTokens` RPC? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=delegation-token-manager)) |
+| [SerializerManager (Kryo / Java)](serializer-manager.md) | How does data serialization (`KryoSerializer` / `JavaSerializer` + LZ4/AES stream wrapping) stay separate from `closureSerializer`? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=serializer-manager)) |
 
 ### 4. Scheduling: from dependencies to a launch message
 
@@ -107,8 +114,9 @@ service on the producer node instead of the original executor.
 | [TaskSetManager](task-set-manager.md) | Which partition attempt gets a slot? Which failures count, and which duplicate result wins? |
 | [CoarseGrainedSchedulerBackend](driver-scheduler-backend.md) | Who tracks registered executor resources and sends `LaunchTask`? |
 | [YarnSchedulerBackend](yarn-scheduler-backend.md) | How do capacity requests and executor loss reasons cross the driver/AM boundary? |
+| [HealthTracker (ExcludeOnFailure)](health-tracker.md) | When does driver-side `ExcludeOnFailure` block failing executors/nodes from offers and sync exclusions to YARN AM? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=health-tracker)) |
 
-### 5. Executor runtime and control messages
+### 5. Executor runtime, transport, and control messages
 
 | Component | Decision or handoff to look for |
 |---|---|
@@ -117,6 +125,8 @@ service on the producer node instead of the original executor.
 | [Task attempt](task-attempt.md) | What is per-attempt state, and how does interruption differ from normal completion? |
 | [TaskResultGetter](task-result-getter.md) | When does a status update contain the result, and when must the driver fetch a block? |
 | [RpcEnv](rpc-env.md) | What is a named endpoint rather than a TCP listener, and how do replies find the caller? |
+| [RPC File Server (`NettyStreamManager`)](rpc-file-server.md) | How do `sc.addFile()` and `sc.addJar()` stream dynamic dependencies over Driver `RpcEnv` to `SparkFiles.get()`? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=rpc-file-server)) |
+| [Netty `TransportContext`](transport-context.md) | How does shared `network-common` framing, SASL/AES bootstrap, pooling, and zero-copy `FileRegion` back RPC, block transfer, and ESS? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=transport-context)) |
 
 ### 6. Capacity, liveness, and observation
 
@@ -126,23 +136,27 @@ service on the producer node instead of the original executor.
 | [ExecutorMonitor](executor-monitor.md) | Which idle executors can be considered for removal given cached and shuffle state? |
 | [HeartbeatReceiver](heartbeat-receiver.md) | When does the driver expire an executor independently of YARN node health? |
 | [LiveListenerBus](listener-bus.md) | How do scheduler events reach listeners without turning an observation into a scheduling command? |
+| [AppStatusStore & KVStore](app-status-store.md) | How does `AppStatusListener` populate live `ElementTrackingStore` (in-memory or RocksDB) for Spark UI, distinct from History Server replay? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=app-status-store)) |
 | [Spark event log](event-log.md) | What structured events are written for replay, as distinct from container stdout/stderr? |
 | [Live Spark UI](spark-ui.md) | Which driver-side state explains a running job, stage, SQL execution, or executor? |
 | [Spark History Server](history-server.md) | What can a separate service reconstruct after the driver is gone, and what evidence can be missing? |
 | [MetricsSystem](metrics-system.md) | How do driver, executor, and AM JVMs each wire Dropwizard sources to local sinks and UI servlets? |
 | [ExecutorMetricsPoller](executor-metrics-poller.md) | How are executor memory and `/proc` peaks sampled, cached for Dropwizard, and shipped via heartbeats? |
 
-### 7. Block storage and reuse
+### 7. Memory, block storage, cleanup, and migration
 
 | Component | Decision or handoff to look for |
 |---|---|
+| [UnifiedMemoryManager & TaskMemoryManager](memory-manager.md) | How do execution and storage pools borrow, evict cached RDD blocks, and trigger `UnsafeExternalSorter` spill (while excluding external Python RSS)? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=memory-manager)) |
 | [BlockManager](block-manager.md) | Who stores bytes locally and falls back to other locations? |
 | [BlockManagerMaster](block-manager-master.md) | Who tracks block managers and reported block locations without proxying the data? |
 | [NettyBlockTransferService](block-transfer-service.md) | Which listener serves incoming block transfers, separate from scheduler RPC? |
 | [Persisted RDD partition path](rdd-cache.md) | What happens to one partition on a local hit, remote hit, or complete miss? |
 | [BroadcastManager](broadcast-manager.md) | How does a reusable broadcast value become pieces that executors can fetch? |
+| [ContextCleaner](context-cleaner.md) | How does driver `WeakReference` GC asynchronously drive RDD, shuffle, and broadcast cleanup across executors? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=context-cleaner)) |
+| [BlockManagerDecommissioner](block-manager-decommissioner.md) | How are RDD and shuffle blocks migrated to peer BlockManagers during YARN node decommission (ESS OFF)? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=block-manager-decommissioner)) |
 
-### 8. Shuffle: directory, files, and fetch
+### 8. Shuffle: directory, files, push-merge, and fetch
 
 | Component | Decision or handoff to look for |
 |---|---|
@@ -152,18 +166,22 @@ service on the producer node instead of the original executor.
 | [Shuffle reader](shuffle-reader.md) | How are local and remote reads selected, fetched, and consumed? |
 | [Shuffle block resolver](shuffle-block-resolver.md) | How does a logical shuffle block become a segment of a physical file? |
 | [External shuffle service](external-shuffle-service.md) | When can shuffle data still be served after its executor exits? |
+| [Push-Based Shuffle (Pusher & Merger)](push-based-shuffle.md) | How do map executors push shuffle blocks to ESS `RemoteBlockPushResolver` mergers for sequential reads with unmerged fallback? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=push-based-shuffle)) |
 
-### 9. SQL planning and physical execution
+### 9. SQL planning, codegen, and physical execution
 
 | Component | Decision or handoff to look for |
 |---|---|
+| [SessionCatalog & CatalogManager](session-catalog.md) | How are multi-part V1/V2 table names, temp views, and functions resolved via `InMemoryCatalog` or optional `HiveExternalCatalog`? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=session-catalog)) |
 | [Spark SQL planner](sql-planner.md) | How do logical operations become an executable physical plan rather than task assignments? |
+| [WholeStageCodegen (Janino)](whole-stage-codegen.md) | How does `CollapseCodegenStages` emit and Janino-compile fused `BufferedRowIterator` loops on driver trial and executors? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=whole-stage-codegen)) |
 | [Adaptive Query Execution](adaptive-query-execution.md) | Which decisions can change after a query stage materializes? |
 | [Broadcast exchange](broadcast-exchange.md) | Who materializes the build side for distribution? |
 | [Broadcast hash join](broadcast-hash-join.md) | Who probes that relation, and why need the large side not shuffle for the join? |
+| [Dataset Encoders & JVM UDFs](dataset-encoder-udf.md) | How do `ExpressionEncoder` / `Encoders.bean()` and in-JVM Scala/Java UDFs (plus PySpark `registerJavaFunction`) run with zero Python IPC? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=dataset-encoder-udf)) |
 | [Python UDF physical operator](python-udf-operator.md) | Which inputs cross the JVM/Python boundary, and how are results associated with rows? |
 
-### 10. Python workers and durable output
+### 10. Python workers and durable output (V1 & DataSource V2)
 
 | Component | Decision or handoff to look for |
 |---|---|
@@ -173,6 +191,7 @@ service on the producer node instead of the original executor.
 | [FileFormatWriter](file-format-writer.md) | How does a V1 file write collect task outcomes before invoking job commit? |
 | [File commit protocol](file-commit-protocol.md) | What belongs to task commit versus job commit, and what does abort guarantee? |
 | [OutputCommitCoordinator](output-commit-coordinator.md) | When authorization is used, which competing task attempt may commit? |
+| [DataSource V2 (Scan & BatchWrite)](datasource-v2.md) | How do explicit V2 `TableProvider` connectors (Iceberg, Delta, Kafka) run `PartitionReader`/`DataWriter` and driver `BatchWrite.commit()`? ([Interactive trace](https://nuthanreddy.github.io/spark-visualizer/#component=datasource-v2)) |
 
 ## Choose the right evidence
 

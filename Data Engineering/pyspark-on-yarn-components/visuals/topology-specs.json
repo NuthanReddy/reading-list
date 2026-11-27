@@ -1,7 +1,7 @@
 {
   "overview": {
     "slug": "overview",
-    "title": "PySpark on YARN — End-to-End Cluster & Shuffle Architecture",
+    "title": "PySpark on YARN -- End-to-End Cluster & Shuffle Architecture",
     "subtitle": "Submission, AM & Python bootstrap, RM registration, executor RPC, cross-worker shuffle fetch, and driver HDFS commit across all 6 host zones",
     "focusComponentId": null,
     "nodes": [
@@ -3196,6 +3196,14 @@
     "focusComponentId": "rpc-env",
     "nodes": [
       {
+        "id": "executor-backend",
+        "componentId": "executor-backend",
+        "shortLabel": "ExecutorBackend",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
         "id": "rpc-env",
         "componentId": "rpc-env",
         "shortLabel": "NettyRpcEnv",
@@ -3204,17 +3212,9 @@
         "subsystem": "executor-rpc"
       },
       {
-        "id": "task-result-getter",
-        "componentId": "task-result-getter",
-        "shortLabel": "TaskResultGetter",
-        "hostZone": "driver-jvm",
-        "hostLabel": "driver-1 (AM)",
-        "subsystem": "executor-rpc"
-      },
-      {
-        "id": "executor-backend",
-        "componentId": "executor-backend",
-        "shortLabel": "ExecutorBackend",
+        "id": "exec-rpc-env",
+        "componentId": "rpc-env",
+        "shortLabel": "Exec RpcEnv",
         "hostZone": "worker-node-a",
         "hostLabel": "worker-a",
         "subsystem": "executor-rpc"
@@ -3226,6 +3226,14 @@
         "hostZone": "driver-jvm",
         "hostLabel": "driver-1 (AM)",
         "subsystem": "scheduling"
+      },
+      {
+        "id": "task-result-getter",
+        "componentId": "task-result-getter",
+        "shortLabel": "TaskResultGetter",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "executor-rpc"
       },
       {
         "id": "block-transfer-service",
@@ -3264,7 +3272,7 @@
       {
         "index": 3,
         "from": "driver-scheduler-backend",
-        "to": "rpc-env",
+        "to": "exec-rpc-env",
         "channel": "rpc",
         "protocol": "Spark Netty RPC (Reverse Send)",
         "port": "driver-1:41000",
@@ -3275,12 +3283,12 @@
       },
       {
         "index": 4,
-        "from": "rpc-env",
+        "from": "exec-rpc-env",
         "to": "executor-backend",
-        "channel": "rpc",
+        "channel": "internal",
         "protocol": "In-JVM Dispatcher -> Inbox",
-        "port": "worker-a:ephemeral",
-        "label": "Deliver LaunchTask -> Inbox",
+        "port": "worker-a JVM",
+        "label": "Dispatcher -> Inbox",
         "isError": false,
         "kind": "wire",
         "peerTag": null
@@ -3553,7 +3561,7 @@
   },
   "heartbeat-receiver": {
     "slug": "heartbeat-receiver",
-    "title": "HeartbeatReceiver — Executor Liveness & Metrics",
+    "title": "HeartbeatReceiver -- Executor Liveness & Metrics",
     "subtitle": "Driver receipt-clock liveness checks, in-flight metrics forwarding, and 180s timeout expiry",
     "focusComponentId": "heartbeat-receiver",
     "nodes": [
@@ -3683,7 +3691,7 @@
   },
   "listener-bus": {
     "slug": "listener-bus",
-    "title": "LiveListenerBus — Async Queue Fan-Out",
+    "title": "LiveListenerBus -- Async Queue Fan-Out",
     "subtitle": "Non-blocking offer() fan-out from DAGScheduler to isolated per-queue daemon threads",
     "focusComponentId": "listener-bus",
     "nodes": [
@@ -3813,7 +3821,7 @@
   },
   "event-log": {
     "slug": "event-log",
-    "title": "EventLoggingListener — Rolling HDFS Event Log",
+    "title": "EventLoggingListener -- Rolling HDFS Event Log",
     "subtitle": "NDJSON encoding via JsonProtocol, rolling v2 segments, stage hflush(), and status marker rename",
     "focusComponentId": "event-log",
     "nodes": [
@@ -3935,7 +3943,7 @@
   },
   "spark-ui": {
     "slug": "spark-ui",
-    "title": "Live SparkUI — Driver AppStatusStore & Jetty",
+    "title": "Live SparkUI -- Driver AppStatusStore & Jetty",
     "subtitle": "Driver-hosted status store serving stage attempts and REST API without polling executors or logs",
     "focusComponentId": "spark-ui",
     "nodes": [
@@ -4065,7 +4073,7 @@
   },
   "history-server": {
     "slug": "history-server",
-    "title": "HistoryServer — Cold Log Replay & UI Rebuild",
+    "title": "HistoryServer -- Cold Log Replay & UI Rebuild",
     "subtitle": "Separate operator daemon (:18080) scanning HDFS logs and rebuilding driverless SparkUIs via ReplayListenerBus",
     "focusComponentId": "history-server",
     "nodes": [
@@ -4187,7 +4195,7 @@
   },
   "block-manager": {
     "slug": "block-manager",
-    "title": "BlockManager — Local Tiering, Locking & Eviction",
+    "title": "BlockManager -- Local Tiering, Locking & Eviction",
     "subtitle": "Per-JVM storage engine managing BlockInfoManager locks, MemoryStore/DiskStore fallback, and peer fetch",
     "focusComponentId": "block-manager",
     "nodes": [
@@ -4309,7 +4317,7 @@
   },
   "block-manager-master": {
     "slug": "block-manager-master",
-    "title": "BlockManagerMaster — Driver Block Directory",
+    "title": "BlockManagerMaster -- Driver Block Directory",
     "subtitle": "Metadata-only location index, preferred-location lookup, heartbeat membership, and RemoveRdd fan-out",
     "focusComponentId": "block-manager-master",
     "nodes": [
@@ -4439,7 +4447,7 @@
   },
   "block-transfer-service": {
     "slug": "block-transfer-service",
-    "title": "NettyBlockTransferService — StreamHandle & Chunks",
+    "title": "NettyBlockTransferService -- StreamHandle & Chunks",
     "subtitle": "Two-phase OpenBlocks -> StreamHandle -> ChunkFetchRequest wire protocol and UploadBlock replication",
     "focusComponentId": "block-transfer-service",
     "nodes": [
@@ -4561,7 +4569,7 @@
   },
   "rdd-cache": {
     "slug": "rdd-cache",
-    "title": "RDD Cache — Lazy Persist & getOrCompute(rdd_17_3)",
+    "title": "RDD Cache -- Lazy Persist & getOrCompute(rdd_17_3)",
     "subtitle": "Driver persistence intent vs per-partition executor read-or-compute decision and uncached fallback",
     "focusComponentId": "rdd-cache",
     "nodes": [
@@ -4574,27 +4582,11 @@
         "subsystem": "driver-runtime"
       },
       {
-        "id": "rdd-cache",
+        "id": "driver-rdd-cache",
         "componentId": "rdd-cache",
-        "shortLabel": "RDD Cache",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "block-storage"
-      },
-      {
-        "id": "task-attempt",
-        "componentId": "task-attempt",
-        "shortLabel": "Task Attempt",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "executor-rpc"
-      },
-      {
-        "id": "block-manager",
-        "componentId": "block-manager",
-        "shortLabel": "BlockManager",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
+        "shortLabel": "Driver RDD",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1",
         "subsystem": "block-storage"
       },
       {
@@ -4612,86 +4604,104 @@
         "hostZone": "driver-jvm",
         "hostLabel": "driver-1 (AM)",
         "subsystem": "block-storage"
+      },
+      {
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Task Attempt",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "rdd-cache",
+        "componentId": "rdd-cache",
+        "shortLabel": "RDD Cache",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-manager",
+        "componentId": "block-manager",
+        "shortLabel": "BlockManager",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
       }
     ],
     "hops": [
       {
-        "index": 1,
+        "num": 1,
         "from": "python-driver",
-        "to": "dag-scheduler",
+        "to": "driver-rdd-cache",
         "channel": "python",
+        "kind": "wire",
+        "label": "rdd.persist(MEM_DISK)",
         "protocol": "Py4J -> JVM RDD",
         "port": "127.0.0.1:ephemeral",
-        "label": "rdd.persist(MEM_DISK)",
-        "isError": false,
-        "kind": "wire",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 2,
+        "num": 2,
         "from": "dag-scheduler",
         "to": "block-manager-master",
         "channel": "internal",
+        "kind": "local",
+        "label": "getLocations(rdd_17_3)",
         "protocol": "In-JVM Query",
         "port": "in-JVM",
-        "label": "getLocations(rdd_17_3)",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 3,
+        "num": 3,
         "from": "task-attempt",
         "to": "rdd-cache",
         "channel": "internal",
+        "kind": "local",
+        "label": "getOrCompute(rdd_17_3)",
         "protocol": "In-JVM Iterator",
         "port": "in-JVM",
-        "label": "getOrCompute(rdd_17_3)",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 4,
+        "num": 4,
         "from": "rdd-cache",
         "to": "block-manager",
         "channel": "internal",
+        "kind": "local",
+        "label": "get(rdd_17_3) -> Miss",
         "protocol": "In-JVM Lookup",
         "port": "in-JVM",
-        "label": "get(rdd_17_3) -> Miss",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 5,
+        "num": 5,
         "from": "rdd-cache",
         "to": "block-manager",
         "channel": "internal",
+        "kind": "local",
+        "label": "putIterator(rdd_17_3)",
         "protocol": "BlockInfoManager",
         "port": "in-JVM",
-        "label": "putIterator(rdd_17_3)",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 6,
+        "num": 6,
         "from": "block-manager",
         "to": "block-manager-master",
         "channel": "rpc",
+        "kind": "wire",
+        "label": "UpdateBlockInfo(stored)",
         "protocol": "Spark Netty RPC",
         "port": ":41000",
-        "label": "UpdateBlockInfo(stored)",
-        "isError": false,
-        "kind": "wire",
-        "peerTag": null
+        "isError": false
       }
     ]
   },
   "broadcast-manager": {
     "slug": "broadcast-manager",
-    "title": "BroadcastManager — TorrentBroadcast Piece Distribution",
+    "title": "BroadcastManager -- TorrentBroadcast Piece Distribution",
     "subtitle": "Driver seeding 4 MiB checksummed pieces, randomized P2P peer fetch, and ordered reassembly",
     "focusComponentId": "broadcast-manager",
     "nodes": [
@@ -4829,7 +4839,7 @@
   },
   "map-output-tracker-master": {
     "slug": "map-output-tracker-master",
-    "title": "MapOutputTrackerMaster — Driver Shuffle Directory",
+    "title": "MapOutputTrackerMaster -- Driver Shuffle Directory",
     "subtitle": "Logical mapIndex slots, physical mapId attempt tracking, snapshot serialization, and epoch invalidation",
     "focusComponentId": "map-output-tracker-master",
     "nodes": [
@@ -4959,7 +4969,7 @@
   },
   "map-output-tracker-worker": {
     "slug": "map-output-tracker-worker",
-    "title": "MapOutputTrackerWorker — Executor Lookup Cache",
+    "title": "MapOutputTrackerWorker -- Executor Lookup Cache",
     "subtitle": "Epoch-driven invalidation, KeyLock dedup, zero-size skipping vs null MetadataFetchFailedException",
     "focusComponentId": "map-output-tracker-worker",
     "nodes": [
@@ -5081,7 +5091,7 @@
   },
   "shuffle-writer": {
     "slug": "shuffle-writer",
-    "title": "ShuffleWriter — Partition, Spill & MapStatus",
+    "title": "ShuffleWriter -- Partition, Spill & MapStatus",
     "subtitle": "BypassMergeSort / Unsafe / Sort writer selection, contiguous reduce segments, and local commit",
     "focusComponentId": "shuffle-writer",
     "nodes": [
@@ -5203,7 +5213,7 @@
   },
   "shuffle-reader": {
     "slug": "shuffle-reader",
-    "title": "BlockStoreShuffleReader — Pull Fetch & Decode",
+    "title": "BlockStoreShuffleReader -- Pull Fetch & Decode",
     "subtitle": "Local/host-local/remote split, bounded in-flight Netty fetch, reduce-side combine, and FetchFailedException",
     "focusComponentId": "shuffle-reader",
     "nodes": [
@@ -5333,7 +5343,7 @@
   },
   "shuffle-block-resolver": {
     "slug": "shuffle-block-resolver",
-    "title": "IndexShuffleBlockResolver — _0 Index & Byte Ranges",
+    "title": "IndexShuffleBlockResolver -- _0 Index & Byte Ranges",
     "subtitle": "Mapping logical shuffle_7_41_2 to shuffle_7_41_0.index/.data offsets [40, 65) and 25 B FileSegment",
     "focusComponentId": "shuffle-block-resolver",
     "nodes": [
@@ -5455,7 +5465,7 @@
   },
   "external-shuffle-service": {
     "slug": "external-shuffle-service",
-    "title": "YarnShuffleService (ESS) — Post-Exit Shuffle Serving",
+    "title": "YarnShuffleService (ESS) -- Post-Exit Shuffle Serving",
     "subtitle": "NodeManager auxiliary service (:7337) serving local map files even after producer executors exit",
     "focusComponentId": "external-shuffle-service",
     "nodes": [
@@ -5585,7 +5595,7 @@
   },
   "sql-planner": {
     "slug": "sql-planner",
-    "title": "SparkPlanner — Logical Plan to Prepared SparkPlan",
+    "title": "SparkPlanner -- Logical Plan to Prepared SparkPlan",
     "subtitle": "JoinSelection build-side rules, first-candidate selection, EnsureRequirements, and RDD handoff",
     "focusComponentId": "sql-planner",
     "nodes": [
@@ -5715,7 +5725,7 @@
   },
   "adaptive-query-execution": {
     "slug": "adaptive-query-execution",
-    "title": "AdaptiveSparkPlanExec — Skew Split & Replanning",
+    "title": "AdaptiveSparkPlanExec -- Skew Split & Replanning",
     "subtitle": "Runtime MapOutputStatistics feedback loop, 640 MiB skew split into PartialReducerPartitionSpecs",
     "focusComponentId": "adaptive-query-execution",
     "nodes": [
@@ -5845,7 +5855,7 @@
   },
   "broadcast-exchange": {
     "slug": "broadcast-exchange",
-    "title": "BroadcastExchangeExec — Driver HashedRelation Build",
+    "title": "BroadcastExchangeExec -- Driver HashedRelation Build",
     "subtitle": "Async executeCollectIterator(), LongHashedRelation build, 8 GiB post-build guard, serializedOnly broadcast",
     "focusComponentId": "broadcast-exchange",
     "nodes": [
@@ -5975,18 +5985,10 @@
   },
   "broadcast-hash-join": {
     "slug": "broadcast-hash-join",
-    "title": "BroadcastHashJoinExec — Per-Partition Probe & Residuals",
+    "title": "BroadcastHashJoinExec -- Per-Partition Probe & Residuals",
     "subtitle": "Shared asReadOnlyCopy() hash table, multi-match probing, residual predicate filtering, and NULL padding",
     "focusComponentId": "broadcast-hash-join",
     "nodes": [
-      {
-        "id": "task-attempt",
-        "componentId": "task-attempt",
-        "shortLabel": "Task Attempt",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "executor-rpc"
-      },
       {
         "id": "broadcast-exchange",
         "componentId": "broadcast-exchange",
@@ -5996,119 +5998,121 @@
         "subsystem": "sql-execution"
       },
       {
-        "id": "file-format-writer",
-        "componentId": "file-format-writer",
-        "shortLabel": "FileFormatWriter",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "python-output"
+        "id": "driver-bhj",
+        "componentId": "broadcast-hash-join",
+        "shortLabel": "BHJ (Driver)",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1",
+        "subsystem": "sql-execution"
       },
       {
-        "id": "exec-bm",
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Probe Task",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "broadcast-manager",
         "componentId": "broadcast-manager",
         "shortLabel": "Exec BroadcastMgr",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
         "subsystem": "block-storage"
       },
       {
         "id": "broadcast-hash-join",
         "componentId": "broadcast-hash-join",
         "shortLabel": "BroadcastHashJoin",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
         "subsystem": "sql-execution"
+      },
+      {
+        "id": "file-format-writer",
+        "componentId": "file-format-writer",
+        "shortLabel": "FileFormatWriter",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "python-output"
       }
     ],
     "hops": [
       {
-        "index": 1,
+        "num": 1,
         "from": "broadcast-exchange",
-        "to": "broadcast-hash-join",
-        "channel": "rpc",
-        "protocol": "Spark Netty RPC (Task Closure)",
-        "port": "driver-1 -> worker-a",
+        "to": "driver-bhj",
+        "channel": "internal",
+        "kind": "local",
         "label": "Broadcast[HashedRelation]",
-        "isError": false,
-        "kind": "wire",
-        "peerTag": null
+        "protocol": "In-JVM Handle",
+        "port": "in-JVM",
+        "isError": false
       },
       {
-        "index": 2,
+        "num": 2,
         "from": "task-attempt",
-        "to": "exec-bm",
+        "to": "broadcast-manager",
         "channel": "internal",
+        "kind": "local",
+        "label": "Resolve HashedRelation",
         "protocol": "TorrentBroadcast.value",
         "port": "in-JVM",
-        "label": "Resolve HashedRelation",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 3,
-        "from": "exec-bm",
+        "num": 3,
+        "from": "broadcast-manager",
         "to": "broadcast-hash-join",
         "channel": "internal",
+        "kind": "local",
+        "label": "Shared backing hash map",
         "protocol": "asReadOnlyCopy()",
         "port": "in-JVM",
-        "label": "Shared backing hash map",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 4,
+        "num": 4,
         "from": "broadcast-hash-join",
         "to": "broadcast-hash-join",
         "channel": "internal",
+        "kind": "local",
+        "label": "Probe k=7 -> 2 matches",
         "protocol": "WholeStageCodegen",
         "port": "in-JVM",
-        "label": "Probe k=7 -> 2 matches",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 5,
+        "num": 5,
         "from": "broadcast-hash-join",
         "to": "broadcast-hash-join",
         "channel": "internal",
+        "kind": "local",
+        "label": "Miss/Residual -> NULL row",
         "protocol": "LeftOuter Residual",
         "port": "in-JVM",
-        "label": "Miss/Residual -> NULL row",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 6,
+        "num": 6,
         "from": "broadcast-hash-join",
         "to": "file-format-writer",
         "channel": "internal",
+        "kind": "local",
+        "label": "Emit joined InternalRows",
         "protocol": "RDD[InternalRow] Pipe",
         "port": "in-JVM",
-        "label": "Emit joined InternalRows",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       }
     ]
   },
   "python-udf-operator": {
     "slug": "python-udf-operator",
-    "title": "EvalPythonExec — Crossing the Executor JVM Boundary",
+    "title": "EvalPythonExec -- Crossing the Executor JVM Boundary",
     "subtitle": "ExtractPythonUDFs, FIFO HybridRowQueue pass-through alignment, pickled/Arrow batches, and JVM Filter",
     "focusComponentId": "python-udf-operator",
     "nodes": [
-      {
-        "id": "task-attempt",
-        "componentId": "task-attempt",
-        "shortLabel": "Task Attempt",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "executor-rpc"
-      },
       {
         "id": "sql-planner",
         "componentId": "sql-planner",
@@ -6118,116 +6122,126 @@
         "subsystem": "sql-execution"
       },
       {
+        "id": "driver-udf-plan",
+        "componentId": "python-udf-operator",
+        "shortLabel": "UDF Plan",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "python-udf-operator",
+        "componentId": "python-udf-operator",
+        "shortLabel": "Python UDF Exec",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "sql-execution"
+      },
+      {
         "id": "block-manager",
         "componentId": "block-manager",
-        "shortLabel": "BlockManager",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
+        "shortLabel": "Exec-2 BM",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b:42002",
         "subsystem": "block-storage"
       },
       {
         "id": "python-runner",
         "componentId": "python-runner",
         "shortLabel": "BasePythonRunner",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
         "subsystem": "python-output"
-      },
-      {
-        "id": "python-udf-operator",
-        "componentId": "python-udf-operator",
-        "shortLabel": "Python UDF Exec",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "sql-execution"
       },
       {
         "id": "python-worker",
         "componentId": "python-worker",
         "shortLabel": "Python Worker",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
         "subsystem": "python-output"
+      },
+      {
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Exec-2 Task",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "executor-rpc"
       }
     ],
     "hops": [
       {
-        "index": 1,
+        "num": 1,
         "from": "sql-planner",
-        "to": "python-udf-operator",
-        "channel": "rpc",
-        "protocol": "ExtractPythonUDFs / LaunchTask",
-        "port": "driver-1 -> worker-a",
+        "to": "driver-udf-plan",
+        "channel": "internal",
+        "kind": "local",
         "label": "Plan BatchEvalPythonExec",
-        "isError": false,
-        "kind": "wire",
-        "peerTag": null
+        "protocol": "ExtractPythonUDFs",
+        "port": "in-JVM",
+        "isError": false
       },
       {
-        "index": 2,
+        "num": 2,
         "from": "python-udf-operator",
         "to": "block-manager",
         "channel": "internal",
+        "kind": "local",
+        "label": "Buffer order_id (FIFO)",
         "protocol": "HybridRowQueue",
         "port": "local-disk",
-        "label": "Buffer order_id (FIFO)",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 3,
+        "num": 3,
         "from": "python-udf-operator",
         "to": "python-runner",
         "channel": "internal",
+        "kind": "local",
+        "label": "Pickle status batch",
         "protocol": "SQL_BATCHED_UDF",
         "port": "in-JVM",
-        "label": "Pickle status batch",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 4,
+        "num": 4,
         "from": "python-runner",
         "to": "python-worker",
         "channel": "python",
+        "kind": "wire",
+        "label": "Send [\"PAID\",None,\"OPEN\"]",
         "protocol": "Loopback TCP Socket",
         "port": "127.0.0.1:ephemeral",
-        "label": "Send [\"PAID\",None,\"OPEN\"]",
-        "isError": false,
-        "kind": "wire",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 5,
+        "num": 5,
         "from": "python-worker",
         "to": "python-runner",
         "channel": "python",
+        "kind": "wire",
+        "label": "Return [True,None,False]",
         "protocol": "Loopback TCP Socket",
         "port": "127.0.0.1:ephemeral",
-        "label": "Return [True,None,False]",
-        "isError": false,
-        "kind": "wire",
-        "peerTag": null
+        "isError": false
       },
       {
-        "index": 6,
+        "num": 6,
         "from": "python-udf-operator",
         "to": "task-attempt",
         "channel": "internal",
+        "kind": "local",
+        "label": "Join & filter -> order 41",
         "protocol": "JoinedRow + Filter",
         "port": "in-JVM",
-        "label": "Join & filter -> order 41",
-        "isError": false,
-        "kind": "local",
-        "peerTag": null
+        "isError": false
       }
     ]
   },
   "python-worker-factory": {
     "slug": "python-worker-factory",
-    "title": "PythonWorkerFactory — Daemon Fork & Idle Pool Reuse",
+    "title": "PythonWorkerFactory -- Daemon Fork & Idle Pool Reuse",
     "subtitle": "Executor-local pyspark.daemon spawn, child fork + PID/secret handshake, and FIFO idle worker checkout",
     "focusComponentId": "python-worker-factory",
     "nodes": [
@@ -6349,7 +6363,7 @@
   },
   "python-worker": {
     "slug": "python-worker",
-    "title": "pyspark.worker — One Partition Invocation Loop",
+    "title": "pyspark.worker -- One Partition Invocation Loop",
     "subtitle": "Init frame & Python version check, broadcast delta sync, mapPartitions [4,9]->[5,10], and reuse handshake",
     "focusComponentId": "python-worker",
     "nodes": [
@@ -6471,7 +6485,7 @@
   },
   "python-runner": {
     "slug": "python-runner",
-    "title": "BasePythonRunner — Non-Blocking NIO Socket Exchange",
+    "title": "BasePythonRunner -- Non-Blocking NIO Socket Exchange",
     "subtitle": "Executor-side compute() -> InterruptibleIterator, NIO Selector duplex I/O, and CAS worker release",
     "focusComponentId": "python-runner",
     "nodes": [
@@ -6593,7 +6607,7 @@
   },
   "file-format-writer": {
     "slug": "file-format-writer",
-    "title": "FileFormatWriter — V1 Partitioned Parquet Write",
+    "title": "FileFormatWriter -- V1 Partitioned Parquet Write",
     "subtitle": "Schema validation, WriteJobDescription, maxRecordsPerFile=2 rollover (3 files), and WriteTaskResult",
     "focusComponentId": "file-format-writer",
     "nodes": [
@@ -6723,7 +6737,7 @@
   },
   "file-commit-protocol": {
     "slug": "file-commit-protocol",
-    "title": "SQLHadoopMapReduceCommitProtocol — Dynamic Staging",
+    "title": "SQLHadoopMapReduceCommitProtocol -- Dynamic Staging",
     "subtitle": ".spark-staging-<uuid>, transient executor FileOutputCommitter, OutputCommitCoordinator gate, & dir swap",
     "focusComponentId": "file-commit-protocol",
     "nodes": [
@@ -6861,7 +6875,7 @@
   },
   "output-commit-coordinator": {
     "slug": "output-commit-coordinator",
-    "title": "OutputCommitCoordinator — Speculative Attempt Race",
+    "title": "OutputCommitCoordinator -- Speculative Attempt Race",
     "subtitle": "First-eligible-asker permission gate for (stage=17, partition=7), TaskCommitDenied, and owner slot clearing",
     "focusComponentId": "output-commit-coordinator",
     "nodes": [
@@ -6991,7 +7005,7 @@
   },
   "metrics-system": {
     "slug": "metrics-system",
-    "title": "MetricsSystem — Per-JVM Dropwizard Sources, Sinks & Servlets",
+    "title": "MetricsSystem -- Per-JVM Dropwizard Sources, Sinks & Servlets",
     "subtitle": "Driver, Executor & AM MetricsSystem bootstrap, internal Source registration, SparkUI /metrics/* mount, and stop cleanup",
     "focusComponentId": "metrics-system",
     "nodes": [
@@ -6999,6 +7013,14 @@
         "id": "spark-env",
         "componentId": "spark-env",
         "shortLabel": "SparkEnv",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "spark-context",
+        "componentId": "spark-context",
+        "shortLabel": "SparkContext",
         "hostZone": "driver-jvm",
         "hostLabel": "driver-1 (AM)",
         "subsystem": "driver-runtime"
@@ -7020,20 +7042,12 @@
         "subsystem": "submission"
       },
       {
-        "id": "spark-context",
-        "componentId": "spark-context",
-        "shortLabel": "SparkContext",
-        "hostZone": "driver-jvm",
-        "hostLabel": "driver-1 (AM)",
-        "subsystem": "driver-runtime"
-      },
-      {
-        "id": "metrics-system",
-        "componentId": "metrics-system",
-        "shortLabel": "Driver MetricsSys",
-        "hostZone": "driver-jvm",
-        "hostLabel": "driver-1 (AM)",
-        "subsystem": "observability"
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
       },
       {
         "id": "spark-ui",
@@ -7044,17 +7058,17 @@
         "subsystem": "observability"
       },
       {
-        "id": "executor",
-        "componentId": "executor",
-        "shortLabel": "Executor",
-        "hostZone": "worker-node-a",
-        "hostLabel": "worker-a",
-        "subsystem": "executor-rpc"
+        "id": "metrics-system",
+        "componentId": "metrics-system",
+        "shortLabel": "MetricsSystem",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
       },
       {
         "id": "exec-metrics-system",
         "componentId": "metrics-system",
-        "shortLabel": "Exec MetricsSys",
+        "shortLabel": "Exec Metrics",
         "hostZone": "worker-node-a",
         "hostLabel": "worker-a",
         "subsystem": "observability"
@@ -7106,7 +7120,7 @@
         "port": "driver-1:4040",
         "label": "attachHandler(/metrics/*)",
         "isError": false,
-        "kind": "local",
+        "kind": "wire",
         "peerTag": null
       },
       {
@@ -7115,7 +7129,7 @@
         "to": "exec-metrics-system",
         "channel": "internal",
         "protocol": "Dropwizard Sink Report",
-        "port": "in-JVM",
+        "port": "worker-a in-JVM",
         "label": "ExecutorSource & report()",
         "isError": false,
         "kind": "local",
@@ -7137,10 +7151,42 @@
   },
   "executor-metrics-poller": {
     "slug": "executor-metrics-poller",
-    "title": "ExecutorMetricsPoller — Peak Sampling & Heartbeat Bridge",
+    "title": "ExecutorMetricsPoller -- Peak Sampling & Heartbeat Bridge",
     "subtitle": "Task/stage high-water mark polling, ExecutorMetricsSource Dropwizard snapshot, Heartbeat RPC, and stage peak event logging",
     "focusComponentId": "executor-metrics-poller",
     "nodes": [
+      {
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "exec-poller",
+        "componentId": "executor-metrics-poller",
+        "shortLabel": "Metrics Poller",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "observability"
+      },
+      {
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Task Attempt",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "exec-metrics-system",
+        "componentId": "metrics-system",
+        "shortLabel": "Exec Metrics",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "observability"
+      },
       {
         "id": "heartbeat-receiver",
         "componentId": "heartbeat-receiver",
@@ -7156,48 +7202,16 @@
         "hostZone": "driver-jvm",
         "hostLabel": "driver-1 (AM)",
         "subsystem": "observability"
-      },
-      {
-        "id": "executor",
-        "componentId": "executor",
-        "shortLabel": "Executor",
-        "hostZone": "worker-node-b",
-        "hostLabel": "worker-b",
-        "subsystem": "executor-rpc"
-      },
-      {
-        "id": "executor-metrics-poller",
-        "componentId": "executor-metrics-poller",
-        "shortLabel": "ExecMetricsPoller",
-        "hostZone": "worker-node-b",
-        "hostLabel": "worker-b",
-        "subsystem": "observability"
-      },
-      {
-        "id": "exec-metrics-source",
-        "componentId": "metrics-system",
-        "shortLabel": "ExecMetricsSource",
-        "hostZone": "worker-node-b",
-        "hostLabel": "worker-b",
-        "subsystem": "observability"
-      },
-      {
-        "id": "task-attempt",
-        "componentId": "task-attempt",
-        "shortLabel": "Task Attempt",
-        "hostZone": "worker-node-b",
-        "hostLabel": "worker-b",
-        "subsystem": "executor-rpc"
       }
     ],
     "hops": [
       {
         "index": 1,
         "from": "executor",
-        "to": "executor-metrics-poller",
+        "to": "exec-poller",
         "channel": "internal",
         "protocol": "In-JVM Poller Init",
-        "port": "in-JVM",
+        "port": "worker-a in-JVM",
         "label": "new Poller & start()",
         "isError": false,
         "kind": "local",
@@ -7206,10 +7220,10 @@
       {
         "index": 2,
         "from": "task-attempt",
-        "to": "executor-metrics-poller",
+        "to": "exec-poller",
         "channel": "internal",
         "protocol": "In-JVM Task Hook",
-        "port": "in-JVM",
+        "port": "worker-a in-JVM",
         "label": "onTaskStart(84, s3.0)",
         "isError": false,
         "kind": "local",
@@ -7217,11 +7231,11 @@
       },
       {
         "index": 3,
-        "from": "executor-metrics-poller",
-        "to": "exec-metrics-source",
+        "from": "exec-poller",
+        "to": "exec-metrics-system",
         "channel": "internal",
         "protocol": "Dropwizard Snapshot",
-        "port": "in-JVM",
+        "port": "worker-a in-JVM",
         "label": "updateMetricsSnapshot()",
         "isError": false,
         "kind": "local",
@@ -7229,11 +7243,11 @@
       },
       {
         "index": 4,
-        "from": "executor-metrics-poller",
+        "from": "exec-poller",
         "to": "executor",
         "channel": "internal",
         "protocol": "In-JVM Peak Drain",
-        "port": "in-JVM",
+        "port": "worker-a in-JVM",
         "label": "getExecutorUpdates()",
         "isError": false,
         "kind": "local",
@@ -7245,7 +7259,7 @@
         "to": "heartbeat-receiver",
         "channel": "rpc",
         "protocol": "Spark Netty RPC",
-        "port": ":41000",
+        "port": "driver-1:41000",
         "label": "Heartbeat(execUpdates)",
         "isError": false,
         "kind": "wire",
@@ -7257,8 +7271,2250 @@
         "to": "event-log",
         "channel": "internal",
         "protocol": "ListenerBus -> EventLog",
-        "port": "in-JVM",
+        "port": "driver-1 in-JVM",
         "label": "StageExecutorMetrics peak",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "memory-manager": {
+    "slug": "memory-manager",
+    "title": "UnifiedMemoryManager & TaskMemoryManager -- Pool Borrowing & Spill",
+    "subtitle": "Per-SparkEnv unified execution/storage pools, per-task Tungsten page arbitration, RDD eviction, and UnsafeExternalSorter spill",
+    "focusComponentId": "memory-manager",
+    "nodes": [
+      {
+        "id": "exec-spark-env",
+        "componentId": "spark-env",
+        "shortLabel": "Exec SparkEnv",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "exec-task-memory",
+        "componentId": "task-attempt",
+        "shortLabel": "TaskMemMgr",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "memory-manager",
+        "componentId": "memory-manager",
+        "shortLabel": "MemoryManager",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-manager",
+        "componentId": "block-manager",
+        "shortLabel": "BlockManager",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "rdd-cache",
+        "componentId": "rdd-cache",
+        "shortLabel": "RDD Cache",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "shuffle-writer",
+        "componentId": "shuffle-writer",
+        "shortLabel": "Shuffle Writer",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "shuffle"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "exec-spark-env",
+        "to": "memory-manager",
+        "channel": "internal",
+        "protocol": "In-JVM SparkEnv Init",
+        "port": "worker-a in-JVM",
+        "label": "new UnifiedMemoryManager",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "exec-task-memory",
+        "to": "memory-manager",
+        "channel": "internal",
+        "protocol": "TaskMemoryManager",
+        "port": "worker-a in-JVM",
+        "label": "allocatePage -> acquireExec",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "memory-manager",
+        "to": "block-manager",
+        "channel": "internal",
+        "protocol": "StoragePool Shrink",
+        "port": "worker-a in-JVM",
+        "label": "evictBlocksToFreeSpace",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "block-manager",
+        "to": "rdd-cache",
+        "channel": "internal",
+        "protocol": "MemoryStore Eviction",
+        "port": "worker-a in-JVM",
+        "label": "Evict rdd_17_3 -> disk",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "memory-manager",
+        "to": "shuffle-writer",
+        "channel": "internal",
+        "protocol": "MemoryConsumer Spill",
+        "port": "worker-a in-JVM",
+        "label": "UnsafeExternalSorter.spill()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "exec-task-memory",
+        "to": "memory-manager",
+        "channel": "internal",
+        "protocol": "Task Cleanup",
+        "port": "worker-a in-JVM",
+        "label": "cleanUpAllAllocatedMemory",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "serializer-manager": {
+    "slug": "serializer-manager",
+    "title": "SerializerManager -- Closure JavaSerializer vs Data Kryo & Stream Wrapping",
+    "subtitle": "SparkEnv.closureSerializer (always JavaSerializer) vs KryoSerializer data codecs and LZ4/AES wrapStream",
+    "focusComponentId": "serializer-manager",
+    "nodes": [
+      {
+        "id": "spark-env",
+        "componentId": "spark-env",
+        "shortLabel": "SparkEnv",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "serializer-manager",
+        "componentId": "serializer-manager",
+        "shortLabel": "SerializerManager",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "exec-serializer-manager",
+        "componentId": "serializer-manager",
+        "shortLabel": "Exec Serializer",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "dag-scheduler",
+        "componentId": "dag-scheduler",
+        "shortLabel": "DAGScheduler",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "broadcast-manager",
+        "componentId": "broadcast-manager",
+        "shortLabel": "BroadcastManager",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "shuffle-writer",
+        "componentId": "shuffle-writer",
+        "shortLabel": "Shuffle Writer",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "block-manager",
+        "componentId": "block-manager",
+        "shortLabel": "BlockManager",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-env",
+        "to": "serializer-manager",
+        "channel": "internal",
+        "protocol": "In-JVM SparkEnv Init",
+        "port": "driver-1 in-JVM",
+        "label": "new SerializerManager()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "dag-scheduler",
+        "to": "spark-env",
+        "channel": "internal",
+        "protocol": "SparkEnv.closureSerializer",
+        "port": "driver-1 in-JVM",
+        "label": "closureSerializer.serialize",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "dag-scheduler",
+        "to": "broadcast-manager",
+        "channel": "internal",
+        "protocol": "TorrentBroadcast (taskBinary)",
+        "port": "driver-1 in-JVM",
+        "label": "sc.broadcast(taskBinary)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "dag-scheduler",
+        "to": "executor",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "LaunchTask(bcast handle)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "executor",
+        "to": "exec-serializer-manager",
+        "channel": "internal",
+        "protocol": "ClassLoader Sync",
+        "port": "worker-a in-JVM",
+        "label": "setDefaultClassLoader()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "shuffle-writer",
+        "to": "exec-serializer-manager",
+        "channel": "internal",
+        "protocol": "KryoSerializer Pool",
+        "port": "worker-a in-JVM",
+        "label": "getSerializer(Kryo)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "exec-serializer-manager",
+        "to": "block-manager",
+        "channel": "internal",
+        "protocol": "Stream Pipeline",
+        "port": "worker-a in-JVM",
+        "label": "wrapStream(LZ4 + AES)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "delegation-token-manager": {
+    "slug": "delegation-token-manager",
+    "title": "HadoopDelegationTokenManager -- 75% Renewal & Token Fanout",
+    "subtitle": "Submit-time HDFS token fetch, 0.75 * (renewal - now) KDC refresh, and UpdateDelegationTokens RPC fanout",
+    "focusComponentId": "delegation-token-manager",
+    "nodes": [
+      {
+        "id": "yarn-client",
+        "componentId": "yarn-client",
+        "shortLabel": "YARN Client",
+        "hostZone": "submit-host",
+        "hostLabel": "edge-01",
+        "subsystem": "submission"
+      },
+      {
+        "id": "hdfs-namenode",
+        "componentId": "hdfs-namenode",
+        "shortLabel": "HDFS NameNode",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs :8020",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "yarn-scheduler-backend",
+        "componentId": "yarn-scheduler-backend",
+        "shortLabel": "YarnSchedBackend",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "delegation-token-manager",
+        "componentId": "delegation-token-manager",
+        "shortLabel": "Delegation Tokens",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "driver-scheduler-backend",
+        "componentId": "driver-scheduler-backend",
+        "shortLabel": "DriverSchedBackend",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "executor-backend",
+        "componentId": "executor-backend",
+        "shortLabel": "ExecutorBackend",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "yarn-client",
+        "to": "hdfs-namenode",
+        "channel": "yarn",
+        "protocol": "Hadoop DFSClient RPC",
+        "port": "nn01:8020",
+        "label": "getDelegationToken (init)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "yarn-scheduler-backend",
+        "to": "delegation-token-manager",
+        "channel": "internal",
+        "protocol": "SupportsDelegationToken",
+        "port": "driver-1 in-JVM",
+        "label": "if renewalEnabled -> start()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "delegation-token-manager",
+        "to": "hdfs-namenode",
+        "channel": "yarn",
+        "protocol": "Kerberos + DFSClient RPC",
+        "port": "nn01:8020",
+        "label": "doLogin + getDelegationToken",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "hdfs-namenode",
+        "to": "delegation-token-manager",
+        "channel": "yarn",
+        "protocol": "Hadoop DFSClient RPC",
+        "port": "nn01:8020",
+        "label": "Fresh HDFS_DELEGATION_TOKEN",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "delegation-token-manager",
+        "to": "driver-scheduler-backend",
+        "channel": "internal",
+        "protocol": "In-JVM Scheduler Ref",
+        "port": "driver-1 in-JVM",
+        "label": "UpdateDelegationTokens",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "driver-scheduler-backend",
+        "to": "executor-backend",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "UpdateDelegationTokens",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      }
+    ]
+  },
+  "rpc-file-server": {
+    "slug": "rpc-file-server",
+    "title": "RpcEnvFileServer (NettyStreamManager) & SparkFiles",
+    "subtitle": "Dynamic sc.addJar/sc.addFile registration on Driver RpcEnv :41000, executor stream fetch, and SparkFiles.get()",
+    "focusComponentId": "rpc-file-server",
+    "nodes": [
+      {
+        "id": "spark-context",
+        "componentId": "spark-context",
+        "shortLabel": "SparkContext",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "rpc-file-server",
+        "componentId": "rpc-file-server",
+        "shortLabel": "RPC File Server",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "rpc-env",
+        "componentId": "rpc-env",
+        "shortLabel": "NettyRpcEnv",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "driver-scheduler-backend",
+        "componentId": "driver-scheduler-backend",
+        "shortLabel": "DriverSchedBackend",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Task Attempt",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-context",
+        "to": "rpc-file-server",
+        "channel": "internal",
+        "protocol": "RpcEnvFileServer API",
+        "port": "driver-1 in-JVM",
+        "label": "addJar & addFile",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "driver-scheduler-backend",
+        "to": "executor",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "LaunchTask(addedFiles/Jars)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "executor",
+        "to": "rpc-file-server",
+        "channel": "data",
+        "protocol": "Netty RpcEnv Stream",
+        "port": "driver-1:41000",
+        "label": "StreamRequest(/files & /jars)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "rpc-file-server",
+        "to": "rpc-env",
+        "channel": "internal",
+        "protocol": "FileSegmentManagedBuffer",
+        "port": "driver-1 in-JVM",
+        "label": "openStream() -> Buffer",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "rpc-env",
+        "to": "executor",
+        "channel": "data",
+        "protocol": "Netty RpcEnv Stream",
+        "port": "driver-1:41000",
+        "label": "Stream bytes (jar + csv)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "executor",
+        "to": "task-attempt",
+        "channel": "internal",
+        "protocol": "ClassLoader & SparkFiles",
+        "port": "worker-a in-JVM",
+        "label": "addURL + SparkFiles.get()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "context-cleaner": {
+    "slug": "context-cleaner",
+    "title": "ContextCleaner -- Async WeakReference GC Cleanup",
+    "subtitle": "Driver ReferenceQueue daemon cleaning unreachable RDDs, shuffles, and broadcasts asynchronously after GC",
+    "focusComponentId": "context-cleaner",
+    "nodes": [
+      {
+        "id": "spark-context",
+        "componentId": "spark-context",
+        "shortLabel": "SparkContext",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "context-cleaner",
+        "componentId": "context-cleaner",
+        "shortLabel": "ContextCleaner",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-manager-master",
+        "componentId": "block-manager-master",
+        "shortLabel": "BlockManagerMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "map-output-tracker-master",
+        "componentId": "map-output-tracker-master",
+        "shortLabel": "MapOutputMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "broadcast-manager",
+        "componentId": "broadcast-manager",
+        "shortLabel": "BroadcastManager",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-manager",
+        "componentId": "block-manager",
+        "shortLabel": "BlockManager",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-context",
+        "to": "context-cleaner",
+        "channel": "internal",
+        "protocol": "WeakReference Registry",
+        "port": "driver-1 in-JVM",
+        "label": "registerRDD/Shuffle/Broadcast",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "context-cleaner",
+        "to": "context-cleaner",
+        "channel": "internal",
+        "protocol": "JVM ReferenceQueue GC",
+        "port": "driver-1 in-JVM",
+        "label": "GC enqueue -> pop task",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "context-cleaner",
+        "to": "block-manager-master",
+        "channel": "internal",
+        "protocol": "In-JVM Cleanup",
+        "port": "driver-1 in-JVM",
+        "label": "doCleanupRDD(17)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "context-cleaner",
+        "to": "map-output-tracker-master",
+        "channel": "internal",
+        "protocol": "In-JVM Cleanup",
+        "port": "driver-1 in-JVM",
+        "label": "doCleanupShuffle(4)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "context-cleaner",
+        "to": "broadcast-manager",
+        "channel": "internal",
+        "protocol": "In-JVM Cleanup",
+        "port": "driver-1 in-JVM",
+        "label": "doCleanupBroadcast(9)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "block-manager-master",
+        "to": "block-manager",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC (client-mode channel)",
+        "port": "driver-1:41000 (exec outbound RPC)",
+        "label": "RemoveRdd/Shuffle/Broadcast",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      }
+    ]
+  },
+  "health-tracker": {
+    "slug": "health-tracker",
+    "title": "HealthTracker -- ExcludeOnFailure vs YARN AM Node Tracker",
+    "subtitle": "Task/stage/app failure counting, resourceOffers gating, AM excludedNode sync, and 1h timeout expiry",
+    "focusComponentId": "health-tracker",
+    "nodes": [
+      {
+        "id": "task-set-manager",
+        "componentId": "task-set-manager",
+        "shortLabel": "TaskSetManager",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "task-scheduler",
+        "componentId": "task-scheduler",
+        "shortLabel": "TaskSchedulerImpl",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "health-tracker",
+        "componentId": "health-tracker",
+        "shortLabel": "HealthTracker",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "listener-bus",
+        "componentId": "listener-bus",
+        "shortLabel": "LiveListenerBus",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "yarn-scheduler-backend",
+        "componentId": "yarn-scheduler-backend",
+        "shortLabel": "YarnSchedBackend",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "yarn-allocator",
+        "componentId": "yarn-allocator",
+        "shortLabel": "YarnAllocator",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "submission"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "task-set-manager",
+        "to": "task-scheduler",
+        "channel": "internal",
+        "protocol": "TaskSetExcludelist",
+        "port": "driver-1 in-JVM",
+        "label": "Failures on Exec-1 & Exec-3",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "task-scheduler",
+        "to": "health-tracker",
+        "channel": "internal",
+        "protocol": "HealthTracker Update",
+        "port": "driver-1 in-JVM",
+        "label": "Exclude Exec-1, Exec-3 & node",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "health-tracker",
+        "to": "listener-bus",
+        "channel": "internal",
+        "protocol": "SparkListener Event",
+        "port": "driver-1 in-JVM",
+        "label": "SparkListenerNodeExcluded",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "health-tracker",
+        "to": "yarn-scheduler-backend",
+        "channel": "internal",
+        "protocol": "Atomic Snapshot Read",
+        "port": "driver-1 in-JVM",
+        "label": "scheduler.excludedNodes()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "yarn-scheduler-backend",
+        "to": "yarn-allocator",
+        "channel": "internal",
+        "protocol": "Local RpcEnv Endpoint (Cluster AM)",
+        "port": "driver-1 in-JVM",
+        "label": "RequestExecutors(excluded)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "health-tracker",
+        "to": "task-scheduler",
+        "channel": "internal",
+        "protocol": "Timeout Expiry",
+        "port": "driver-1 in-JVM",
+        "label": "applyExcludeOnFailureTimeout",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "app-status-store": {
+    "slug": "app-status-store",
+    "title": "AppStatusStore -- Live KVStore vs History Server Replay",
+    "subtitle": "AppStatusListener -> ElementTrackingStore (InMemoryStore) -> AppStatusStore -> SparkUI vs separate History Server KVStore",
+    "focusComponentId": "app-status-store",
+    "nodes": [
+      {
+        "id": "listener-bus",
+        "componentId": "listener-bus",
+        "shortLabel": "LiveListenerBus",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "app-status-store",
+        "componentId": "app-status-store",
+        "shortLabel": "AppStatusStore",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "spark-ui",
+        "componentId": "spark-ui",
+        "shortLabel": "Live Spark UI",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "event-log",
+        "componentId": "event-log",
+        "shortLabel": "Spark Event Log",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "observability"
+      },
+      {
+        "id": "hdfs-namenode",
+        "componentId": "hdfs-namenode",
+        "shortLabel": "HDFS NameNode",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs :8020",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "hdfs-datanode",
+        "componentId": "hdfs-datanode",
+        "shortLabel": "HDFS DataNode",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs :9866",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "history-server",
+        "componentId": "history-server",
+        "shortLabel": "History Server",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs / history",
+        "subsystem": "observability"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "listener-bus",
+        "to": "app-status-store",
+        "channel": "internal",
+        "protocol": "AsyncEventQueue (appStatus)",
+        "port": "driver-1 in-JVM",
+        "label": "JobStart / TaskEnd / Metrics",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "app-status-store",
+        "to": "app-status-store",
+        "channel": "internal",
+        "protocol": "ElementTrackingStore",
+        "port": "driver-1 in-JVM",
+        "label": "Write KVStore wrappers",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "spark-ui",
+        "to": "app-status-store",
+        "channel": "internal",
+        "protocol": "AppStatusStore Facade",
+        "port": "driver-1 in-JVM",
+        "label": "jobsList & executorList",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "app-status-store",
+        "to": "spark-ui",
+        "channel": "internal",
+        "protocol": "v1 Status DTOs",
+        "port": "driver-1 in-JVM",
+        "label": "v1.JobData / ExecutorSummary",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "listener-bus",
+        "to": "event-log",
+        "channel": "internal",
+        "protocol": "AsyncEventQueue (eventLog)",
+        "port": "driver-1 in-JVM",
+        "label": "Write JSONL event log",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "event-log",
+        "to": "hdfs-namenode",
+        "channel": "yarn",
+        "protocol": "Hadoop RPC (ClientProtocol)",
+        "port": "nn01:8020",
+        "label": "create / addBlock (meta)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "event-log",
+        "to": "hdfs-datanode",
+        "channel": "data",
+        "protocol": "HDFS DataTransferProtocol",
+        "port": "dn01:9866",
+        "label": "Stream 4.2 MB JSONL log",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 8,
+        "from": "hdfs-namenode",
+        "to": "history-server",
+        "channel": "yarn",
+        "protocol": "Hadoop RPC (ClientProtocol)",
+        "port": "nn01:8020",
+        "label": "getBlockLocations(meta)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 9,
+        "from": "hdfs-datanode",
+        "to": "history-server",
+        "channel": "data",
+        "protocol": "HDFS DataTransferProtocol",
+        "port": "dn01:9866",
+        "label": "Read 4.2 MB -> History KVStore",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      }
+    ]
+  },
+  "session-catalog": {
+    "slug": "session-catalog",
+    "title": "SessionCatalog & CatalogManager -- V1/V2 Table Resolution",
+    "subtitle": "Qualified persistent catalog lookup, SessionCatalog UnresolvedCatalogRelation vs V2 plugins, optional HiveExternalCatalog, and later file-index conversion",
+    "focusComponentId": "session-catalog",
+    "nodes": [
+      {
+        "id": "spark-session",
+        "componentId": "spark-session",
+        "shortLabel": "SparkSession",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "sql-planner",
+        "componentId": "sql-planner",
+        "shortLabel": "SQL Planner",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "session-catalog",
+        "componentId": "session-catalog",
+        "shortLabel": "SessionCatalog",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "hdfs-namenode",
+        "componentId": "hdfs-namenode",
+        "shortLabel": "HDFS NameNode",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs :8020",
+        "subsystem": "cluster-hdfs"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-session",
+        "to": "session-catalog",
+        "channel": "internal",
+        "protocol": "SessionState Init",
+        "port": "driver-1 in-JVM",
+        "label": "Init CatalogManager + V1/V2",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "sql-planner",
+        "to": "session-catalog",
+        "channel": "internal",
+        "protocol": "Catalyst Analyzer",
+        "port": "driver-1 in-JVM",
+        "label": "loadTable(3-part V1)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "session-catalog",
+        "to": "session-catalog",
+        "channel": "internal",
+        "protocol": "ExternalCatalog Lookup",
+        "port": "driver-1 in-JVM",
+        "label": "getRelation -> UnresolvedCatRel",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "session-catalog",
+        "to": "sql-planner",
+        "channel": "internal",
+        "protocol": "SessionCatalog Return",
+        "port": "driver-1 in-JVM",
+        "label": "UnresolvedCatalogRelation",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "sql-planner",
+        "to": "hdfs-namenode",
+        "channel": "data",
+        "protocol": "Hadoop DFSClient RPC",
+        "port": "nn01:8020",
+        "label": "listStatus(orders partitions)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "hdfs-namenode",
+        "to": "sql-planner",
+        "channel": "data",
+        "protocol": "Hadoop DFSClient RPC",
+        "port": "nn01:8020",
+        "label": "24 Parquet LocatedFileStatus",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "sql-planner",
+        "to": "sql-planner",
+        "channel": "internal",
+        "protocol": "Analyzed LogicalPlan",
+        "port": "driver-1 in-JVM",
+        "label": "LogicalRelation(HadoopFs)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "whole-stage-codegen": {
+    "slug": "whole-stage-codegen",
+    "title": "WholeStageCodegenExec & CodeGenerator -- Driver Trial & Executor Fusion",
+    "subtitle": "CollapseCodegenStages fusion, Driver doCodeGen() + Janino trial compile/fallback, and Executor BufferedRowIterator loop",
+    "focusComponentId": "whole-stage-codegen",
+    "nodes": [
+      {
+        "id": "sql-planner",
+        "componentId": "sql-planner",
+        "shortLabel": "SQL Planner",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "whole-stage-codegen",
+        "componentId": "whole-stage-codegen",
+        "shortLabel": "WholeStageCodegen",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "exec-codegen",
+        "componentId": "whole-stage-codegen",
+        "shortLabel": "Exec Codegen",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "dag-scheduler",
+        "componentId": "dag-scheduler",
+        "shortLabel": "DAGScheduler",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "executor",
+        "componentId": "executor",
+        "shortLabel": "Executor",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "task-attempt",
+        "componentId": "task-attempt",
+        "shortLabel": "Task Attempt",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "sql-planner",
+        "to": "whole-stage-codegen",
+        "channel": "internal",
+        "protocol": "CollapseCodegenStages",
+        "port": "driver-1 in-JVM",
+        "label": "Wrap *(1) Scan->Filter->Agg",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "whole-stage-codegen",
+        "to": "whole-stage-codegen",
+        "channel": "internal",
+        "protocol": "Janino Trial Compile",
+        "port": "driver-1 in-JVM",
+        "label": "doCodeGen() + trial compile",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "whole-stage-codegen",
+        "to": "dag-scheduler",
+        "channel": "internal",
+        "protocol": "RDD Closure Build",
+        "port": "driver-1 in-JVM",
+        "label": "RDD(CodeAndComment)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "dag-scheduler",
+        "to": "executor",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "LaunchTask(CodeAndComment)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "executor",
+        "to": "exec-codegen",
+        "channel": "internal",
+        "protocol": "CodeGenerator.cache",
+        "port": "worker-a in-JVM",
+        "label": "compile() / cache hit",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "exec-codegen",
+        "to": "task-attempt",
+        "channel": "internal",
+        "protocol": "UnsafeRow Fused Loop",
+        "port": "worker-a in-JVM",
+        "label": "processNext() UnsafeRow",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "datasource-v2": {
+    "slug": "datasource-v2",
+    "title": "DataSource V2 -- Explicit V2 BatchScanExec & BatchWrite (Iceberg/Delta)",
+    "subtitle": "Explicit V2 TableProvider (Iceberg/Delta), optional canCommit, DataWriter -> WriterCommitMessage, and connector BatchWrite.commit()",
+    "focusComponentId": "datasource-v2",
+    "nodes": [
+      {
+        "id": "sql-planner",
+        "componentId": "sql-planner",
+        "shortLabel": "SQL Planner",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "datasource-v2",
+        "componentId": "datasource-v2",
+        "shortLabel": "DataSource V2",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "python-output"
+      },
+      {
+        "id": "driver-v2",
+        "componentId": "datasource-v2",
+        "shortLabel": "Driver DSv2",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1",
+        "subsystem": "python-output"
+      },
+      {
+        "id": "dag-scheduler",
+        "componentId": "dag-scheduler",
+        "shortLabel": "DAGScheduler",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "output-commit-coordinator",
+        "componentId": "output-commit-coordinator",
+        "shortLabel": "OutputCommitCoord",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "python-output"
+      },
+      {
+        "id": "worker-b-task",
+        "componentId": "task-attempt",
+        "shortLabel": "Task (Exec 2)",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "hdfs-datanode",
+        "componentId": "hdfs-datanode",
+        "shortLabel": "HDFS DataNode",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs :9866",
+        "subsystem": "cluster-hdfs"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "sql-planner",
+        "to": "driver-v2",
+        "channel": "internal",
+        "protocol": "DataSourceV2Strategy",
+        "port": "driver-1 in-JVM",
+        "label": "Plan BatchScan + V2Write",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "driver-v2",
+        "to": "dag-scheduler",
+        "channel": "internal",
+        "protocol": "V2 Partition Planning",
+        "port": "driver-1 in-JVM",
+        "label": "planInputPartitions + Factory",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "dag-scheduler",
+        "to": "worker-b-task",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "LaunchTask(V2 Factories)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "worker-b-task",
+        "to": "datasource-v2",
+        "channel": "internal",
+        "protocol": "V2 Reader/Writer API",
+        "port": "worker-b in-JVM",
+        "label": "PartitionReader & DataWriter",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "datasource-v2",
+        "to": "hdfs-datanode",
+        "channel": "data",
+        "protocol": "HDFS DataTransfer",
+        "port": "dn01:9866",
+        "label": "Write V2 data file",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "worker-b-task",
+        "to": "output-commit-coordinator",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "canCommit? (optional)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "datasource-v2",
+        "to": "driver-v2",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "WriterCommitMessage",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 8,
+        "from": "driver-v2",
+        "to": "driver-v2",
+        "channel": "internal",
+        "protocol": "BatchWrite Commit",
+        "port": "driver-1 in-JVM",
+        "label": "BatchWrite.commit(msgs)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "jvm-user-app": {
+    "slug": "jvm-user-app",
+    "title": "JVM User App -- Scala/Java --class Entry & __app__.jar",
+    "subtitle": "YarnClusterApplication vs JavaMainApplication, __app__.jar staging, AM reflection main(), JavaSparkContext, and exit 15",
+    "focusComponentId": "jvm-user-app",
+    "nodes": [
+      {
+        "id": "spark-submit",
+        "componentId": "spark-submit",
+        "shortLabel": "spark-submit",
+        "hostZone": "submit-host",
+        "hostLabel": "edge-01",
+        "subsystem": "submission"
+      },
+      {
+        "id": "yarn-client",
+        "componentId": "yarn-client",
+        "shortLabel": "YARN Client",
+        "hostZone": "submit-host",
+        "hostLabel": "edge-01",
+        "subsystem": "submission"
+      },
+      {
+        "id": "hdfs-namenode",
+        "componentId": "hdfs-namenode",
+        "shortLabel": "HDFS NameNode",
+        "hostZone": "storage-history",
+        "hostLabel": "hdfs :8020",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "resource-manager",
+        "componentId": "resource-manager",
+        "shortLabel": "ResourceManager",
+        "hostZone": "yarn-control",
+        "hostLabel": "rm01",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "am-nm",
+        "componentId": "node-manager",
+        "shortLabel": "AM NodeMgr",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1:dynamic",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "application-master",
+        "componentId": "application-master",
+        "shortLabel": "ApplicationMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "submission"
+      },
+      {
+        "id": "jvm-user-app",
+        "componentId": "jvm-user-app",
+        "shortLabel": "JVM User App",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "spark-session",
+        "componentId": "spark-session",
+        "shortLabel": "SparkSession",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "spark-context",
+        "componentId": "spark-context",
+        "shortLabel": "SparkContext",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-submit",
+        "to": "yarn-client",
+        "channel": "internal",
+        "protocol": "SparkApplication Dispatch",
+        "port": "edge-01 in-JVM",
+        "label": "YarnClusterApplication",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "yarn-client",
+        "to": "hdfs-namenode",
+        "channel": "data",
+        "protocol": "HDFS Staging Upload",
+        "port": "nn01:8020",
+        "label": "Stage __app__.jar",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "yarn-client",
+        "to": "resource-manager",
+        "channel": "yarn",
+        "protocol": "Hadoop RPC (ApplicationClientProtocol)",
+        "port": "rm01:8032",
+        "label": "submitApplication(AM)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "resource-manager",
+        "to": "am-nm",
+        "channel": "yarn",
+        "protocol": "Hadoop RPC (ContainerManagementProtocol)",
+        "port": "driver-1:dynamic",
+        "label": "startContainers(AM)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "am-nm",
+        "to": "application-master",
+        "channel": "yarn",
+        "protocol": "ContainerExecutor + cgroups",
+        "port": "driver-1 OS",
+        "label": "Boot AM container",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "application-master",
+        "to": "jvm-user-app",
+        "channel": "internal",
+        "protocol": "Reflection main() Launch",
+        "port": "driver-1 in-JVM",
+        "label": "Reflect OrdersJob.main()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "jvm-user-app",
+        "to": "spark-session",
+        "channel": "internal",
+        "protocol": "In-JVM Scala/Java API",
+        "port": "driver-1 in-JVM",
+        "label": "SparkSession.builder()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 8,
+        "from": "spark-session",
+        "to": "spark-context",
+        "channel": "internal",
+        "protocol": "In-JVM Context Wrap",
+        "port": "driver-1 in-JVM",
+        "label": "SparkContext / JavaSparkContext",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 9,
+        "from": "jvm-user-app",
+        "to": "application-master",
+        "channel": "internal",
+        "protocol": "Driver Thread Exit",
+        "port": "driver-1 in-JVM",
+        "label": "main() exit (0 or 15)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "dataset-encoder-udf": {
+    "slug": "dataset-encoder-udf",
+    "title": "Dataset ExpressionEncoder & In-JVM UDFs (Scala/Java/registerJavaFunction)",
+    "subtitle": "Driver ExpressionEncoder / JavaTypeInference.encoderFor & UDF registration vs Executor in-JVM evaluation with ZERO Python IPC",
+    "focusComponentId": "dataset-encoder-udf",
+    "nodes": [
+      {
+        "id": "spark-session",
+        "componentId": "spark-session",
+        "shortLabel": "SparkSession",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "driver-runtime"
+      },
+      {
+        "id": "sql-planner",
+        "componentId": "sql-planner",
+        "shortLabel": "SQL Planner",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "dataset-encoder-udf",
+        "componentId": "dataset-encoder-udf",
+        "shortLabel": "Encoder / JVM UDF",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "driver-encoder",
+        "componentId": "dataset-encoder-udf",
+        "shortLabel": "Driver Encoder",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1",
+        "subsystem": "sql-execution"
+      },
+      {
+        "id": "dag-scheduler",
+        "componentId": "dag-scheduler",
+        "shortLabel": "DAGScheduler",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "worker-b-task",
+        "componentId": "task-attempt",
+        "shortLabel": "Task (Exec 2)",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "executor-rpc"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "spark-session",
+        "to": "driver-encoder",
+        "channel": "internal",
+        "protocol": "Encoder & UDF Registry",
+        "port": "driver-1 in-JVM",
+        "label": "Encoder vs registerJavaUDF",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "driver-encoder",
+        "to": "sql-planner",
+        "channel": "internal",
+        "protocol": "Catalyst Expression Bind",
+        "port": "driver-1 in-JVM",
+        "label": "Plan MapElements vs ScalaUDF",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "sql-planner",
+        "to": "dag-scheduler",
+        "channel": "internal",
+        "protocol": "Physical Plan Submit",
+        "port": "driver-1 in-JVM",
+        "label": "Submit JVM stage",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "dag-scheduler",
+        "to": "worker-b-task",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "LaunchTask(JVM Op)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "worker-b-task",
+        "to": "dataset-encoder-udf",
+        "channel": "internal",
+        "protocol": "In-JVM Task Thread",
+        "port": "worker-b in-JVM",
+        "label": "Dataset.map vs UDF1.call",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "dataset-encoder-udf",
+        "to": "worker-b-task",
+        "channel": "internal",
+        "protocol": "UnsafeRow / UDF Error",
+        "port": "worker-b in-JVM",
+        "label": "Return UnsafeRow (or err)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "transport-context": {
+    "slug": "transport-context",
+    "title": "TransportContext -- Shared Netty Server, ClientFactory & Zero-Copy",
+    "subtitle": "Shared common/network-common Netty framing, SASL/AES bootstraps, connection pooling, and FileRegion ChunkFetch",
+    "focusComponentId": "transport-context",
+    "nodes": [
+      {
+        "id": "rpc-env",
+        "componentId": "rpc-env",
+        "shortLabel": "NettyRpcEnv",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "transport-context",
+        "componentId": "transport-context",
+        "shortLabel": "TransportContext",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "driver-transport",
+        "componentId": "transport-context",
+        "shortLabel": "Driver Transport",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "exec-rpc-transport",
+        "componentId": "transport-context",
+        "shortLabel": "Exec RPC Transport",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "executor-backend",
+        "componentId": "executor-backend",
+        "shortLabel": "ExecutorBackend",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "block-transfer-service",
+        "componentId": "block-transfer-service",
+        "shortLabel": "BlockTransferSvc",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-manager",
+        "componentId": "block-manager",
+        "shortLabel": "BlockManager",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "rpc-env",
+        "to": "driver-transport",
+        "channel": "internal",
+        "protocol": "Netty Server Bootstrap",
+        "port": "driver-1 in-JVM",
+        "label": "new TransportContext(:41000)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "block-transfer-service",
+        "to": "transport-context",
+        "channel": "internal",
+        "protocol": "Netty Server Bootstrap",
+        "port": "worker-a in-JVM",
+        "label": "new TransportContext(:42001)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "executor-backend",
+        "to": "exec-rpc-transport",
+        "channel": "internal",
+        "protocol": "TransportClientFactory (rpc)",
+        "port": "worker-a in-JVM",
+        "label": "createClient(driver-1:41000)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "exec-rpc-transport",
+        "to": "driver-transport",
+        "channel": "rpc",
+        "protocol": "Netty TransportFrame",
+        "port": "driver-1:41000",
+        "label": "RpcRequest (control frame)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "transport-context",
+        "to": "block-manager",
+        "channel": "internal",
+        "protocol": "FileRegion Zero-Copy",
+        "port": "worker-a in-JVM",
+        "label": "getChunk() FileRegion",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "driver-transport",
+        "to": "rpc-env",
+        "channel": "internal",
+        "protocol": "RpcHandler Upcall",
+        "port": "driver-1 in-JVM",
+        "label": "NettyRpcHandler.receive()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      }
+    ]
+  },
+  "push-based-shuffle": {
+    "slug": "push-based-shuffle",
+    "title": "Push-Based Shuffle -- ShuffleBlockPusher & ESS Merge",
+    "subtitle": "ESS RemoteBlockPushResolver config, post-status-update ShuffleBlockPusher, FinalizeShuffleMerge, and push-merged-local + fallback reads",
+    "focusComponentId": "push-based-shuffle",
+    "nodes": [
+      {
+        "id": "yarn-scheduler-backend",
+        "componentId": "yarn-scheduler-backend",
+        "shortLabel": "YarnSchedBackend",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "dag-scheduler",
+        "componentId": "dag-scheduler",
+        "shortLabel": "DAGScheduler",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "map-output-tracker-master",
+        "componentId": "map-output-tracker-master",
+        "shortLabel": "MapOutputMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "shuffle-writer",
+        "componentId": "shuffle-writer",
+        "shortLabel": "Shuffle Writer",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "push-based-shuffle",
+        "componentId": "push-based-shuffle",
+        "shortLabel": "Push-Based Shuffle",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "external-shuffle-service",
+        "componentId": "external-shuffle-service",
+        "shortLabel": "Ext Shuffle Service",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "ess-merger-b",
+        "componentId": "external-shuffle-service",
+        "shortLabel": "ESS Merger B",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "shuffle"
+      },
+      {
+        "id": "shuffle-reader",
+        "componentId": "shuffle-reader",
+        "shortLabel": "Shuffle Reader",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "shuffle"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "yarn-scheduler-backend",
+        "to": "dag-scheduler",
+        "channel": "internal",
+        "protocol": "Merger Location Select",
+        "port": "driver-1 in-JVM",
+        "label": "getShufflePushMergerLocs",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "shuffle-writer",
+        "to": "push-based-shuffle",
+        "channel": "internal",
+        "protocol": "ShuffleWriteProcessor Listener",
+        "port": "worker-a in-JVM",
+        "label": "postStatusUpdate -> push",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "push-based-shuffle",
+        "to": "ess-merger-b",
+        "channel": "data",
+        "protocol": "Netty PushBlockStream",
+        "port": "worker-b:7337",
+        "label": "PushBlockStream(s=4, p=0)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "dag-scheduler",
+        "to": "ess-merger-b",
+        "channel": "rpc",
+        "protocol": "Netty Shuffle RPC",
+        "port": "worker-b:7337",
+        "label": "FinalizeShuffleMerge(s=4)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "dag-scheduler",
+        "to": "map-output-tracker-master",
+        "channel": "internal",
+        "protocol": "MergeStatus Register",
+        "port": "driver-1 in-JVM",
+        "label": "registerMergeResults(s=4)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "shuffle-reader",
+        "to": "map-output-tracker-master",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "GetMapAndMergeResultStatuses",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "shuffle-reader",
+        "to": "ess-merger-b",
+        "channel": "rpc",
+        "protocol": "ESS GetLocalDirsForExecutors",
+        "port": "worker-b:7337",
+        "label": "GetLocalDirs(merger miss)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 8,
+        "from": "shuffle-reader",
+        "to": "shuffle-reader",
+        "channel": "data",
+        "protocol": "Local Disk Read (push-merged-local)",
+        "port": "worker-b local-disk",
+        "label": "Read merged meta & chunks",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 9,
+        "from": "shuffle-reader",
+        "to": "external-shuffle-service",
+        "channel": "data",
+        "protocol": "Netty FetchShuffleBlocks",
+        "port": "worker-a:7337",
+        "label": "Fallback unmerged (map 2)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      }
+    ]
+  },
+  "block-manager-decommissioner": {
+    "slug": "block-manager-decommissioner",
+    "title": "BlockManagerDecommissioner -- YARN Node Decommission Migration",
+    "subtitle": "ESS OFF requirement (YarnAllocator.scala:192-202), RM DECOMMISSIONING signal, RDD & shuffle peer migration, and metadata updates",
+    "focusComponentId": "block-manager-decommissioner",
+    "nodes": [
+      {
+        "id": "resource-manager",
+        "componentId": "resource-manager",
+        "shortLabel": "ResourceManager",
+        "hostZone": "yarn-control",
+        "hostLabel": "rm01",
+        "subsystem": "cluster-hdfs"
+      },
+      {
+        "id": "yarn-allocator",
+        "componentId": "yarn-allocator",
+        "shortLabel": "YarnAllocator",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "submission"
+      },
+      {
+        "id": "driver-scheduler-backend",
+        "componentId": "driver-scheduler-backend",
+        "shortLabel": "DriverSchedBackend",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "scheduling"
+      },
+      {
+        "id": "executor-backend",
+        "componentId": "executor-backend",
+        "shortLabel": "ExecutorBackend",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "executor-rpc"
+      },
+      {
+        "id": "block-manager-decommissioner",
+        "componentId": "block-manager-decommissioner",
+        "shortLabel": "BM Decommissioner",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-transfer-service",
+        "componentId": "block-transfer-service",
+        "shortLabel": "BlockTransferSvc",
+        "hostZone": "worker-node-a",
+        "hostLabel": "worker-a",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "peer-bm-b",
+        "componentId": "block-manager",
+        "shortLabel": "Peer BlockMgr B",
+        "hostZone": "worker-node-b",
+        "hostLabel": "worker-b",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "block-manager-master",
+        "componentId": "block-manager-master",
+        "shortLabel": "BlockManagerMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "block-storage"
+      },
+      {
+        "id": "map-output-tracker-master",
+        "componentId": "map-output-tracker-master",
+        "shortLabel": "MapOutputMaster",
+        "hostZone": "driver-jvm",
+        "hostLabel": "driver-1 (AM)",
+        "subsystem": "shuffle"
+      }
+    ],
+    "hops": [
+      {
+        "index": 1,
+        "from": "resource-manager",
+        "to": "yarn-allocator",
+        "channel": "yarn",
+        "protocol": "YARN AMRM Allocate",
+        "port": "rm01:8030",
+        "label": "NodeReport(DECOMMISSIONING)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 2,
+        "from": "yarn-allocator",
+        "to": "driver-scheduler-backend",
+        "channel": "internal",
+        "protocol": "In-JVM AM Bridge",
+        "port": "driver-1 in-JVM",
+        "label": "decommissionExecutorsOnHost",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 3,
+        "from": "driver-scheduler-backend",
+        "to": "executor-backend",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "DecommissionExecutor",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 4,
+        "from": "executor-backend",
+        "to": "block-manager-decommissioner",
+        "channel": "internal",
+        "protocol": "In-JVM Decommission",
+        "port": "worker-a in-JVM",
+        "label": "decommissionBlockManager()",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 5,
+        "from": "block-manager-decommissioner",
+        "to": "block-transfer-service",
+        "channel": "internal",
+        "protocol": "Migration Upload Calls",
+        "port": "worker-a in-JVM",
+        "label": "uploadBlockSync (per block)",
+        "isError": false,
+        "kind": "local",
+        "peerTag": null
+      },
+      {
+        "index": 6,
+        "from": "block-transfer-service",
+        "to": "peer-bm-b",
+        "channel": "data",
+        "protocol": "Netty UploadBlock",
+        "port": "worker-b:42002",
+        "label": "UploadBlock(rdd_17_3)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 7,
+        "from": "block-transfer-service",
+        "to": "peer-bm-b",
+        "channel": "data",
+        "protocol": "Netty UploadBlockStream",
+        "port": "worker-b:42002",
+        "label": "UploadBlockStream(.data)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 8,
+        "from": "block-transfer-service",
+        "to": "peer-bm-b",
+        "channel": "data",
+        "protocol": "Netty UploadBlockStream",
+        "port": "worker-b:42002",
+        "label": "UploadBlockStream(.index)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 9,
+        "from": "peer-bm-b",
+        "to": "block-manager-master",
+        "channel": "rpc",
+        "protocol": "Spark Netty RPC",
+        "port": "driver-1:41000",
+        "label": "UpdateBlockInfo(RDD+Index)",
+        "isError": false,
+        "kind": "wire",
+        "peerTag": null
+      },
+      {
+        "index": 10,
+        "from": "block-manager-master",
+        "to": "map-output-tracker-master",
+        "channel": "internal",
+        "protocol": "Async Future (SPARK-36782)",
+        "port": "driver-1 in-JVM",
+        "label": "updateMapOutput(s=4, m=0)",
         "isError": false,
         "kind": "local",
         "peerTag": null

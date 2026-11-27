@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">HealthTracker -- ExcludeOnFailure vs YARN AM Node Tracker</title>
+<desc id="topo-desc">Task/stage/app failure counting, resourceOffers gating, AM excludedNode sync, and 1h timeout expiry. 1. TaskSetManager to TaskSchedulerImpl: Failures on Exec-1 &amp; Exec-3 (driver-1 in-JVM); 2. TaskSchedulerImpl to HealthTracker: Exclude Exec-1, Exec-3 &amp; node (driver-1 in-JVM); 3. HealthTracker to LiveListenerBus: SparkListenerNodeExcluded (driver-1 in-JVM); 4. HealthTracker to YarnSchedBackend: scheduler.excludedNodes() (driver-1 in-JVM); 5. YarnSchedBackend to YarnAllocator: RequestExecutors(excluded) (driver-1 in-JVM); 6. HealthTracker to TaskSchedulerImpl: applyExcludeOnFailureTimeout (driver-1 in-JVM)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
+<style>
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(334px, 199.2px); color: #bfa6ff; opacity: 0; }
+  0.67% { transform: translate(334px, 199.2px); color: #bfa6ff; opacity: 1; }
+  5.17% { transform: translate(355.8px, 201.7px); color: #bfa6ff; opacity: 1; }
+  9.67% { transform: translate(378.2px, 201.7px); color: #bfa6ff; opacity: 1; }
+  14.17% { transform: translate(400px, 199.2px); color: #bfa6ff; opacity: 1; }
+  15.33% { transform: translate(400px, 199.2px); color: #bfa6ff; opacity: 0; }
+  16.00% { transform: translate(560px, 207.7px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(560px, 207.7px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(581.8px, 210.2px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(604.2px, 210.2px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(626px, 207.7px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(626px, 207.7px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(626px, 207.1px); color: #bfa6ff; opacity: 0; }
+  34.00% { transform: translate(626px, 207.1px); color: #bfa6ff; opacity: 1; }
+  38.50% { transform: translate(542px, 229.2px); color: #bfa6ff; opacity: 1; }
+  43.00% { transform: translate(442.8px, 253.1px); color: #bfa6ff; opacity: 1; }
+  47.50% { transform: translate(334px, 277.6px); color: #bfa6ff; opacity: 1; }
+  48.67% { transform: translate(334px, 277.6px); color: #bfa6ff; opacity: 0; }
+  49.33% { transform: translate(626px, 209.3px); color: #bfa6ff; opacity: 0; }
+  50.67% { transform: translate(626px, 209.3px); color: #bfa6ff; opacity: 1; }
+  55.17% { transform: translate(595.7px, 221.4px); color: #bfa6ff; opacity: 1; }
+  59.67% { transform: translate(558.7px, 241.7px); color: #bfa6ff; opacity: 1; }
+  64.17% { transform: translate(517.1px, 269px); color: #bfa6ff; opacity: 1; }
+  65.33% { transform: translate(517.1px, 269px); color: #bfa6ff; opacity: 0; }
+  66.00% { transform: translate(560px, 309.2px); color: #bfa6ff; opacity: 0; }
+  67.33% { transform: translate(560px, 309.2px); color: #bfa6ff; opacity: 1; }
+  71.83% { transform: translate(581.8px, 311.7px); color: #bfa6ff; opacity: 1; }
+  76.33% { transform: translate(604.2px, 311.7px); color: #bfa6ff; opacity: 1; }
+  80.83% { transform: translate(626px, 309.2px); color: #bfa6ff; opacity: 1; }
+  82.00% { transform: translate(626px, 309.2px); color: #bfa6ff; opacity: 0; }
+  82.67% { transform: translate(626px, 162.3px); color: #bfa6ff; opacity: 0; }
+  84.00% { transform: translate(626px, 162.3px); color: #bfa6ff; opacity: 1; }
+  88.50% { transform: translate(604.2px, 159.8px); color: #bfa6ff; opacity: 1; }
+  93.00% { transform: translate(581.8px, 159.8px); color: #bfa6ff; opacity: 1; }
+  97.50% { transform: translate(560px, 162.3px); color: #bfa6ff; opacity: 1; }
+  98.67% { transform: translate(560px, 162.3px); color: #bfa6ff; opacity: 0; }
+  100% { transform: translate(334px, 199.2px); color: #bfa6ff; opacity: 0; }
+}
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
+</style>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
+</g>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">HealthTracker -- ExcludeOnFailure vs YARN AM Node Tracker</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Task/stage/app failure counting, resourceOffers gating, AM excludedNode sync, and 1h timeout expiry</text>
+  <g class="channel-legend">
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="350" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="topo-edge" data-from="task-set-manager" data-to="task-scheduler">
+    <path d="M 334 199.2 Q 367 205 400 199.2" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(400, 199.2) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="task-scheduler" data-to="health-tracker">
+    <path d="M 560 207.7 Q 593 213.5 626 207.7" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 207.7) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="health-tracker" data-to="listener-bus">
+    <path d="M 626 207.1 Q 508 239.6 334 277.6" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(334, 277.6) rotate(167.6)"/>
+  </g>
+  <g class="topo-edge" data-from="health-tracker" data-to="yarn-scheduler-backend">
+    <path d="M 626 209.3 Q 584.2 222 517.1 269" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(517.1, 269) rotate(145.3)"/>
+  </g>
+  <g class="topo-edge" data-from="yarn-scheduler-backend" data-to="yarn-allocator">
+    <path d="M 560 309.2 Q 593 315 626 309.2" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 309.2) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="health-tracker" data-to="task-scheduler">
+    <path d="M 626 162.3 Q 593 156.5 560 162.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(560, 162.3) rotate(170.6)"/>
+  </g>
+  <g class="topo-node" data-id="task-set-manager">
+    <rect x="177" y="162" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="163" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="185" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TaskSetManager</text>
+    <text class="f-mono" x="254" y="199" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="task-scheduler">
+    <rect x="403" y="162" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="163" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="185" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TaskSchedulerImpl</text>
+    <text class="f-mono" x="480" y="199" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="health-tracker">
+    <rect x="626" y="159" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="629" y="162" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="635" y="163" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="706" y="185" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">HealthTracker</text>
+    <text class="f-mono" x="706" y="199" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(741, 155)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="listener-bus">
+    <rect x="177" y="272" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="273" width="142" height="3" rx="1.5" fill="#bfa6ff"/>
+    <text class="f-sans" x="254" y="295" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">LiveListenerBus</text>
+    <text class="f-mono" x="254" y="309" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="yarn-scheduler-backend">
+    <rect x="403" y="272" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="273" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="295" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YarnSchedBackend</text>
+    <text class="f-mono" x="480" y="309" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="yarn-allocator">
+    <rect x="629" y="272" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="273" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="706" y="295" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">YarnAllocator</text>
+    <text class="f-mono" x="706" y="309" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="367" cy="202.1" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="205.3" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="593" cy="210.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="213.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="494" cy="241" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="494" y="244.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="577.9" cy="230.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="577.9" y="233.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="593" cy="312.1" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="315.3" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="593" cy="159.4" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="162.6" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">TaskSetManager -&gt; TaskSchedulerImpl</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">Failures on Exec-1 &amp; Exec-3</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">TaskSchedulerImpl -&gt; HealthTracker</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">Exclude Exec-1, Exec-3 &amp; node</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">HealthTracker -&gt; LiveListenerBus</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">SparkListenerNodeExcluded</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">HealthTracker -&gt; YarnSchedBackend</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">scheduler.excludedNodes()</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">YarnSchedBackend -&gt; YarnAllocator</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">RequestExecutors(excluded)</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">HealthTracker -&gt; TaskSchedulerImpl</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">applyExcludeOnFailureTimeout</text>
+  </g>
+</g>
+</svg>

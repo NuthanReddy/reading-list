@@ -1,0 +1,254 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">SessionCatalog &amp; CatalogManager -- V1/V2 Table Resolution</title>
+<desc id="topo-desc">Qualified persistent catalog lookup, SessionCatalog UnresolvedCatalogRelation vs V2 plugins, optional HiveExternalCatalog, and later file-index conversion. 1. SparkSession to SessionCatalog: Init CatalogManager + V1/V2 (driver-1 in-JVM); 2. SQL Planner to SessionCatalog: loadTable(3-part V1) (driver-1 in-JVM); 3. SessionCatalog to SessionCatalog: getRelation -&gt; UnresolvedCatRel (driver-1 in-JVM); 4. SessionCatalog to SQL Planner: UnresolvedCatalogRelation (driver-1 in-JVM); 5. SQL Planner to HDFS NameNode: listStatus(orders partitions) (nn01:8020); 6. HDFS NameNode to SQL Planner: 24 Parquet LocatedFileStatus (nn01:8020); 7. SQL Planner to SQL Planner: LogicalRelation(HadoopFs) (driver-1 in-JVM)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
+<style>
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(334px, 312.6px); color: #bfa6ff; opacity: 0; }
+  0.57% { transform: translate(334px, 312.6px); color: #bfa6ff; opacity: 1; }
+  4.43% { transform: translate(444.9px, 292px); color: #bfa6ff; opacity: 1; }
+  8.29% { transform: translate(545.3px, 290.1px); color: #bfa6ff; opacity: 1; }
+  12.14% { transform: translate(629.3px, 307px); color: #bfa6ff; opacity: 1; }
+  13.14% { transform: translate(629.3px, 307px); color: #bfa6ff; opacity: 0; }
+  13.71% { transform: translate(560px, 355.7px); color: #bfa6ff; opacity: 0; }
+  14.86% { transform: translate(560px, 355.7px); color: #bfa6ff; opacity: 1; }
+  18.71% { transform: translate(581.8px, 358.3px); color: #bfa6ff; opacity: 1; }
+  22.57% { transform: translate(604.2px, 358.3px); color: #bfa6ff; opacity: 1; }
+  26.43% { transform: translate(626px, 355.7px); color: #bfa6ff; opacity: 1; }
+  27.43% { transform: translate(626px, 355.7px); color: #bfa6ff; opacity: 0; }
+  28.00% { transform: translate(680px, 308px); color: #bfa6ff; opacity: 0; }
+  29.14% { transform: translate(680px, 308px); color: #bfa6ff; opacity: 1; }
+  33.00% { transform: translate(692.5px, 288.6px); color: #bfa6ff; opacity: 1; }
+  36.86% { transform: translate(705.5px, 288.6px); color: #bfa6ff; opacity: 1; }
+  40.71% { transform: translate(718px, 308px); color: #bfa6ff; opacity: 1; }
+  41.71% { transform: translate(718px, 308px); color: #bfa6ff; opacity: 0; }
+  42.29% { transform: translate(626px, 310.4px); color: #bfa6ff; opacity: 0; }
+  43.43% { transform: translate(626px, 310.4px); color: #bfa6ff; opacity: 1; }
+  47.29% { transform: translate(604.2px, 307.8px); color: #bfa6ff; opacity: 1; }
+  51.14% { transform: translate(581.8px, 307.8px); color: #bfa6ff; opacity: 1; }
+  55.00% { transform: translate(560px, 310.4px); color: #bfa6ff; opacity: 1; }
+  56.00% { transform: translate(560px, 310.4px); color: #bfa6ff; opacity: 0; }
+  56.57% { transform: translate(496.5px, 307px); color: #f2b950; opacity: 0; }
+  57.71% { transform: translate(496.5px, 307px); color: #f2b950; opacity: 1; }
+  61.57% { transform: translate(506.1px, 260.2px); color: #f2b950; opacity: 1; }
+  65.43% { transform: translate(506.1px, 211.9px); color: #f2b950; opacity: 1; }
+  69.29% { transform: translate(496.5px, 165px); color: #f2b950; opacity: 1; }
+  70.29% { transform: translate(496.5px, 165px); color: #f2b950; opacity: 0; }
+  70.86% { transform: translate(463.5px, 165px); color: #f2b950; opacity: 0; }
+  72.00% { transform: translate(463.5px, 165px); color: #f2b950; opacity: 1; }
+  75.86% { transform: translate(453.9px, 211.9px); color: #f2b950; opacity: 1; }
+  79.71% { transform: translate(453.9px, 260.2px); color: #f2b950; opacity: 1; }
+  83.57% { transform: translate(463.5px, 307px); color: #f2b950; opacity: 1; }
+  84.57% { transform: translate(463.5px, 307px); color: #f2b950; opacity: 0; }
+  85.14% { transform: translate(454px, 308px); color: #bfa6ff; opacity: 0; }
+  86.29% { transform: translate(454px, 308px); color: #bfa6ff; opacity: 1; }
+  90.14% { transform: translate(466.5px, 288.6px); color: #bfa6ff; opacity: 1; }
+  94.00% { transform: translate(479.5px, 288.6px); color: #bfa6ff; opacity: 1; }
+  97.86% { transform: translate(492px, 308px); color: #bfa6ff; opacity: 1; }
+  98.86% { transform: translate(492px, 308px); color: #bfa6ff; opacity: 0; }
+  100% { transform: translate(334px, 312.6px); color: #bfa6ff; opacity: 0; }
+}
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
+</style>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
+</g>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">SessionCatalog &amp; CatalogManager -- V1/V2 Table Resolution</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Qualified persistent catalog lookup, SessionCatalog UnresolvedCatalogRelation vs V2 plugins, optional HiveExternalCatalog, and later file-index conversion</text>
+  <g class="channel-legend">
+    <line x1="838.9" y1="24" x2="849.9" y2="24" stroke="#f2b950" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="849.9" cy="24" r="2.2" fill="#f2b950"/>
+    <text class="f-mono" x="855.9" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">DATA</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="storage-history">
+    <rect x="16" y="54" width="928" height="148.1" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">HDFS &amp; HISTORY</text>
+  </g>
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="214.1" width="928" height="189.9" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="236.1" x2="944" y2="236.1" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="225.1" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="228.3" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="topo-edge" data-from="spark-session" data-to="session-catalog">
+    <path d="M 334 312.6 Q 512 267.3 629.3 307" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(629.3, 307) rotate(17.3)"/>
+  </g>
+  <g class="topo-edge" data-from="sql-planner" data-to="session-catalog">
+    <path d="M 560 355.7 Q 593 361.5 626 355.7" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 355.7) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="session-catalog" data-to="session-catalog">
+    <path d="M 680 308 Q 699 264 718 308" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(718, 308) rotate(65.3)"/>
+  </g>
+  <g class="topo-edge" data-from="session-catalog" data-to="sql-planner">
+    <path d="M 626 310.4 Q 593 304.5 560 310.4" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(560, 310.4) rotate(170.6)"/>
+  </g>
+  <g class="topo-edge" data-from="sql-planner" data-to="hdfs-namenode">
+    <path d="M 496.5 307 Q 518.3 236 496.5 165" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(496.5, 165) rotate(-106.1)"/>
+  </g>
+  <g class="topo-edge" data-from="hdfs-namenode" data-to="sql-planner">
+    <path d="M 463.5 165 Q 441.7 236 463.5 307" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(463.5, 307) rotate(73.9)"/>
+  </g>
+  <g class="topo-edge" data-from="sql-planner" data-to="sql-planner">
+    <path d="M 454 308 Q 473 264 492 308" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(492, 308) rotate(65.3)"/>
+  </g>
+  <g class="topo-node" data-id="hdfs-namenode">
+    <rect x="403" y="116" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="117" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="480" y="139" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">HDFS NameNode</text>
+    <text class="f-mono" x="480" y="153" text-anchor="middle" fill="#8998b4" font-size="9">hdfs :8020</text>
+  </g>
+  <g class="topo-node" data-id="spark-session">
+    <rect x="177" y="310" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="311" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="254" y="333" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">SparkSession</text>
+    <text class="f-mono" x="254" y="347" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="sql-planner">
+    <rect x="403" y="310" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="311" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="480" y="333" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">SQL Planner</text>
+    <text class="f-mono" x="480" y="347" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="session-catalog">
+    <rect x="626" y="307" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="629" y="310" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="635" y="311" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="706" y="333" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">SessionCatalog</text>
+    <text class="f-mono" x="706" y="347" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(741, 303)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="496.8" cy="288.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="496.8" y="291.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="593" cy="358.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="361.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="699" cy="286" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="699" y="289.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="593" cy="307.5" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="310.7" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="507.4" cy="236" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="507.4" y="239.2" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="452.6" cy="236" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="452.6" y="239.2" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g class="hop-badge" data-hop="7">
+    <circle cx="473" cy="286" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="473" y="289.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">7</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">7 HOPS · 4 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="444.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="455.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="449.8" fill="#d0d9ec" font-size="8.5" font-weight="600">SparkSession -&gt; SessionCatalog</text>
+    <text class="f-mono" x="472" y="449.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="461.8" fill="#93a4c2" font-size="8.5">Init CatalogManager + V1/V2</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="468.5" x2="474" y2="468.5" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="476.8" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="487.8" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="482.3" fill="#d0d9ec" font-size="8.5" font-weight="600">SQL Planner -&gt; SessionCatalog</text>
+    <text class="f-mono" x="472" y="482.3" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="494.3" fill="#93a4c2" font-size="8.5">loadTable(3-part V1)</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="501" x2="474" y2="501" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="509.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="520.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="514.8" fill="#d0d9ec" font-size="8.5" font-weight="600">SessionCatalog (self)</text>
+    <text class="f-mono" x="472" y="514.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="526.8" fill="#93a4c2" font-size="8.5">getRelation -&gt; UnresolvedCatRel</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <line x1="26" y1="533.5" x2="474" y2="533.5" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="541.8" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="552.8" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="50" y="547.3" fill="#d0d9ec" font-size="8.5" font-weight="600">SessionCatalog -&gt; SQL Planner</text>
+    <text class="f-mono" x="472" y="547.3" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="559.3" fill="#93a4c2" font-size="8.5">UnresolvedCatalogRelation</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <rect x="488" y="444.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="455.3" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="449.8" fill="#d0d9ec" font-size="8.5" font-weight="600">SQL Planner -&gt; HDFS NameNode</text>
+    <text class="f-mono" x="934" y="449.8" text-anchor="end" fill="#6f80a0" font-size="8.2">nn01:8020</text>
+    <text class="f-mono" x="512" y="461.8" fill="#93a4c2" font-size="8.5">listStatus(orders partitions)</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="468.5" x2="936" y2="468.5" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="476.8" width="18" height="16" rx="3.5" fill="#141e32" stroke="#f2b950" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="487.8" text-anchor="middle" fill="#f2b950" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="482.3" fill="#d0d9ec" font-size="8.5" font-weight="600">HDFS NameNode -&gt; SQL Planner</text>
+    <text class="f-mono" x="934" y="482.3" text-anchor="end" fill="#6f80a0" font-size="8.2">nn01:8020</text>
+    <text class="f-mono" x="512" y="494.3" fill="#93a4c2" font-size="8.5">24 Parquet LocatedFileStatus</text>
+  </g>
+  <g class="trace-row" data-hop="7">
+    <line x1="488" y1="501" x2="936" y2="501" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="509.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="520.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">7</text>
+    <text class="f-mono" x="512" y="514.8" fill="#d0d9ec" font-size="8.5" font-weight="600">SQL Planner (self)</text>
+    <text class="f-mono" x="934" y="514.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="512" y="526.8" fill="#93a4c2" font-size="8.5">LogicalRelation(HadoopFs)</text>
+  </g>
+</g>
+</svg>

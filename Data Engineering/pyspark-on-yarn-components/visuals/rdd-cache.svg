@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
-<title id="topo-title">RDD Cache — Lazy Persist &amp; getOrCompute(rdd_17_3)</title>
-<desc id="topo-desc">Driver persistence intent vs per-partition executor read-or-compute decision and uncached fallback. 1. Python Driver to DAGScheduler: rdd.persist(MEM_DISK) (127.0.0.1:ephemeral); 2. DAGScheduler to BlockManagerMaster: getLocations(rdd_17_3) (in-JVM); 3. Task Attempt to RDD Cache: getOrCompute(rdd_17_3) (in-JVM); 4. RDD Cache to BlockManager: get(rdd_17_3) -&gt; Miss (in-JVM); 5. RDD Cache to BlockManager: putIterator(rdd_17_3) (in-JVM); 6. BlockManager to BlockManagerMaster: UpdateBlockInfo(stored) (:41000)</desc>
+<title id="topo-title">RDD Cache -- Lazy Persist &amp; getOrCompute(rdd_17_3)</title>
+<desc id="topo-desc">Driver persistence intent vs per-partition executor read-or-compute decision and uncached fallback. undefined. Python Driver to Driver RDD: rdd.persist(MEM_DISK) (127.0.0.1:ephemeral); undefined. DAGScheduler to BlockManagerMaster: getLocations(rdd_17_3) (in-JVM); undefined. Task Attempt to RDD Cache: getOrCompute(rdd_17_3) (in-JVM); undefined. RDD Cache to BlockManager: get(rdd_17_3) -&gt; Miss (in-JVM); undefined. RDD Cache to BlockManager: putIterator(rdd_17_3) (in-JVM); undefined. BlockManager to BlockManagerMaster: UpdateBlockInfo(stored) (:41000)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
     <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
@@ -10,43 +10,43 @@
 .f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 .f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
 @keyframes packet-travel {
-  0% { transform: translate(334px, 163.7px); color: #ec82b3; opacity: 0; }
-  0.67% { transform: translate(334px, 163.7px); color: #ec82b3; opacity: 1; }
-  5.17% { transform: translate(355.8px, 166.2px); color: #ec82b3; opacity: 1; }
-  9.67% { transform: translate(378.2px, 166.2px); color: #ec82b3; opacity: 1; }
-  14.17% { transform: translate(400px, 163.7px); color: #ec82b3; opacity: 1; }
-  15.33% { transform: translate(400px, 163.7px); color: #ec82b3; opacity: 0; }
-  16.00% { transform: translate(560px, 163.7px); color: #bfa6ff; opacity: 0; }
-  17.33% { transform: translate(560px, 163.7px); color: #bfa6ff; opacity: 1; }
-  21.83% { transform: translate(581.8px, 166.2px); color: #bfa6ff; opacity: 1; }
-  26.33% { transform: translate(604.2px, 166.2px); color: #bfa6ff; opacity: 1; }
-  30.83% { transform: translate(626px, 163.7px); color: #bfa6ff; opacity: 1; }
-  32.00% { transform: translate(626px, 163.7px); color: #bfa6ff; opacity: 0; }
-  32.67% { transform: translate(400px, 316.3px); color: #bfa6ff; opacity: 0; }
-  34.00% { transform: translate(400px, 316.3px); color: #bfa6ff; opacity: 1; }
-  38.50% { transform: translate(378.2px, 313.8px); color: #bfa6ff; opacity: 1; }
-  43.00% { transform: translate(355.8px, 313.8px); color: #bfa6ff; opacity: 1; }
-  47.50% { transform: translate(334px, 316.3px); color: #bfa6ff; opacity: 1; }
-  48.67% { transform: translate(334px, 316.3px); color: #bfa6ff; opacity: 0; }
-  49.33% { transform: translate(334px, 310.1px); color: #bfa6ff; opacity: 0; }
-  50.67% { transform: translate(334px, 310.1px); color: #bfa6ff; opacity: 1; }
-  55.17% { transform: translate(444.9px, 289.4px); color: #bfa6ff; opacity: 1; }
-  59.67% { transform: translate(545.3px, 287.5px); color: #bfa6ff; opacity: 1; }
-  64.17% { transform: translate(629.3px, 304.5px); color: #bfa6ff; opacity: 1; }
-  65.33% { transform: translate(629.3px, 304.5px); color: #bfa6ff; opacity: 0; }
-  66.00% { transform: translate(334px, 310.1px); color: #bfa6ff; opacity: 0; }
-  67.33% { transform: translate(334px, 310.1px); color: #bfa6ff; opacity: 1; }
-  71.83% { transform: translate(444.9px, 289.4px); color: #bfa6ff; opacity: 1; }
-  76.33% { transform: translate(545.3px, 287.5px); color: #bfa6ff; opacity: 1; }
-  80.83% { transform: translate(629.3px, 304.5px); color: #bfa6ff; opacity: 1; }
-  82.00% { transform: translate(629.3px, 304.5px); color: #bfa6ff; opacity: 0; }
-  82.67% { transform: translate(711.7px, 304.5px); color: #5bd3a8; opacity: 0; }
-  84.00% { transform: translate(711.7px, 304.5px); color: #5bd3a8; opacity: 1; }
-  88.50% { transform: translate(718px, 261.9px); color: #5bd3a8; opacity: 1; }
-  93.00% { transform: translate(718px, 218.1px); color: #5bd3a8; opacity: 1; }
-  97.50% { transform: translate(711.7px, 175.5px); color: #5bd3a8; opacity: 1; }
-  98.67% { transform: translate(711.7px, 175.5px); color: #5bd3a8; opacity: 0; }
-  100% { transform: translate(334px, 163.7px); color: #ec82b3; opacity: 0; }
+  0% { transform: translate(233.3px, 164.2px); color: #ec82b3; opacity: 0; }
+  0.67% { transform: translate(233.3px, 164.2px); color: #ec82b3; opacity: 1; }
+  5.17% { transform: translate(252.4px, 166.5px); color: #ec82b3; opacity: 1; }
+  9.67% { transform: translate(272px, 166.5px); color: #ec82b3; opacity: 1; }
+  14.17% { transform: translate(291.1px, 164.2px); color: #ec82b3; opacity: 1; }
+  15.33% { transform: translate(291.1px, 164.2px); color: #ec82b3; opacity: 0; }
+  16.00% { transform: translate(668.9px, 164.2px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(668.9px, 164.2px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(688px, 166.5px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(707.6px, 166.5px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(726.7px, 164.2px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(726.7px, 164.2px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(334px, 344.7px); color: #bfa6ff; opacity: 0; }
+  34.00% { transform: translate(334px, 344.7px); color: #bfa6ff; opacity: 1; }
+  38.50% { transform: translate(355.8px, 347.2px); color: #bfa6ff; opacity: 1; }
+  43.00% { transform: translate(378.2px, 347.2px); color: #bfa6ff; opacity: 1; }
+  47.50% { transform: translate(400px, 344.7px); color: #bfa6ff; opacity: 1; }
+  48.67% { transform: translate(400px, 344.7px); color: #bfa6ff; opacity: 0; }
+  49.33% { transform: translate(560px, 344.7px); color: #bfa6ff; opacity: 0; }
+  50.67% { transform: translate(560px, 344.7px); color: #bfa6ff; opacity: 1; }
+  55.17% { transform: translate(581.8px, 347.2px); color: #bfa6ff; opacity: 1; }
+  59.67% { transform: translate(604.2px, 347.2px); color: #bfa6ff; opacity: 1; }
+  64.17% { transform: translate(626px, 344.7px); color: #bfa6ff; opacity: 1; }
+  65.33% { transform: translate(626px, 344.7px); color: #bfa6ff; opacity: 0; }
+  66.00% { transform: translate(560px, 344.7px); color: #bfa6ff; opacity: 0; }
+  67.33% { transform: translate(560px, 344.7px); color: #bfa6ff; opacity: 1; }
+  71.83% { transform: translate(581.8px, 347.2px); color: #bfa6ff; opacity: 1; }
+  76.33% { transform: translate(604.2px, 347.2px); color: #bfa6ff; opacity: 1; }
+  80.83% { transform: translate(626px, 344.7px); color: #bfa6ff; opacity: 1; }
+  82.00% { transform: translate(626px, 344.7px); color: #bfa6ff; opacity: 0; }
+  82.67% { transform: translate(728.1px, 304.5px); color: #5bd3a8; opacity: 0; }
+  84.00% { transform: translate(728.1px, 304.5px); color: #5bd3a8; opacity: 1; }
+  88.50% { transform: translate(756.2px, 266.4px); color: #5bd3a8; opacity: 1; }
+  93.00% { transform: translate(780.1px, 222.5px); color: #5bd3a8; opacity: 1; }
+  97.50% { transform: translate(798.4px, 175.5px); color: #5bd3a8; opacity: 1; }
+  98.67% { transform: translate(798.4px, 175.5px); color: #5bd3a8; opacity: 0; }
+  100% { transform: translate(233.3px, 164.2px); color: #ec82b3; opacity: 0; }
 }
 #packet-orb {
   opacity: 0;
@@ -69,7 +69,7 @@
   <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
   <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
   <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
-  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">RDD Cache — Lazy Persist &amp; getOrCompute(rdd_17_3)</text>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">RDD Cache -- Lazy Persist &amp; getOrCompute(rdd_17_3)</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Driver persistence intent vs per-partition executor read-or-compute decision and uncached fallback</text>
   <g class="channel-legend">
     <line x1="786.3" y1="24" x2="797.3" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
@@ -96,60 +96,71 @@
     <circle cx="27" cy="246" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
     <text class="f-sans" x="35" y="249.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
   </g>
-  <g class="topo-edge" data-from="python-driver" data-to="dag-scheduler">
-    <path d="M 334 163.7 Q 367 169.5 400 163.7" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(400, 163.7) rotate(-9.4)"/>
+  <g class="topo-edge" data-from="python-driver" data-to="driver-rdd-cache">
+    <path d="M 233.3 164.2 Q 262.2 169.5 291.1 164.2" fill="none" stroke="#ec82b3" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#ec82b3" transform="translate(291.1, 164.2) rotate(-9.8)"/>
   </g>
   <g class="topo-edge" data-from="dag-scheduler" data-to="block-manager-master">
-    <path d="M 560 163.7 Q 593 169.5 626 163.7" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 163.7) rotate(-9.4)"/>
+    <path d="M 668.9 164.2 Q 697.8 169.5 726.7 164.2" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(726.7, 164.2) rotate(-9.8)"/>
   </g>
   <g class="topo-edge" data-from="task-attempt" data-to="rdd-cache">
-    <path d="M 400 316.3 Q 367 310.5 334 316.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(334, 316.3) rotate(170.6)"/>
+    <path d="M 334 344.7 Q 367 350.5 400 344.7" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(400, 344.7) rotate(-9.4)"/>
   </g>
   <g class="topo-edge" data-from="rdd-cache" data-to="block-manager">
-    <path d="M 334 310.1 Q 512 264.7 629.3 304.5" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(629.3, 304.5) rotate(17.3)"/>
+    <path d="M 560 344.7 Q 593 350.5 626 344.7" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 344.7) rotate(-9.4)"/>
   </g>
   <g class="topo-edge" data-from="block-manager" data-to="block-manager-master">
-    <path d="M 711.7 304.5 Q 726 240 711.7 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(711.7, 175.5) rotate(-101.7)"/>
+    <path d="M 728.1 304.5 Q 774.4 250.1 798.4 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(798.4, 175.5) rotate(-71.6)"/>
   </g>
   <g class="topo-node" data-id="python-driver">
-    <rect x="177" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
-    <rect x="183" y="127.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
-    <text class="f-sans" x="254" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Python Driver</text>
-    <text class="f-mono" x="254" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <rect x="76.3" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="82.3" y="127.5" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="153.3" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Python Driver</text>
+    <text class="f-mono" x="153.3" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
   </g>
-  <g class="topo-node" data-id="dag-scheduler">
-    <rect x="403" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
-    <rect x="409" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
-    <text class="f-sans" x="480" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DAGScheduler</text>
-    <text class="f-mono" x="480" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
-  </g>
-  <g class="topo-node" data-id="block-manager-master">
-    <rect x="629" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
-    <rect x="635" y="127.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
-    <text class="f-sans" x="706" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManagerMaster</text>
-    <text class="f-mono" x="706" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
-  </g>
-  <g class="topo-node" data-id="rdd-cache">
-    <rect x="174" y="304.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
-    <rect x="177" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
-    <rect x="183" y="308.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
-    <text class="f-sans" x="254" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">RDD Cache</text>
-    <text class="f-mono" x="254" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
-    <g transform="translate(289, 300.5)">
+  <g class="topo-node" data-id="driver-rdd-cache">
+    <rect x="291.1" y="123.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="294.1" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="300.1" y="127.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="371.1" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Driver RDD</text>
+    <text class="f-mono" x="371.1" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1</text>
+    <g transform="translate(406.1, 119.5)">
       <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
       <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
     </g>
   </g>
+  <g class="topo-node" data-id="dag-scheduler">
+    <rect x="511.9" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="517.9" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="588.9" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DAGScheduler</text>
+    <text class="f-mono" x="588.9" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="block-manager-master">
+    <rect x="729.7" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="735.7" y="127.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="806.7" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManagerMaster</text>
+    <text class="f-mono" x="806.7" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
   <g class="topo-node" data-id="task-attempt">
-    <rect x="403" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
-    <rect x="409" y="308.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
-    <text class="f-sans" x="480" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Task Attempt</text>
+    <rect x="177" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="308.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Task Attempt</text>
+    <text class="f-mono" x="254" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="rdd-cache">
+    <rect x="400" y="304.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="308.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="480" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">RDD Cache</text>
     <text class="f-mono" x="480" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(515, 300.5)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
   </g>
   <g class="topo-node" data-id="block-manager">
     <rect x="629" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
@@ -157,29 +168,29 @@
     <text class="f-sans" x="706" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockManager</text>
     <text class="f-mono" x="706" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
   </g>
-  <g class="hop-badge" data-hop="1">
-    <circle cx="367" cy="166.6" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
-    <text class="f-mono" x="367" y="169.8" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">1</text>
+  <g class="hop-badge" data-hop="undefined">
+    <circle cx="262.2" cy="166.8" r="9" fill="#0d1526" stroke="#ec82b3" stroke-width="1.6"/>
+    <text class="f-mono" x="262.2" y="170" text-anchor="middle" fill="#ec82b3" font-size="9.5" font-weight="700">undefined</text>
   </g>
-  <g class="hop-badge" data-hop="2">
-    <circle cx="593" cy="166.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
-    <text class="f-mono" x="593" y="169.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  <g class="hop-badge" data-hop="undefined">
+    <circle cx="697.8" cy="166.8" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="697.8" y="170" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">undefined</text>
   </g>
-  <g class="hop-badge" data-hop="3">
-    <circle cx="367" cy="313.4" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
-    <text class="f-mono" x="367" y="316.6" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">3</text>
+  <g class="hop-badge" data-hop="undefined">
+    <circle cx="367" cy="347.6" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="350.8" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">undefined</text>
   </g>
-  <g class="hop-badge" data-hop="4">
-    <circle cx="428.9" cy="291.4" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
-    <text class="f-mono" x="428.9" y="294.6" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
+  <g class="hop-badge" data-hop="undefined">
+    <circle cx="578.5" cy="347" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="578.5" y="350.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">undefined</text>
   </g>
-  <g class="hop-badge" data-hop="5">
-    <circle cx="558.9" cy="288.9" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
-    <text class="f-mono" x="558.9" y="292.1" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  <g class="hop-badge" data-hop="undefined">
+    <circle cx="607.5" cy="347" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="607.5" y="350.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">undefined</text>
   </g>
-  <g class="hop-badge" data-hop="6">
-    <circle cx="718.9" cy="240" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
-    <text class="f-mono" x="718.9" y="243.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">6</text>
+  <g class="hop-badge" data-hop="undefined">
+    <circle cx="768.8" cy="245" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="768.8" y="248.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">undefined</text>
   </g>
   <g id="packet-orb" aria-hidden="true">
     <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
@@ -191,50 +202,50 @@
   <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
   <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
   <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
-  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 7 NODES</text>
   <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
-  <g class="trace-row" data-hop="1">
+  <g class="trace-row" data-hop="undefined">
     <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#ec82b3" stroke-width="1.15"/>
-    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">1</text>
-    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Python Driver -&gt; DAGScheduler</text>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#ec82b3" font-size="8.5" font-weight="700">undefined</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Python Driver -&gt; Driver RDD</text>
     <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">127.0.0.1:ephemeral</text>
     <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">rdd.persist(MEM_DISK)</text>
   </g>
-  <g class="trace-row" data-hop="2">
+  <g class="trace-row" data-hop="undefined">
     <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
     <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
-    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">undefined</text>
     <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">DAGScheduler -&gt; BlockManagerMaster</text>
     <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
     <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">getLocations(rdd_17_3)</text>
   </g>
-  <g class="trace-row" data-hop="3">
+  <g class="trace-row" data-hop="undefined">
     <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
     <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
-    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">undefined</text>
     <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Task Attempt -&gt; RDD Cache</text>
     <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
     <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">getOrCompute(rdd_17_3)</text>
   </g>
-  <g class="trace-row" data-hop="4">
+  <g class="trace-row" data-hop="undefined">
     <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
-    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">undefined</text>
     <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">RDD Cache -&gt; BlockManager</text>
     <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
     <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">get(rdd_17_3) -&gt; Miss</text>
   </g>
-  <g class="trace-row" data-hop="5">
+  <g class="trace-row" data-hop="undefined">
     <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
     <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
-    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">undefined</text>
     <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">RDD Cache -&gt; BlockManager</text>
     <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">in-JVM</text>
     <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">putIterator(rdd_17_3)</text>
   </g>
-  <g class="trace-row" data-hop="6">
+  <g class="trace-row" data-hop="undefined">
     <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
     <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
-    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">undefined</text>
     <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">BlockManager -&gt; BlockManagerMaster</text>
     <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">:41000</text>
     <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">UpdateBlockInfo(stored)</text>

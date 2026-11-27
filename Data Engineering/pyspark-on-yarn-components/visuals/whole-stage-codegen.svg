@@ -1,0 +1,249 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
+<title id="topo-title">WholeStageCodegenExec &amp; CodeGenerator -- Driver Trial &amp; Executor Fusion</title>
+<desc id="topo-desc">CollapseCodegenStages fusion, Driver doCodeGen() + Janino trial compile/fallback, and Executor BufferedRowIterator loop. 1. SQL Planner to WholeStageCodegen: Wrap *(1) Scan-&gt;Filter-&gt;Agg (driver-1 in-JVM); 2. WholeStageCodegen to WholeStageCodegen: doCodeGen() + trial compile (driver-1 in-JVM); 3. WholeStageCodegen to DAGScheduler: RDD(CodeAndComment) (driver-1 in-JVM); 4. DAGScheduler to Executor: LaunchTask(CodeAndComment) (driver-1:41000); 5. Executor to Exec Codegen: compile() / cache hit (worker-a in-JVM); 6. Exec Codegen to Task Attempt: processNext() UnsafeRow (worker-a in-JVM)</desc>
+<defs>
+  <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
+  </pattern>
+</defs>
+<style>
+.f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+.f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
+@keyframes packet-travel {
+  0% { transform: translate(334px, 187.1px); color: #bfa6ff; opacity: 0; }
+  0.67% { transform: translate(334px, 187.1px); color: #bfa6ff; opacity: 1; }
+  5.17% { transform: translate(355.8px, 189.7px); color: #bfa6ff; opacity: 1; }
+  9.67% { transform: translate(378.2px, 189.7px); color: #bfa6ff; opacity: 1; }
+  14.17% { transform: translate(400px, 187.1px); color: #bfa6ff; opacity: 1; }
+  15.33% { transform: translate(400px, 187.1px); color: #bfa6ff; opacity: 0; }
+  16.00% { transform: translate(454px, 148px); color: #bfa6ff; opacity: 0; }
+  17.33% { transform: translate(454px, 148px); color: #bfa6ff; opacity: 1; }
+  21.83% { transform: translate(466.5px, 128.5px); color: #bfa6ff; opacity: 1; }
+  26.33% { transform: translate(479.5px, 128.5px); color: #bfa6ff; opacity: 1; }
+  30.83% { transform: translate(492px, 148px); color: #bfa6ff; opacity: 1; }
+  32.00% { transform: translate(492px, 148px); color: #bfa6ff; opacity: 0; }
+  32.67% { transform: translate(560px, 187.1px); color: #bfa6ff; opacity: 0; }
+  34.00% { transform: translate(560px, 187.1px); color: #bfa6ff; opacity: 1; }
+  38.50% { transform: translate(581.8px, 189.7px); color: #bfa6ff; opacity: 1; }
+  43.00% { transform: translate(604.2px, 189.7px); color: #bfa6ff; opacity: 1; }
+  47.50% { transform: translate(626px, 187.1px); color: #bfa6ff; opacity: 1; }
+  48.67% { transform: translate(626px, 187.1px); color: #bfa6ff; opacity: 0; }
+  49.33% { transform: translate(651.9px, 199px); color: #5bd3a8; opacity: 0; }
+  50.67% { transform: translate(651.9px, 199px); color: #5bd3a8; opacity: 1; }
+  55.17% { transform: translate(602.6px, 227.6px); color: #5bd3a8; opacity: 1; }
+  59.67% { transform: translate(552.2px, 267px); color: #5bd3a8; opacity: 1; }
+  64.17% { transform: translate(503.8px, 315px); color: #5bd3a8; opacity: 1; }
+  65.33% { transform: translate(503.8px, 315px); color: #5bd3a8; opacity: 0; }
+  66.00% { transform: translate(400px, 326.8px); color: #bfa6ff; opacity: 0; }
+  67.33% { transform: translate(400px, 326.8px); color: #bfa6ff; opacity: 1; }
+  71.83% { transform: translate(378.2px, 324.2px); color: #bfa6ff; opacity: 1; }
+  76.33% { transform: translate(355.8px, 324.2px); color: #bfa6ff; opacity: 1; }
+  80.83% { transform: translate(334px, 326.8px); color: #bfa6ff; opacity: 1; }
+  82.00% { transform: translate(334px, 326.8px); color: #bfa6ff; opacity: 0; }
+  82.67% { transform: translate(334px, 320.6px); color: #bfa6ff; opacity: 0; }
+  84.00% { transform: translate(334px, 320.6px); color: #bfa6ff; opacity: 1; }
+  88.50% { transform: translate(444.9px, 299.9px); color: #bfa6ff; opacity: 1; }
+  93.00% { transform: translate(545.3px, 298px); color: #bfa6ff; opacity: 1; }
+  97.50% { transform: translate(629.3px, 315px); color: #bfa6ff; opacity: 1; }
+  98.67% { transform: translate(629.3px, 315px); color: #bfa6ff; opacity: 0; }
+  100% { transform: translate(334px, 187.1px); color: #bfa6ff; opacity: 0; }
+}
+#packet-orb {
+  opacity: 0;
+  animation: packet-travel 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #packet-orb { display: none; animation: none; }
+}
+</style>
+<rect x="0" y="0" width="960" height="580" rx="10" fill="#0b1020"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="url(#bp-grid)"/>
+<rect x="1" y="1" width="958" height="578" rx="9" fill="none" stroke="#283349" stroke-width="1.5"/>
+<g stroke="#344666" stroke-width="1" fill="none" opacity="0.75">
+  <path d="M 8 18 V 8 H 18"/>
+  <path d="M 942 8 H 952 V 18"/>
+  <path d="M 8 562 V 572 H 18"/>
+  <path d="M 942 572 H 952 V 562"/>
+</g>
+<g class="header-band">
+  <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
+  <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
+  <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">WholeStageCodegenExec &amp; CodeGenerator -- Driver Trial &amp; Executor Fusion</text>
+  <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">CollapseCodegenStages fusion, Driver doCodeGen() + Janino trial compile/fallback, and Executor BufferedRowIterator loop</text>
+  <g class="channel-legend">
+    <line x1="844.2" y1="24" x2="855.2" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="855.2" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="861.2" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
+  </g>
+</g>
+<g class="topology-stage">
+  <g class="host-zone" data-zone="driver-jvm">
+    <rect x="16" y="54" width="928" height="189.9" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="76" x2="944" y2="76" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="65" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="68.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">AM / DRIVER CONTAINER</text>
+  </g>
+  <g class="host-zone" data-zone="worker-node-a">
+    <rect x="16" y="255.9" width="928" height="148.1" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+    <line x1="16" y1="277.9" x2="944" y2="277.9" stroke="#212d45" stroke-width="1"/>
+    <circle cx="27" cy="266.9" r="2.4" fill="#7aa2ff" fill-opacity="0.85"/>
+    <text class="f-sans" x="35" y="270.1" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
+  </g>
+  <g class="topo-edge" data-from="sql-planner" data-to="whole-stage-codegen">
+    <path d="M 334 187.1 Q 367 193 400 187.1" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(400, 187.1) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="whole-stage-codegen" data-to="whole-stage-codegen">
+    <path d="M 454 148 Q 473 104 492 148" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(492, 148) rotate(65.3)"/>
+  </g>
+  <g class="topo-edge" data-from="whole-stage-codegen" data-to="dag-scheduler">
+    <path d="M 560 187.1 Q 593 193 626 187.1" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(626, 187.1) rotate(-9.4)"/>
+  </g>
+  <g class="topo-edge" data-from="dag-scheduler" data-to="executor">
+    <path d="M 651.9 199 Q 576.8 235.1 503.8 315" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(503.8, 315) rotate(132.9)"/>
+  </g>
+  <g class="topo-edge" data-from="executor" data-to="exec-codegen">
+    <path d="M 400 326.8 Q 367 321 334 326.8" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(334, 326.8) rotate(170.6)"/>
+  </g>
+  <g class="topo-edge" data-from="exec-codegen" data-to="task-attempt">
+    <path d="M 334 320.6 Q 512 275.2 629.3 315" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(629.3, 315) rotate(17.3)"/>
+  </g>
+  <g class="topo-node" data-id="sql-planner">
+    <rect x="177" y="150" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="151" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="254" y="173" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">SQL Planner</text>
+    <text class="f-mono" x="254" y="187" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="whole-stage-codegen">
+    <rect x="400" y="147" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="150" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="151" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="480" y="173" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">WholeStageCodegen</text>
+    <text class="f-mono" x="480" y="187" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+    <g transform="translate(515, 143)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="dag-scheduler">
+    <rect x="629" y="150" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="151" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="706" y="173" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DAGScheduler</text>
+    <text class="f-mono" x="706" y="187" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
+  </g>
+  <g class="topo-node" data-id="exec-codegen">
+    <rect x="174" y="315" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="177" y="318" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="183" y="319" width="142" height="3" rx="1.5" fill="#7aa2ff"/>
+    <text class="f-sans" x="254" y="341" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Exec Codegen</text>
+    <text class="f-mono" x="254" y="355" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(289, 311)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
+  </g>
+  <g class="topo-node" data-id="executor">
+    <rect x="403" y="318" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="409" y="319" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="341" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Executor</text>
+    <text class="f-mono" x="480" y="355" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="task-attempt">
+    <rect x="629" y="318" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="319" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="706" y="341" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Task Attempt</text>
+    <text class="f-mono" x="706" y="355" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="hop-badge" data-hop="1">
+    <circle cx="367" cy="190" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="193.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">1</text>
+  </g>
+  <g class="hop-badge" data-hop="2">
+    <circle cx="473" cy="126" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="473" y="129.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">2</text>
+  </g>
+  <g class="hop-badge" data-hop="3">
+    <circle cx="593" cy="190" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="593" y="193.2" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">3</text>
+  </g>
+  <g class="hop-badge" data-hop="4">
+    <circle cx="577.3" cy="246" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="577.3" y="249.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">4</text>
+  </g>
+  <g class="hop-badge" data-hop="5">
+    <circle cx="367" cy="323.9" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="327.1" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">5</text>
+  </g>
+  <g class="hop-badge" data-hop="6">
+    <circle cx="496.8" cy="296.5" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="496.8" y="299.7" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">6</text>
+  </g>
+  <g id="packet-orb" aria-hidden="true">
+    <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
+    <circle cx="0" cy="0" r="6.2" fill="currentColor" fill-opacity="0.48"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff" stroke="currentColor" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="wire-trace-strip">
+  <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
+  <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
+  <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">6 HOPS · 6 NODES</text>
+  <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
+  <g class="trace-row" data-hop="1">
+    <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">1</text>
+    <text class="f-mono" x="50" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">SQL Planner -&gt; WholeStageCodegen</text>
+    <text class="f-mono" x="472" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="467.2" fill="#93a4c2" font-size="8.5">Wrap *(1) Scan-&gt;Filter-&gt;Agg</text>
+  </g>
+  <g class="trace-row" data-hop="2">
+    <line x1="26" y1="479.3" x2="474" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">2</text>
+    <text class="f-mono" x="50" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">WholeStageCodegen (self)</text>
+    <text class="f-mono" x="472" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="510.5" fill="#93a4c2" font-size="8.5">doCodeGen() + trial compile</text>
+  </g>
+  <g class="trace-row" data-hop="3">
+    <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">3</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">WholeStageCodegen -&gt; DAGScheduler</text>
+    <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1 in-JVM</text>
+    <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">RDD(CodeAndComment)</text>
+  </g>
+  <g class="trace-row" data-hop="4">
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">DAGScheduler -&gt; Executor</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">LaunchTask(CodeAndComment)</text>
+  </g>
+  <g class="trace-row" data-hop="5">
+    <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="493" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="504" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">5</text>
+    <text class="f-mono" x="512" y="498.5" fill="#d0d9ec" font-size="8.5" font-weight="600">Executor -&gt; Exec Codegen</text>
+    <text class="f-mono" x="934" y="498.5" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a in-JVM</text>
+    <text class="f-mono" x="512" y="510.5" fill="#93a4c2" font-size="8.5">compile() / cache hit</text>
+  </g>
+  <g class="trace-row" data-hop="6">
+    <line x1="488" y1="522.7" x2="936" y2="522.7" stroke="#182236" stroke-width="0.75"/>
+    <rect x="488" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="547.3" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">6</text>
+    <text class="f-mono" x="512" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">Exec Codegen -&gt; Task Attempt</text>
+    <text class="f-mono" x="934" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a in-JVM</text>
+    <text class="f-mono" x="512" y="553.8" fill="#93a4c2" font-size="8.5">processNext() UnsafeRow</text>
+  </g>
+</g>
+</svg>

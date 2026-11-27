@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
-<title id="topo-title">PySpark on YARN — End-to-End Cluster &amp; Shuffle Architecture</title>
+<title id="topo-title">PySpark on YARN -- End-to-End Cluster &amp; Shuffle Architecture</title>
 <desc id="topo-desc">Submission, AM &amp; Python bootstrap, RM registration, executor RPC, cross-worker shuffle fetch, and driver HDFS commit across all 6 host zones. 1. YARN Client to ResourceManager: submitApplication(AM) (rm01:8032); 2. ApplicationMaster to Python Driver: Spawn orders.py &amp; init SparkContext (driver-1 OS); 3. ApplicationMaster to ResourceManager: registerAM &amp; request executors (rm01:8030); 4. ExecBackend A to DriverSchedBackend: RegisterExecutor(id=1) (driver-1:41000); 5. DriverSchedBackend to ExecBackend A: LaunchTask(Map 0.0) (worker-a:ephemeral); 6. DriverSchedBackend to ExecBackend B: LaunchTask(Reduce p42) (worker-b:ephemeral); 7. Shuffle Reader to BlockTransferSvc: FetchShuffleBlock(0_12_42) (worker-a:42001); 8. Driver Commit to HDFS NameNode: commitJob() (FileOutputCommitter Algo 1) (nn01:8020)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -81,7 +81,7 @@
   <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
   <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
   <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
-  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">PySpark on YARN — End-to-End Cluster &amp; Shuffle Architecture</text>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">PySpark on YARN -- End-to-End Cluster &amp; Shuffle Architecture</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Submission, AM &amp; Python bootstrap, RM registration, executor RPC, cross-worker shuffle fetch, and driver HDFS commit across all 6 host zones</text>
   <g class="channel-legend">
     <line x1="749.7" y1="24" x2="760.7" y2="24" stroke="#7aa2ff" stroke-width="2" stroke-linecap="round"/>

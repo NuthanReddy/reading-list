@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
-<title id="topo-title">YarnShuffleService (ESS) — Post-Exit Shuffle Serving</title>
+<title id="topo-title">YarnShuffleService (ESS) -- Post-Exit Shuffle Serving</title>
 <desc id="topo-desc">NodeManager auxiliary service (:7337) serving local map files even after producer executors exit. 1. NodeManager to Ext Shuffle Service: serviceInit(:7337) (:7337); 2. BlockManager to Ext Shuffle Service: RegisterExecutor(info) (:7337); 3. YARN Container to MapOutputMaster: MapStatus(worker-a:7337) (:41000); 4. Shuffle Reader to Ext Shuffle Service: FetchBlocks(s7,m41,r2) (:7337); 5. Ext Shuffle Service to Shuffle Reader: StreamHandle(id=91, n=1) (:7337); 6. Ext Shuffle Service to Shuffle Reader: Chunk #0 (25 B segment) (:7337)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -69,7 +69,7 @@
   <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
   <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
   <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
-  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">YarnShuffleService (ESS) — Post-Exit Shuffle Serving</text>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">YarnShuffleService (ESS) -- Post-Exit Shuffle Serving</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">NodeManager auxiliary service (:7337) serving local map files even after producer executors exit</text>
   <g class="channel-legend">
     <line x1="807.6" y1="24" x2="818.6" y2="24" stroke="#7aa2ff" stroke-width="2" stroke-linecap="round"/>

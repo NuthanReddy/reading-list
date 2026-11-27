@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
-<title id="topo-title">FileFormatWriter — V1 Partitioned Parquet Write</title>
+<title id="topo-title">FileFormatWriter -- V1 Partitioned Parquet Write</title>
 <desc id="topo-desc">Schema validation, WriteJobDescription, maxRecordsPerFile=2 rollover (3 files), and WriteTaskResult. 1. SparkSession to FileFormatWriter: FileFormatWriter.write() (in-JVM); 2. FileFormatWriter to Driver Commit: setupJob(stagingPath) (in-JVM); 3. FileFormatWriter to DAGScheduler: Submit WriteJobDesc (in-JVM); 4. Task Attempt to HDFS DataNode: Write 2 east + 1 west (:9866); 5. Task Attempt to FileFormatWriter: WriteTaskResult (summary) (:41000); 6. FileFormatWriter to Driver Commit: commitJob(taskMsgs) (in-JVM)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -69,7 +69,7 @@
   <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
   <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
   <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
-  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">FileFormatWriter — V1 Partitioned Parquet Write</text>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">FileFormatWriter -- V1 Partitioned Parquet Write</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Schema validation, WriteJobDescription, maxRecordsPerFile=2 rollover (3 files), and WriteTaskResult</text>
   <g class="channel-legend">
     <line x1="796.9" y1="24" x2="807.9" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>

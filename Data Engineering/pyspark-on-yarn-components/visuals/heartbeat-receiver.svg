@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
-<title id="topo-title">HeartbeatReceiver — Executor Liveness &amp; Metrics</title>
+<title id="topo-title">HeartbeatReceiver -- Executor Liveness &amp; Metrics</title>
 <desc id="topo-desc">Driver receipt-clock liveness checks, in-flight metrics forwarding, and 180s timeout expiry. 1. Executor to HeartbeatReceiver: Heartbeat(exec=7) (:41000); 2. HeartbeatReceiver to TaskSchedulerImpl: executorHeartbeatReceived (in-JVM); 3. DAGScheduler to BlockManagerMaster: BlockManagerHeartbeat (:41000); 4. HeartbeatReceiver to Executor: HeartbeatResponse(false) (:41000); 5. HeartbeatReceiver to HeartbeatReceiver: ExpireDeadHosts (180s) (in-JVM); 6. HeartbeatReceiver to DriverSchedBackend: RemoveExecutor(7,timeout) (:41000)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -69,7 +69,7 @@
   <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
   <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
   <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
-  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">HeartbeatReceiver — Executor Liveness &amp; Metrics</text>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">HeartbeatReceiver -- Executor Liveness &amp; Metrics</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Driver receipt-clock liveness checks, in-flight metrics forwarding, and 180s timeout expiry</text>
   <g class="channel-legend">
     <line x1="791.6" y1="24" x2="802.6" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>

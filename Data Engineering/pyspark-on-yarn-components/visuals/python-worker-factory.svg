@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
-<title id="topo-title">PythonWorkerFactory — Daemon Fork &amp; Idle Pool Reuse</title>
+<title id="topo-title">PythonWorkerFactory -- Daemon Fork &amp; Idle Pool Reuse</title>
 <desc id="topo-desc">Executor-local pyspark.daemon spawn, child fork + PID/secret handshake, and FIFO idle worker checkout. 1. BasePythonRunner to Exec SparkEnv: createPythonWorker(env) (in-JVM); 2. PythonWorkerFactory to YARN Container: Spawn pyspark.daemon (in-JVM); 3. YARN Container to PythonWorkerFactory: Advertise port :53412 (127.0.0.1:ephemeral); 4. PythonWorkerFactory to Python Worker: Connect, fork &amp; PID auth (127.0.0.1:ephemeral); 5. PythonWorkerFactory to BasePythonRunner: Hand off PythonWorker (in-JVM); 6. BasePythonRunner to PythonWorkerFactory: releaseWorker -&gt; p8 hit (in-JVM)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -69,7 +69,7 @@
   <path d="M 10 2 H 950 A 8 8 0 0 1 958 10 V 48 H 2 V 10 A 8 8 0 0 1 10 2 Z" fill="#0e1526"/>
   <line x1="2" y1="48" x2="958" y2="48" stroke="#283349" stroke-width="1"/>
   <circle cx="19" cy="20" r="3.4" fill="#7aa2ff"/>
-  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">PythonWorkerFactory — Daemon Fork &amp; Idle Pool Reuse</text>
+  <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">PythonWorkerFactory -- Daemon Fork &amp; Idle Pool Reuse</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">Executor-local pyspark.daemon spawn, child fork + PID/secret handshake, and FIFO idle worker checkout</text>
   <g class="channel-legend">
     <line x1="828.3" y1="24" x2="839.3" y2="24" stroke="#ec82b3" stroke-width="2" stroke-linecap="round"/>

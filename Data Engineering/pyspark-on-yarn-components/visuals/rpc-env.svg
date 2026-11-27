@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="topo-title" aria-describedby="topo-desc">
 <title id="topo-title">NettyRpcEnv: Reverse Routing Over Client Socket</title>
-<desc id="topo-desc">clientMode=true executors (no listen port), attached TransportClient reverse send, Inbox dispatch, and data-plane split. 1. ExecutorBackend to NettyRpcEnv: CheckExistence(CoarseGrn) (driver-1:41000); 2. NettyRpcEnv to DriverSchedBackend: Attach client ref (ephem) (driver-1:41000); 3. DriverSchedBackend to NettyRpcEnv: Send LaunchTask (reverse) (driver-1:41000); 4. NettyRpcEnv to ExecutorBackend: Deliver LaunchTask -&gt; Inbox (worker-a:ephemeral); 5. TaskResultGetter to BlockTransferSvc: Fetch block (:42001) (worker-a:42001)</desc>
+<desc id="topo-desc">clientMode=true executors (no listen port), attached TransportClient reverse send, Inbox dispatch, and data-plane split. 1. ExecutorBackend to NettyRpcEnv: CheckExistence(CoarseGrn) (driver-1:41000); 2. NettyRpcEnv to DriverSchedBackend: Attach client ref (ephem) (driver-1:41000); 3. DriverSchedBackend to Exec RpcEnv: Send LaunchTask (reverse) (driver-1:41000); 4. Exec RpcEnv to ExecutorBackend: Dispatcher -&gt; Inbox (worker-a JVM); 5. TaskResultGetter to BlockTransferSvc: Fetch block (:42001) (worker-a:42001)</desc>
 <defs>
   <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
     <circle cx="10" cy="10" r="0.9" fill="#1a253b"/>
@@ -10,37 +10,37 @@
 .f-sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 .f-mono { font-family: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace; }
 @keyframes packet-travel {
-  0% { transform: translate(368.7px, 304.5px); color: #5bd3a8; opacity: 0; }
-  0.80% { transform: translate(368.7px, 304.5px); color: #5bd3a8; opacity: 1; }
-  6.20% { transform: translate(351.3px, 254.5px); color: #5bd3a8; opacity: 1; }
-  11.60% { transform: translate(326.3px, 210.6px); color: #5bd3a8; opacity: 1; }
-  17.00% { transform: translate(295px, 175.5px); color: #5bd3a8; opacity: 1; }
-  18.40% { transform: translate(295px, 175.5px); color: #5bd3a8; opacity: 0; }
-  19.20% { transform: translate(334px, 172.1px); color: #5bd3a8; opacity: 0; }
-  20.80% { transform: translate(334px, 172.1px); color: #5bd3a8; opacity: 1; }
-  26.20% { transform: translate(445.1px, 186.3px); color: #5bd3a8; opacity: 1; }
-  31.60% { transform: translate(546.1px, 187.4px); color: #5bd3a8; opacity: 1; }
-  37.00% { transform: translate(631.1px, 175.5px); color: #5bd3a8; opacity: 1; }
-  38.40% { transform: translate(631.1px, 175.5px); color: #5bd3a8; opacity: 0; }
-  39.20% { transform: translate(631.1px, 123.5px); color: #5bd3a8; opacity: 0; }
-  40.80% { transform: translate(631.1px, 123.5px); color: #5bd3a8; opacity: 1; }
-  46.20% { transform: translate(546.1px, 111.6px); color: #5bd3a8; opacity: 1; }
-  51.60% { transform: translate(445.1px, 112.7px); color: #5bd3a8; opacity: 1; }
-  57.00% { transform: translate(334px, 126.9px); color: #5bd3a8; opacity: 1; }
-  58.40% { transform: translate(334px, 126.9px); color: #5bd3a8; opacity: 0; }
-  59.20% { transform: translate(252.3px, 175.5px); color: #5bd3a8; opacity: 0; }
-  60.80% { transform: translate(252.3px, 175.5px); color: #5bd3a8; opacity: 1; }
-  66.20% { transform: translate(269.7px, 225.5px); color: #5bd3a8; opacity: 1; }
-  71.60% { transform: translate(294.7px, 269.4px); color: #5bd3a8; opacity: 1; }
-  77.00% { transform: translate(326px, 304.5px); color: #5bd3a8; opacity: 1; }
-  78.40% { transform: translate(326px, 304.5px); color: #5bd3a8; opacity: 0; }
-  79.20% { transform: translate(489.8px, 175.5px); color: #f2b950; opacity: 0; }
-  80.80% { transform: translate(489.8px, 175.5px); color: #f2b950; opacity: 1; }
-  86.20% { transform: translate(511px, 223.1px); color: #f2b950; opacity: 1; }
-  91.60% { transform: translate(537.8px, 266.9px); color: #f2b950; opacity: 1; }
-  97.00% { transform: translate(568.5px, 304.5px); color: #f2b950; opacity: 1; }
-  98.40% { transform: translate(568.5px, 304.5px); color: #f2b950; opacity: 0; }
-  100% { transform: translate(368.7px, 304.5px); color: #5bd3a8; opacity: 0; }
+  0% { transform: translate(259.7px, 304.5px); color: #5bd3a8; opacity: 0; }
+  0.80% { transform: translate(259.7px, 304.5px); color: #5bd3a8; opacity: 1; }
+  6.20% { transform: translate(266px, 261.9px); color: #5bd3a8; opacity: 1; }
+  11.60% { transform: translate(266px, 218.1px); color: #5bd3a8; opacity: 1; }
+  17.00% { transform: translate(259.7px, 175.5px); color: #5bd3a8; opacity: 1; }
+  18.40% { transform: translate(259.7px, 175.5px); color: #5bd3a8; opacity: 0; }
+  19.20% { transform: translate(334px, 163.7px); color: #5bd3a8; opacity: 0; }
+  20.80% { transform: translate(334px, 163.7px); color: #5bd3a8; opacity: 1; }
+  26.20% { transform: translate(355.8px, 166.2px); color: #5bd3a8; opacity: 1; }
+  31.60% { transform: translate(378.2px, 166.2px); color: #5bd3a8; opacity: 1; }
+  37.00% { transform: translate(400px, 163.7px); color: #5bd3a8; opacity: 1; }
+  38.40% { transform: translate(400px, 163.7px); color: #5bd3a8; opacity: 0; }
+  39.20% { transform: translate(474.3px, 175.5px); color: #5bd3a8; opacity: 0; }
+  40.80% { transform: translate(474.3px, 175.5px); color: #5bd3a8; opacity: 1; }
+  46.20% { transform: translate(468px, 218.1px); color: #5bd3a8; opacity: 1; }
+  51.60% { transform: translate(468px, 261.9px); color: #5bd3a8; opacity: 1; }
+  57.00% { transform: translate(474.3px, 304.5px); color: #5bd3a8; opacity: 1; }
+  58.40% { transform: translate(474.3px, 304.5px); color: #5bd3a8; opacity: 0; }
+  59.20% { transform: translate(400px, 316.3px); color: #bfa6ff; opacity: 0; }
+  60.80% { transform: translate(400px, 316.3px); color: #bfa6ff; opacity: 1; }
+  66.20% { transform: translate(378.2px, 313.8px); color: #bfa6ff; opacity: 1; }
+  71.60% { transform: translate(355.8px, 313.8px); color: #bfa6ff; opacity: 1; }
+  77.00% { transform: translate(334px, 316.3px); color: #bfa6ff; opacity: 1; }
+  78.40% { transform: translate(334px, 316.3px); color: #bfa6ff; opacity: 0; }
+  79.20% { transform: translate(700.3px, 175.5px); color: #f2b950; opacity: 0; }
+  80.80% { transform: translate(700.3px, 175.5px); color: #f2b950; opacity: 1; }
+  86.20% { transform: translate(694px, 218.1px); color: #f2b950; opacity: 1; }
+  91.60% { transform: translate(694px, 261.9px); color: #f2b950; opacity: 1; }
+  97.00% { transform: translate(700.3px, 304.5px); color: #f2b950; opacity: 1; }
+  98.40% { transform: translate(700.3px, 304.5px); color: #f2b950; opacity: 0; }
+  100% { transform: translate(259.7px, 304.5px); color: #5bd3a8; opacity: 0; }
 }
 #packet-orb {
   opacity: 0;
@@ -66,12 +66,15 @@
   <text class="f-sans" x="30" y="24" fill="#e2e8f5" font-size="13.5" font-weight="700">NettyRpcEnv: Reverse Routing Over Client Socket</text>
   <text class="f-sans" x="30" y="39" fill="#8998b4" font-size="9.5">clientMode=true executors (no listen port), attached TransportClient reverse send, Inbox dispatch, and data-plane split</text>
   <g class="channel-legend">
-    <line x1="854.8" y1="24" x2="865.8" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="865.8" cy="24" r="2.2" fill="#5bd3a8"/>
-    <text class="f-mono" x="871.8" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
-    <line x1="896.8" y1="24" x2="907.8" y2="24" stroke="#f2b950" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="907.8" cy="24" r="2.2" fill="#f2b950"/>
-    <text class="f-mono" x="913.8" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">DATA</text>
+    <line x1="796.9" y1="24" x2="807.9" y2="24" stroke="#5bd3a8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="807.9" cy="24" r="2.2" fill="#5bd3a8"/>
+    <text class="f-mono" x="813.9" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">RPC</text>
+    <line x1="838.9" y1="24" x2="849.9" y2="24" stroke="#f2b950" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="849.9" cy="24" r="2.2" fill="#f2b950"/>
+    <text class="f-mono" x="855.9" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">DATA</text>
+    <line x1="886.1" y1="24" x2="897.1" y2="24" stroke="#bfa6ff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <circle cx="897.1" cy="24" r="2.2" fill="#bfa6ff"/>
+    <text class="f-mono" x="903.1" y="27" fill="#93a4c2" font-size="8.5" font-weight="600">IN-JVM</text>
   </g>
 </g>
 <g class="topology-stage">
@@ -88,24 +91,24 @@
     <text class="f-sans" x="35" y="249.2" fill="#8998b4" font-size="9.2" font-weight="700" letter-spacing="0.09em">WORKER NODE A</text>
   </g>
   <g class="topo-edge" data-from="executor-backend" data-to="rpc-env">
-    <path d="M 368.7 304.5 Q 347.6 223.1 295 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(295, 175.5) rotate(-136.8)"/>
+    <path d="M 259.7 304.5 Q 274 240 259.7 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(259.7, 175.5) rotate(-101.7)"/>
   </g>
   <g class="topo-edge" data-from="rpc-env" data-to="driver-scheduler-backend">
-    <path d="M 334 172.1 Q 512 203.3 631.1 175.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(631.1, 175.5) rotate(-12.2)"/>
+    <path d="M 334 163.7 Q 367 169.5 400 163.7" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(400, 163.7) rotate(-9.4)"/>
   </g>
-  <g class="topo-edge" data-from="driver-scheduler-backend" data-to="rpc-env">
-    <path d="M 631.1 123.5 Q 512 95.7 334 126.9" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(334, 126.9) rotate(170.5)"/>
+  <g class="topo-edge" data-from="driver-scheduler-backend" data-to="exec-rpc-env">
+    <path d="M 474.3 175.5 Q 460 240 474.3 304.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(474.3, 304.5) rotate(78.3)"/>
   </g>
-  <g class="topo-edge" data-from="rpc-env" data-to="executor-backend">
-    <path d="M 252.3 175.5 Q 273.4 256.9 326 304.5" fill="none" stroke="#5bd3a8" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#5bd3a8" transform="translate(326, 304.5) rotate(43.2)"/>
+  <g class="topo-edge" data-from="exec-rpc-env" data-to="executor-backend">
+    <path d="M 400 316.3 Q 367 310.5 334 316.3" fill="none" stroke="#bfa6ff" stroke-width="1.8" stroke-opacity="0.88" stroke-dasharray="4 3" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#bfa6ff" transform="translate(334, 316.3) rotate(170.6)"/>
   </g>
   <g class="topo-edge" data-from="task-result-getter" data-to="block-transfer-service">
-    <path d="M 489.8 175.5 Q 518.4 251.3 568.5 304.5" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
-    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(568.5, 304.5) rotate(47.5)"/>
+    <path d="M 700.3 175.5 Q 686 240 700.3 304.5" fill="none" stroke="#f2b950" stroke-width="1.8" stroke-opacity="0.88" stroke-linecap="round"/>
+    <polygon points="-8,-3.4 0,0 -8,3.4" fill="#f2b950" transform="translate(700.3, 304.5) rotate(78.3)"/>
   </g>
   <g class="topo-node" data-id="rpc-env">
     <rect x="174" y="123.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
@@ -118,49 +121,60 @@
       <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
     </g>
   </g>
-  <g class="topo-node" data-id="task-result-getter">
+  <g class="topo-node" data-id="driver-scheduler-backend">
     <rect x="403" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
     <rect x="409" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
-    <text class="f-sans" x="480" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TaskResultGetter</text>
+    <text class="f-sans" x="480" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DriverSchedBackend</text>
     <text class="f-mono" x="480" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
   </g>
-  <g class="topo-node" data-id="driver-scheduler-backend">
+  <g class="topo-node" data-id="task-result-getter">
     <rect x="629" y="126.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
     <rect x="635" y="127.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
-    <text class="f-sans" x="706" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">DriverSchedBackend</text>
+    <text class="f-sans" x="706" y="149.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">TaskResultGetter</text>
     <text class="f-mono" x="706" y="163.5" text-anchor="middle" fill="#8998b4" font-size="9">driver-1 (AM)</text>
   </g>
   <g class="topo-node" data-id="executor-backend">
-    <rect x="290" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
-    <rect x="296" y="308.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
-    <text class="f-sans" x="367" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ExecutorBackend</text>
-    <text class="f-mono" x="367" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <rect x="177" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="183" y="308.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="254" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">ExecutorBackend</text>
+    <text class="f-mono" x="254" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+  </g>
+  <g class="topo-node" data-id="exec-rpc-env">
+    <rect x="400" y="304.5" width="160" height="52" rx="8" fill="none" stroke="#7aa2ff" stroke-opacity="0.28" stroke-width="2.5"/>
+    <rect x="403" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#7aa2ff" stroke-width="1.8"/>
+    <rect x="409" y="308.5" width="142" height="3" rx="1.5" fill="#5bd3a8"/>
+    <text class="f-sans" x="480" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">Exec RpcEnv</text>
+    <text class="f-mono" x="480" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <g transform="translate(515, 300.5)">
+      <rect x="0" y="0" width="38" height="13" rx="3" fill="#7aa2ff"/>
+      <text class="f-mono" x="19" y="9.4" text-anchor="middle" fill="#0b1020" font-size="7.8" font-weight="700" letter-spacing="0.06em">FOCUS</text>
+    </g>
   </g>
   <g class="topo-node" data-id="block-transfer-service">
-    <rect x="516" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
-    <rect x="522" y="308.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
-    <text class="f-sans" x="593" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockTransferSvc</text>
-    <text class="f-mono" x="593" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
+    <rect x="629" y="307.5" width="154" height="46" rx="6" fill="#141e32" stroke="#2e3d59" stroke-width="1.15"/>
+    <rect x="635" y="308.5" width="142" height="3" rx="1.5" fill="#f2b950"/>
+    <text class="f-sans" x="706" y="330.5" text-anchor="middle" fill="#d0d9ec" font-size="11.5" font-weight="700">BlockTransferSvc</text>
+    <text class="f-mono" x="706" y="344.5" text-anchor="middle" fill="#8998b4" font-size="9">worker-a</text>
   </g>
   <g class="hop-badge" data-hop="1">
-    <circle cx="339.7" cy="231.5" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
-    <text class="f-mono" x="339.7" y="234.7" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">1</text>
+    <circle cx="266.9" cy="240" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="266.9" y="243.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">1</text>
   </g>
   <g class="hop-badge" data-hop="2">
-    <circle cx="497.3" cy="188.5" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
-    <text class="f-mono" x="497.3" y="191.7" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">2</text>
+    <circle cx="367" cy="166.6" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="169.8" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">2</text>
   </g>
   <g class="hop-badge" data-hop="3">
-    <circle cx="497.3" cy="110.5" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
-    <text class="f-mono" x="497.3" y="113.7" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">3</text>
+    <circle cx="467.1" cy="240" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
+    <text class="f-mono" x="467.1" y="243.2" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">3</text>
   </g>
   <g class="hop-badge" data-hop="4">
-    <circle cx="281.3" cy="248.5" r="9" fill="#0d1526" stroke="#5bd3a8" stroke-width="1.6"/>
-    <text class="f-mono" x="281.3" y="251.7" text-anchor="middle" fill="#5bd3a8" font-size="9.5" font-weight="700">4</text>
+    <circle cx="367" cy="313.4" r="9" fill="#0d1526" stroke="#bfa6ff" stroke-width="1.6"/>
+    <text class="f-mono" x="367" y="316.6" text-anchor="middle" fill="#bfa6ff" font-size="9.5" font-weight="700">4</text>
   </g>
   <g class="hop-badge" data-hop="5">
-    <circle cx="523.8" cy="245.6" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
-    <text class="f-mono" x="523.8" y="248.8" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">5</text>
+    <circle cx="693.1" cy="240" r="9" fill="#0d1526" stroke="#f2b950" stroke-width="1.6"/>
+    <text class="f-mono" x="693.1" y="243.2" text-anchor="middle" fill="#f2b950" font-size="9.5" font-weight="700">5</text>
   </g>
   <g id="packet-orb" aria-hidden="true">
     <circle cx="0" cy="0" r="11" fill="currentColor" fill-opacity="0.22"/>
@@ -172,7 +186,7 @@
   <rect x="16" y="412" width="928" height="158" rx="7" fill="#101727" stroke="#283349" stroke-width="1"/>
   <line x1="16" y1="433" x2="944" y2="433" stroke="#212d45" stroke-width="1"/>
   <text class="f-sans" x="28" y="426" fill="#8998b4" font-size="8.8" font-weight="700" letter-spacing="0.1em">WIRE TRACE</text>
-  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">5 HOPS · 5 NODES</text>
+  <text class="f-mono" x="932" y="426" text-anchor="end" fill="#6f80a0" font-size="8.5">5 HOPS · 6 NODES</text>
   <line x1="480" y1="437" x2="480" y2="564" stroke="#1e2940" stroke-width="1"/>
   <g class="trace-row" data-hop="1">
     <rect x="26" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
@@ -193,16 +207,16 @@
     <line x1="26" y1="522.7" x2="474" y2="522.7" stroke="#182236" stroke-width="0.75"/>
     <rect x="26" y="536.3" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
     <text class="f-mono" x="35" y="547.3" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">3</text>
-    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">DriverSchedBackend -&gt; NettyRpcEnv</text>
+    <text class="f-mono" x="50" y="541.8" fill="#d0d9ec" font-size="8.5" font-weight="600">DriverSchedBackend -&gt; Exec RpcEnv</text>
     <text class="f-mono" x="472" y="541.8" text-anchor="end" fill="#6f80a0" font-size="8.2">driver-1:41000</text>
     <text class="f-mono" x="50" y="553.8" fill="#93a4c2" font-size="8.5">Send LaunchTask (reverse)</text>
   </g>
   <g class="trace-row" data-hop="4">
-    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#5bd3a8" stroke-width="1.15"/>
-    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#5bd3a8" font-size="8.5" font-weight="700">4</text>
-    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">NettyRpcEnv -&gt; ExecutorBackend</text>
-    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a:ephemeral</text>
-    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">Deliver LaunchTask -&gt; Inbox</text>
+    <rect x="488" y="449.7" width="18" height="16" rx="3.5" fill="#141e32" stroke="#bfa6ff" stroke-width="1.15"/>
+    <text class="f-mono" x="497" y="460.7" text-anchor="middle" fill="#bfa6ff" font-size="8.5" font-weight="700">4</text>
+    <text class="f-mono" x="512" y="455.2" fill="#d0d9ec" font-size="8.5" font-weight="600">Exec RpcEnv -&gt; ExecutorBackend</text>
+    <text class="f-mono" x="934" y="455.2" text-anchor="end" fill="#6f80a0" font-size="8.2">worker-a JVM</text>
+    <text class="f-mono" x="512" y="467.2" fill="#93a4c2" font-size="8.5">Dispatcher -&gt; Inbox</text>
   </g>
   <g class="trace-row" data-hop="5">
     <line x1="488" y1="479.3" x2="936" y2="479.3" stroke="#182236" stroke-width="0.75"/>
